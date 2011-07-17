@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 1.25
+Version: 1.3
 
 == Description ==
 
@@ -22,7 +22,15 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
     (/wp-admin/admin.php?page=photoMosaic.php)
 
 == Changelog ==
-= 1.25 =
+= 1.3 =
+* Enhancement: adds "loading gallery" spinner option
+* Enhancement: stronger CSS reset
+* Bug Fix: corrects jQuery context bug that was effecting Custom Lightbox behavior
+* Bug Fix: prevents conflicts with other jQuery instances by adding a super-specific namespace
+* Bug Fix: corrects "Link as URL" for WP and NextGen galleries
+
+
+= 1.2.5 =
 * Bug Fix: corrects a bug that caused images to display that aren't in the specified gallery
 * Bug Fix: corrects a bug that prevented the lightbox from being bound correctly
 

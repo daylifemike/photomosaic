@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 1.25
+Version: 1.3
 */
 
 
@@ -35,6 +35,7 @@ class photomosaic_plugin_options {
 			$options['external_links'] = false;
 			$options['auto_columns'] = false;
 			$options['ideal_column_width'] = 100;
+			$options['show_loading'] = false;
 
 			update_option('photomosaic_options', $options);
 		}
@@ -60,6 +61,7 @@ class photomosaic_plugin_options {
 			$options['external_links'] = stripslashes($_POST['external_links']);
 			$options['auto_columns'] = stripslashes($_POST['auto_columns']);
 			$options['ideal_column_width'] = stripslashes($_POST['ideal_column_width']);
+			$options['show_loading'] = stripslashes($_POST['show_loading']);
 
 			update_option('photomosaic_options', $options);
 		} else {
@@ -140,7 +142,7 @@ class photomosaic_plugin_options {
                         </p>
                         <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
                             causes image links to point to a URL instead of the unresized image
-                                <br/>
+                                <br/><br/>
                             define the link URL in the image description
                                 <br/><br/>
                             requires that <b>image links</b> be checked
@@ -169,6 +171,14 @@ class photomosaic_plugin_options {
                         <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">prevents PhotoMosaic from reordering the images</span>
                     </div>
 	            </div>
+                <div style="overflow:hidden; margin-top:20px;">
+                    <div style="width:25%;float:left;">
+                        <p>
+                            <label><input name="show_loading" type="checkbox" value="1" <?php if($options['show_loading']) echo "checked='checked'"; ?> /> Show Loading Spinner</label>
+                        </p>
+                        <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">displays a "loading gallery..." spinner until the mosaic is ready</span>
+                    </div>
+                </div>
 
                 <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Lightbox</h3>
                 <div style="overflow:hidden;">
@@ -245,6 +255,7 @@ class photomosaic_plugin_options {
                     <li><b>external_links</b> : 1 = yes, 0 = no</li>
                     <li><b>auto_columns</b> : 1 = yes, 0 = no</li>
                     <li><b>ideal_column_width</b> : any number <i>(in pixels)</i></li>
+                    <li><b>show_loading</b> : 1 = yes, 0 = no</li>
                     <li><b>lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox_name</b> : js function name <i>(eg: prettyPhoto)</i></li>
@@ -296,22 +307,22 @@ $options = get_option('photomosaic_options');
 
 //============================== insert HTML header tag ========================//
 $photomosaic_wp_plugin_path = get_option('siteurl')."/wp-content/plugins/photoMosaic";
-wp_register_script( 'jquery152', $photomosaic_wp_plugin_path . '/jquery-1.5.2.min.js');
-wp_enqueue_script('jquery152');
+wp_register_script( 'photomosaicJQ152', $photomosaic_wp_plugin_path . '/js/jquery-1.5.2.min.js');
+wp_enqueue_script('photomosaicJQ152');
 if (!is_admin()) {
 	if($options['lightbox']) {
-		wp_enqueue_style( 'prettyphoto-styles', $photomosaic_wp_plugin_path . '/prettyPhoto/prettyPhoto.css');
-		wp_enqueue_script( 'prettyphoto-script', $photomosaic_wp_plugin_path . '/prettyPhoto/jquery.prettyPhoto.js', array('jquery152'));
+		wp_enqueue_style( 'prettyphoto-styles', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/prettyPhoto.css');
+		wp_enqueue_script( 'prettyphoto-script', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/jquery.prettyPhoto.js', array('photomosaicJQ152'));
 	}
 	
-	wp_enqueue_style( 'photomosaic-styles', $photomosaic_wp_plugin_path . '/photoMosaic.css');
-	wp_enqueue_script( 'photomosaic', $photomosaic_wp_plugin_path . '/jquery.photoMosaic.pack.js', array('jquery152'));
+	wp_enqueue_style( 'photomosaic-custom-styles', $photomosaic_wp_plugin_path . '/css/photoMosaic.css');
+	wp_enqueue_script( 'photomosaic-custom-script', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.js', array('photomosaicJQ152'));
 
 	add_shortcode( 'photoMosaic', 'photomosaic_shortcode' );
 	add_shortcode( 'photomosaic', 'photomosaic_shortcode' );
 } else if (isset($_GET['page'])) { 
     if ($_GET['page'] == "photoMosaic.php") {
-        wp_enqueue_script( 'photomosaic-form-validation', $photomosaic_wp_plugin_path . '/jquery.photoMosaic.wp.form.js', array('jquery152'));
+        wp_enqueue_script( 'photomosaic-form-validation', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.wp.form.js', array('photomosaicJQ152'));
     }
 }
 
@@ -334,6 +345,7 @@ function photomosaic_shortcode( $atts ) {
 		'external_links'           => $options['external_links'],
 		'auto_columns'             => $options['auto_columns'],
 		'ideal_column_width' 	   => $options['ideal_column_width'],
+		'show_loading'             => $options['show_loading'],
 		'lightbox'                 => $options['lightbox'],
 		'custom_lightbox'          => $options['custom_lightbox'],
 		'custom_lightbox_name'     => $options['custom_lightbox_name'],
@@ -347,16 +359,17 @@ function photomosaic_shortcode( $atts ) {
 	$photomosaic_wp_plugin_path = get_option('siteurl')."/wp-content/plugins/WP-photoMosaic";
 	
 	$output_buffer = '
-		<script type="text/javascript">
+		<script type="text/javascript" data-photomosaic-gallery="true">
 			var PMalbum'.$unique.' = [';
 
 	if ( !empty($atts['nggid']) ) {
-		$output_buffer .= PMBuildJsonFromNGG($atts['nggid']);
+		$output_buffer .= PMBuildJsonFromNGG($atts['nggid'], $link_to_url);
 	} else {
-		$output_buffer .= PMBuildJsonFromPost($id, $include, $exclude);
+		$output_buffer .= PMBuildJsonFromPost($id, $link_to_url, $include, $exclude);
 	}		
 	
-	$output_buffer .='];';
+	$output_buffer .='];
+		</script><script type="text/javascript" data-photomosaic-call="true">';
 	
 	if(intval($height) == 0){
 		$opts_height = "'auto'";
@@ -400,6 +413,12 @@ function photomosaic_shortcode( $atts ) {
 		$opts_auto_columns = "false";
 	}
 	
+	if(intval($show_loading)){
+		$opts_show_loading = "true";
+	} else {
+		$opts_show_loading = "false";
+	}
+
 	if(intval($lightbox)){
 		$lightbox = "true";
 	} else {
@@ -415,7 +434,7 @@ function photomosaic_shortcode( $atts ) {
 	}
 
 	$output_buffer .='
-			jq152(document).ready(function($) {
+			photomosaicJQ152(document).ready(function($) {
 				$("#photoMosaicTarget'.$unique.'").photoMosaic({
 					gallery: PMalbum'.$unique.',
 					padding: '. intval($padding) .',
@@ -426,6 +445,7 @@ function photomosaic_shortcode( $atts ) {
 					external_links: '. $opts_external_links .',
 					auto_columns: '. $opts_auto_columns .',
 					ideal_column_width: '. intval($ideal_column_width) .',
+					show_loading: '. $opts_show_loading .',
 			';
 			
 			if($options['lightbox'] || $options['custom_lightbox']) {
@@ -444,7 +464,7 @@ function photomosaic_shortcode( $atts ) {
 				} elseif ($options['custom_lightbox']) {
 					$output_buffer .='
 						modal_ready_callback : function($photomosaic){
-							$("a[rel^=\'pmlightbox\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
+							jQuery("a[rel^=\'pmlightbox\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
 						},
 					';
 				}
@@ -477,7 +497,7 @@ function photomosaic_shortcode( $atts ) {
 }
 
 
-function PMBuildJsonFromPost($id, $include, $exclude){
+function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
 	$output_buffer = '';
 	
 	if ( !empty($include) ) { 
@@ -532,7 +552,7 @@ function PMBuildJsonFromPost($id, $include, $exclude){
 	return $output_buffer;
 }
 
-function PMBuildJsonFromNGG($galleryID) {
+function PMBuildJsonFromNGG($galleryID, $link_to_url) {
 	global $wpdb, $post;
 	$output_buffer ='';
 	
@@ -546,9 +566,22 @@ function PMBuildJsonFromNGG($galleryID) {
     $i = 0;
     $len = count($picturelist);
     foreach ($picturelist as $key => $picture) {
+    	if( intval($link_to_url) ) { 
+			$str = $picture->description;
+			$pattern = '#(www\.|https?:\/\/){1}[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\S*)#i';
+			if ( preg_match_all($pattern, $str, $matches, PREG_PATTERN_ORDER) ) {
+				$url_data = ',url: "' . $matches[0][0] . '"';
+			} else {
+				$url_data = '';
+			}
+		} else {
+			$url_data = '';
+		}
+
     	$output_buffer .='{
 		        src: "' . $picture->imageURL . '",
 		        caption: "' . $picture->description . '"
+		        ' . $url_data . '
 		    }';
 
 		if($i != $len - 1) {

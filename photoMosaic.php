@@ -34,7 +34,7 @@ class photomosaic_plugin_options {
 			$options['link_to_url'] = false;
 			$options['external_links'] = false;
 			$options['auto_columns'] = false;
-			$options['ideal_column_width'] = 100;
+			$options['center'] = true;
 			$options['show_loading'] = false;
 
 			update_option('photomosaic_options', $options);
@@ -60,7 +60,7 @@ class photomosaic_plugin_options {
 			$options['link_to_url'] = stripslashes($_POST['link_to_url']);
 			$options['external_links'] = stripslashes($_POST['external_links']);
 			$options['auto_columns'] = stripslashes($_POST['auto_columns']);
-			$options['ideal_column_width'] = stripslashes($_POST['ideal_column_width']);
+			$options['center'] = stripslashes($_POST['center']);
 			$options['show_loading'] = stripslashes($_POST['show_loading']);
 
 			update_option('photomosaic_options', $options);
@@ -98,6 +98,14 @@ class photomosaic_plugin_options {
 	                    <p><input type="text" name="height" value="<?php echo($options['height']); ?>" /></p>
 	                    <span style="font-size:11px; color:#666666;">set to <b>0</b> for auto-sizing</span>
 	                </div>
+                    <div style="width:25%;float:left;">
+                        <p>
+                            <label><input name="center" type="checkbox" value="1" <?php if($options['center']) echo "checked='checked'"; ?> /> Center Galleries</label>
+                        </p>
+                        <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            causes the Mosaic to center itself to its container
+                        </span>
+                    </div>
                 </div>
                 <div style="overflow:hidden; margin-top:20px;">
                     <div style="width:25%;float:left;">
@@ -113,17 +121,11 @@ class photomosaic_plugin_options {
                             <label><input name="auto_columns" type="checkbox" value="1" <?php if($options['auto_columns']) echo "checked='checked'"; ?> /> Auto-Columns</label>
                         </p>
                         <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
-                             causes PhotoMosaic to calculate the optimal number of columns given the number of images in the gallery and the <b>ideal column width</b>
-                              - requires <b>ideal column width</b>
+                            causes PhotoMosaic to calculate the optimal number of columns given the number of images in the gallery and the size of its container
+                            - ignores the <b>columns</b> setting
                                 <br/>
-                             - ignores the <b>columns</b> setting
-                                <br/>
-                             - the <b>width</b> setting is used as max-width 
+                            - the <b>width</b> setting is used as max-width 
                         </span>
-                    </div>
-                    <div style="width:25%;float:left;">
-                        <p>Ideal Column Width <i>(in pixels)</i></p>
-                        <p><input type="text" name="ideal_column_width" value="<?php echo($options['ideal_column_width']); ?>" /></p>
                     </div>
                 </div>
                 
@@ -248,13 +250,13 @@ class photomosaic_plugin_options {
                     <li><b>columns</b> : any number</li>
                     <li><b>width</b> : any number <i>(in pixels)</i></li>
                     <li><b>height</b> : any number <i>(in pixels)</i></li>
+                    <li><b>center</b> : 1 = yes, 0 = no</li>
                     <li><b>links</b> : 1 = yes, 0 = no</li>
                     <li><b>random</b> : 1 = yes, 0 = no</li>
                     <li><b>force_order</b> : 1 = yes, 0 = no</li>
                     <li><b>link_to_url</b> : 1 = yes, 0 = no</li>
                     <li><b>external_links</b> : 1 = yes, 0 = no</li>
                     <li><b>auto_columns</b> : 1 = yes, 0 = no</li>
-                    <li><b>ideal_column_width</b> : any number <i>(in pixels)</i></li>
                     <li><b>show_loading</b> : 1 = yes, 0 = no</li>
                     <li><b>lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox</b> : 1 = yes, 0 = no</li>
@@ -344,7 +346,7 @@ function photomosaic_shortcode( $atts ) {
 		'link_to_url'              => $options['link_to_url'],
 		'external_links'           => $options['external_links'],
 		'auto_columns'             => $options['auto_columns'],
-		'ideal_column_width' 	   => $options['ideal_column_width'],
+		'center'               	   => $options['center'],
 		'show_loading'             => $options['show_loading'],
 		'lightbox'                 => $options['lightbox'],
 		'custom_lightbox'          => $options['custom_lightbox'],
@@ -382,12 +384,18 @@ function photomosaic_shortcode( $atts ) {
 	} else {
 		$opts_width = intval($width);
 	}
-	
-	if(intval($links)){
-		$opts_links = "true";
-	} else {
-		$opts_links = "false";
-	}
+
+    if(intval($center)){
+        $opts_center = "true";
+    } else {
+        $opts_center = "false";
+    }
+
+    if(intval($links)){
+        $opts_links = "true";
+    } else {
+        $opts_links = "false";
+    }
 
 	if(intval($random)){
 		$opts_random = "true";
@@ -434,18 +442,18 @@ function photomosaic_shortcode( $atts ) {
 	}
 
 	$output_buffer .='
-			photomosaicJQ152(document).ready(function($) {
-				$("#photoMosaicTarget'.$unique.'").photoMosaic({
-					gallery: PMalbum'.$unique.',
-					padding: '. intval($padding) .',
-					columns: '. intval($columns) .',
-					width: '. $opts_width .',
-					height: '. $opts_height .',
-					links: '. $opts_links .',
-					external_links: '. $opts_external_links .',
-					auto_columns: '. $opts_auto_columns .',
-					ideal_column_width: '. intval($ideal_column_width) .',
-					show_loading: '. $opts_show_loading .',
+            photomosaicJQ152(document).ready(function($) {
+                $("#photoMosaicTarget'.$unique.'").photoMosaic({
+                    gallery: PMalbum'.$unique.',
+                    padding: '. intval($padding) .',
+                    columns: '. intval($columns) .',
+                    width: '. $opts_width .',
+                    height: '. $opts_height .',
+                    center: '. $opts_center .',
+                    links: '. $opts_links .',
+                    external_links: '. $opts_external_links .',
+                    auto_columns: '. $opts_auto_columns .',
+                    show_loading: '. $opts_show_loading .',
 			';
 			
 			if($options['lightbox'] || $options['custom_lightbox']) {

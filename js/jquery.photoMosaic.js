@@ -67,7 +67,7 @@ window['PhotoMosaic'].Mustache=Mustache;
                 random : false,
                 force_order : false,
                 auto_columns : false,
-                ideal_column_width : 100,
+                center : true,
                 show_loading : false,
                 modal_name : null,
                 modal_group : true,
@@ -93,7 +93,7 @@ window['PhotoMosaic'].Mustache=Mustache;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
             this.template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px">' +
+                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px; {{#center}}margin:0 auto;{{/center}}">' +
                     '{{#columns}}' +
                         '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}} !important;">' +
                             '{{#images}}' +
@@ -303,6 +303,7 @@ window['PhotoMosaic'].Mustache=Mustache;
             // get column heights (img height adjusted for col width)
             var json = {
                     width: this.opts.width,
+                    center: this.opts.center,
                     columns:[]
                 },
                 col_heights = [];

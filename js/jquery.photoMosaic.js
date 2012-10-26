@@ -86,9 +86,9 @@ window['PhotoMosaic'].Mustache=Mustache;
             if(this.opts.width === 'auto') {
                 this.opts.width = this.obj.width();
             }
-            
-            this.autoCols();
-            
+
+            this.opts.columns = this.autoCols();
+
             this.col_mod = (this.opts.width - (this.opts.padding * (this.opts.columns - 1))) % this.opts.columns;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
@@ -351,7 +351,6 @@ window['PhotoMosaic'].Mustache=Mustache;
         
         autoCols: function(){
             var max_width = this.opts.width,
-                ideal_width = this.opts.ideal_column_width,
                 num_images = eval(this.opts.gallery).length,
                 cols = 0,
                 ratio = {w:4, h:3},
@@ -365,8 +364,9 @@ window['PhotoMosaic'].Mustache=Mustache;
                         ++i;
                     }
                 }
-                this.opts.width = ((cols * ideal_width) >= max_width) ? max_width : cols * ideal_width;
-                this.opts.columns = cols;
+                return cols;
+            } else {
+                return this.opts.columns;
             }
         },
         

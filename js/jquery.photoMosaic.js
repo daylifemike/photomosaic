@@ -50,6 +50,14 @@ window['PhotoMosaic'].Mustache=Mustache;
         };
     }
 
+    // for debugging
+    if (!window['photoMosaic']) {
+        window['photoMosaic'] = {
+            '$' : $, // accessable reference to namespaced jQuery
+            'mosaics' : [] // configured instances are added to this array
+        };
+    }
+
     var photoMosaic = function() { };
 
     $.extend(photoMosaic.prototype, {
@@ -594,8 +602,15 @@ window['PhotoMosaic'].Mustache=Mustache;
             if (!this.photoMosaic) {
                 this.photoMosaic = new photoMosaic();
                 this.photoMosaic.init(this, options, i);
+
+                // for debugging
+                window['photoMosaic']['mosaics'].push({
+                    'el' : this,
+                    'opts' : options
+                });
             }
         });
         return this;
     };
-})(photomosaicJQ152);
+
+})(JQPM);

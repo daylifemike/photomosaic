@@ -309,22 +309,22 @@ $options = get_option('photomosaic_options');
 
 //============================== insert HTML header tag ========================//
 $photomosaic_wp_plugin_path = get_option('siteurl')."/wp-content/plugins/photoMosaic";
-wp_register_script( 'photomosaicJQ152', $photomosaic_wp_plugin_path . '/js/jquery-1.5.2.min.js');
-wp_enqueue_script('photomosaicJQ152');
+wp_register_script( 'JQPM', $photomosaic_wp_plugin_path . '/js/jquery-1.5.2.min.js');
+wp_enqueue_script('JQPM');
 if (!is_admin()) {
 	if($options['lightbox']) {
 		wp_enqueue_style( 'prettyphoto-styles', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/prettyPhoto.css');
-		wp_enqueue_script( 'prettyphoto-script', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/jquery.prettyPhoto.js', array('photomosaicJQ152'));
+		wp_enqueue_script( 'prettyphoto-script', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/jquery.prettyPhoto.js', array('JQPM'));
 	}
 	
 	wp_enqueue_style( 'photomosaic-custom-styles', $photomosaic_wp_plugin_path . '/css/photoMosaic.css');
-	wp_enqueue_script( 'photomosaic-custom-script', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.js', array('photomosaicJQ152'));
+	wp_enqueue_script( 'photomosaic-custom-script', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.js', array('JQPM'));
 
 	add_shortcode( 'photoMosaic', 'photomosaic_shortcode' );
 	add_shortcode( 'photomosaic', 'photomosaic_shortcode' );
 } else if (isset($_GET['page'])) { 
     if ($_GET['page'] == "photoMosaic.php") {
-        wp_enqueue_script( 'photomosaic-form-validation', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.wp.form.js', array('photomosaicJQ152'));
+        wp_enqueue_script( 'photomosaic-form-validation', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.wp.form.js', array('JQPM'));
     }
 }
 
@@ -442,7 +442,7 @@ function photomosaic_shortcode( $atts ) {
 	}
 
 	$output_buffer .='
-            photomosaicJQ152(document).ready(function($) {
+            JQPM(document).ready(function($) {
                 $("#photoMosaicTarget'.$unique.'").photoMosaic({
                     gallery: PMalbum'.$unique.',
                     padding: '. intval($padding) .',

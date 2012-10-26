@@ -829,4 +829,4 @@
 	  return ( results == null ) ? "" : results[1];
 	}
 	
-})(photomosaicJQ152);
+})(JQPM);

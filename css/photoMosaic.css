@@ -5,17 +5,17 @@
 .photoMosaic,
 .photoMosaic ol, .photoMosaic li, .photoMosaic img, .photoMosaic div,
 .photoMosaic a:link, .photoMosaic a:visited, .photoMosaic a:active, .photoMosaic a:hover {
-    background:none; outline:none; border:0; height:auto; width:auto; max-height:auto; max-width:auto; 
-    min-height:none; min-width:none; font-style:normal; font-variant:normal; font-weight:normal;
+    background:none; outline:none; border:0; height:auto; width:auto; max-height:none !important; max-width:none !important; 
+    min-height:none !important; min-width:none !important; font-style:normal; font-variant:normal; font-weight:normal;
     list-style:none; margin:0; padding:0; position:static; float:none; visibility:visible; 
     overflow:visible; color:#000000; letter-spacing:normal; line-height:120%; text-align:left; text-decoration:none; 
     text-indent:0; text-transform:none; vertical-align:baseline; white-space:normal; word-spacing:normal;
 }
 
 .photoMosaic { overflow:hidden; margin-bottom:20px; }
-    .photoMosaic ol { list-style:none; float:left; }
-    .photoMosaic ol li { list-style:none; overflow:hidden; }
-    .photoMosaic ol li img { display:block; position:relative; top:0px; max-width:none; }
+    .photoMosaic ol { list-style:none !important; float:left !important; margin:0 !important; padding:0 !important; }
+    .photoMosaic ol li { list-style:none !important; overflow:hidden !important; margin:0 !important; padding:0 !important; }
+    .photoMosaic ol li img { display:block; position:relative; top:0px; }
     .photoMosaic ol li a:hover img { opacity:0.8; }
 
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/ajax-loader.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }

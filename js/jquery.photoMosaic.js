@@ -93,11 +93,11 @@ window['PhotoMosaic'].Mustache=Mustache;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
             this.template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic">' +
+                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px">' +
                     '{{#columns}}' +
-                        '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}}">' +
+                        '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}} !important;">' +
                             '{{#images}}' +
-                                '<li style="width:{{#width}}{{constraint}}{{/width}}px; height:{{#height}}{{constraint}}{{/height}}px; margin:0 {{^last}}0 {{padding}}px 0{{/last}}">' +
+                                '<li style="width:{{#width}}{{constraint}}{{/width}}px; height:{{#height}}{{constraint}}{{/height}}px; margin:0 {{^last}}0 {{padding}}px 0{{/last}} !important;">' +
                                     '{{#link}}<a href="{{path}}" {{#external}}target="_blank"{{/external}} {{#modal}}rel="{{modal}}"{{/modal}} {{#caption}}title="{{caption}}"{{/caption}}>{{/link}}' +
                                         '<img src="{{src}}" style="' +
                                                 'width:{{#width}}{{adjusted}}{{/width}}px; ' +
@@ -301,7 +301,10 @@ window['PhotoMosaic'].Mustache=Mustache;
             
             // construct template object &
             // get column heights (img height adjusted for col width)
-            var json = {columns:[]},
+            var json = {
+                    width: this.opts.width,
+                    columns:[]
+                },
                 col_heights = [];
             
             for (i = 0; i < this.columns.length; i++) {

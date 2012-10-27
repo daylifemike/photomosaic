@@ -308,23 +308,23 @@ $options = get_option('photomosaic_options');
 
 
 //============================== insert HTML header tag ========================//
-$photomosaic_wp_plugin_path = get_option('siteurl')."/wp-content/plugins/photoMosaic";
-wp_register_script( 'JQPM', $photomosaic_wp_plugin_path . '/js/jquery-1.5.2.min.js');
+wp_register_script( 'JQPM', plugins_url('/js/jquery-1.5.2.min.js', __FILE__ ));
+
 wp_enqueue_script('JQPM');
 if (!is_admin()) {
 	if($options['lightbox']) {
-		wp_enqueue_style( 'prettyphoto-styles', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/prettyPhoto.css');
-		wp_enqueue_script( 'prettyphoto-script', $photomosaic_wp_plugin_path . '/includes/prettyPhoto/jquery.prettyPhoto.js', array('JQPM'));
+		wp_enqueue_style( 'prettyphoto-styles', plugins_url('/includes/prettyPhoto/prettyPhoto.css', __FILE__ ));
+		wp_enqueue_script( 'prettyphoto-script', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('JQPM'));
 	}
 	
-	wp_enqueue_style( 'photomosaic-custom-styles', $photomosaic_wp_plugin_path . '/css/photoMosaic.css');
-	wp_enqueue_script( 'photomosaic-custom-script', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.js', array('JQPM'));
+	wp_enqueue_style( 'photomosaic-custom-styles', plugins_url('/css/photoMosaic.css', __FILE__ ));
+	wp_enqueue_script( 'photomosaic-custom-script', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ), array('JQPM'));
 
 	add_shortcode( 'photoMosaic', 'photomosaic_shortcode' );
 	add_shortcode( 'photomosaic', 'photomosaic_shortcode' );
 } else if (isset($_GET['page'])) { 
     if ($_GET['page'] == "photoMosaic.php") {
-        wp_enqueue_script( 'photomosaic-form-validation', $photomosaic_wp_plugin_path . '/js/jquery.photoMosaic.wp.form.js', array('JQPM'));
+        wp_enqueue_script( 'photomosaic-form-validation', plugins_url('/js/jquery.photoMosaic.wp.form.js', __FILE__ ), array('JQPM'));
     }
 }
 
@@ -357,8 +357,6 @@ function photomosaic_shortcode( $atts ) {
 	), $atts));
 	
 	$unique = time() + rand(21,40);
-	
-	$photomosaic_wp_plugin_path = get_option('siteurl')."/wp-content/plugins/WP-photoMosaic";
 	
 	$output_buffer = '
 		<script type="text/javascript" data-photomosaic-gallery="true">

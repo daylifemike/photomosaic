@@ -208,11 +208,12 @@ window['PhotoMosaic'].Mustache=Mustache;
             // get image sizes, set modalhook, & get link paths
             $.each(this.opts.gallery, function(i) {
                 var image = {},
-                    $img = $preload.find('img[src="'+ this.src +'"]'),
+                    image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src,
+                    $img = $preload.find('img[src="'+ image_url +'"]'),
                     modal_text;
-                    
+
                 // image sizes
-                image.src = this.src;
+                image.src = image_url;
                 image.width = {};
                 image.height = {};
                 image.padding = self.opts.padding;
@@ -520,14 +521,15 @@ window['PhotoMosaic'].Mustache=Mustache;
         },
         
         errorCheck: function(images){
+
             var to_delete = [];
-            
+
             $.each(images, function(i) {
                 if(isNaN(this.height.adjusted)){
                     to_delete.push(i);
                 }
             });
-            
+
             $.each(to_delete, function(i){
                 console.log('PhotoMosaic: ERROR: The following image failed to load and was skipped.\n' + images[to_delete[i]].src);
                 var rest = images.slice( to_delete[i] + 1 );
@@ -548,7 +550,8 @@ window['PhotoMosaic'].Mustache=Mustache;
 
             $.each(this.opts.gallery, function(i) {
                 var dfd = $.Deferred(),
-                    $item = $('<img>').error(dfd.resolve).load(dfd.resolve).attr({src : this.src});
+                    image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src,
+                    $item = $('<img>').error(dfd.resolve).load(dfd.resolve).attr({src : image_url});
                 $images.append($item);
                 promises.push(dfd);
             });

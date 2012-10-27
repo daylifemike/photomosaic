@@ -510,7 +510,8 @@ function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
 		$i = 0;
 		$len = count($attachments);
 		foreach ( $attachments as $aid => $attachment ) {
-			$img = wp_get_attachment_image_src( $aid , 'full');
+
+			$image_full = wp_get_attachment_image_src( $aid , 'full');
 			$image_medium = wp_get_attachment_image_src( $aid , 'medium');
 			$_post = & get_post($aid); 
 			$image_title = attribute_escape($_post->post_title);
@@ -523,13 +524,15 @@ function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
 			} else {
 				$url_data = '';
 			}
-			
-			$output_buffer .='{
-		        src: "' . $img[0] . '",
-		        thumb: "' . $image_medium[0] . '",
-		        caption: "' . $image_caption . '"
-		        ' . $url_data . '
-		    }';
+
+            $output_buffer .='{
+                src: "' . $image_full[0] . '",
+                thumb: "' . $image_medium[0] . '",
+                caption: "' . $image_caption . '",
+                width: "' . $image_full[1] . '",
+                height: "' . $image_full[2] . '"
+                ' . $url_data . '
+            }';
 
 			if($i != $len - 1) {
 				$output_buffer .=',';	    
@@ -568,11 +571,14 @@ function PMBuildJsonFromNGG($galleryID, $link_to_url) {
 			$url_data = '';
 		}
 
-    	$output_buffer .='{
-		        src: "' . $picture->imageURL . '",
-		        caption: "' . $picture->description . '"
-		        ' . $url_data . '
-		    }';
+        $output_buffer .='{
+            src: "' . $picture->imageURL . '",
+            thumb: "' . $picture->thumbURL . '",
+            caption: "' . $picture->description . '",
+            width: "' . $picture->meta_data['width'] . '",
+            height: "' . $picture->meta_data['height'] . '"
+            ' . $url_data . '
+        }';
 
 		if($i != $len - 1) {
 			$output_buffer .=',';	    

@@ -482,23 +482,7 @@ function photomosaic_shortcode( $atts ) {
 				});
 			});
 		</script>
-		<div id="photoMosaicTarget'.$unique.'"></div>
-		<div id="PM_preloadify" class="PM_preloadify">';
-			
-				if ( !empty($attachments) ) {
-					foreach ( $attachments as $aid => $attachment ) {
-						$img = wp_get_attachment_image_src( $aid , 'photospace_full');
-						$_post = & get_post($aid); 
-						$image_title = attribute_escape($_post->post_title);
-						$image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
-						$image_caption = $_post->post_excerpt;
-						$image_description = $_post->post_content;						
-
-						$output_buffer .='<img src="' . $img[0] . '"/>';
-					}
-				}
-			
-		$output_buffer .= '</div>';
+		<div id="photoMosaicTarget'.$unique.'"></div>';
 	return preg_replace('/\s+/', ' ', $output_buffer);
 }
 
@@ -561,7 +545,7 @@ function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
 function PMBuildJsonFromNGG($galleryID, $link_to_url) {
 	global $wpdb, $post;
 	$output_buffer ='';
-	
+
 	//Set sort order value, if not used (upgrade issue)
     $ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
     $ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';

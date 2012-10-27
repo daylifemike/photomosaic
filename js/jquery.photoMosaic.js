@@ -101,7 +101,7 @@ window['PhotoMosaic'].Mustache=Mustache;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
             this.template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px; {{#center}}margin:0 auto;{{/center}}">' +
+                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                     '{{#columns}}' +
                         '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}} !important;">' +
                             '{{#images}}' +
@@ -135,6 +135,10 @@ window['PhotoMosaic'].Mustache=Mustache;
             }
             if ( this.opts.input === 'json' && this.opts.gallery === '' ) {
                 console.log("PhotoMosaic: ERROR: No JSON object defined.");
+                return;
+            }
+            if ( this.opts.input === 'json' && this.opts.gallery.length === 0 ) {
+                console.log("PhotoMosaic: ERROR: Specified gallery data is empty.");
                 return;
             }
             if ( this.opts.input ==='json' && this.opts.gallery === 'PMalbum' ) {
@@ -548,7 +552,7 @@ window['PhotoMosaic'].Mustache=Mustache;
                 $images.append($item);
                 promises.push(dfd);
             });
-            
+
             $.when.apply(null, promises).done(deferred.resolve, $('body').append($images));
             
             return deferred.promise(); 

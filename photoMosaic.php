@@ -308,7 +308,7 @@ $options = get_option('photomosaic_options');
 
 
 //============================== insert HTML header tag ========================//
-wp_register_script( 'JQPM', plugins_url('/js/jquery-1.5.2.min.js', __FILE__ ));
+wp_register_script( 'JQPM', plugins_url('/js/jquery-1.8.2.min.js', __FILE__ ));
 
 wp_enqueue_script('JQPM');
 if (!is_admin()) {

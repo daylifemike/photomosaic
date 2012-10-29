@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 1.3
+Version: 2.0
 */
 
 
@@ -211,9 +211,16 @@ class photomosaic_plugin_options {
                                   <option value="slide-down" <?php if($options['loading_transition'] == 'slide-down') echo "selected"; ?> >Slide Down</option>
                                   <option value="slide-left" <?php if($options['loading_transition'] == 'slide-left') echo "selected"; ?> >Slide Left</option>
                                   <option value="slide-right" <?php if($options['loading_transition'] == 'slide-right') echo "selected"; ?> >Slide Right</option>
+                                  <option value="custom" <?php if($options['loading_transition'] == 'custom') echo "selected"; ?> >Custom</option>
                                 </select>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">a subtle 'arrival' effect on an image after it has been loaded</span>
+                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                                a subtle 'arrival' effect on an image after it has been loaded
+                                    <br/><br/>
+                                uses CSS transforms/transitions (CSS3) - non-modern browser behave normally but don't see the effect
+                                    <br/><br/>
+                                "custom" adds "transition-custom" class to use as a hook in your own CSS
+                            </span>
                         </div>
                     </div>
 
@@ -294,6 +301,7 @@ class photomosaic_plugin_options {
                     <li><b>external_links</b> : 1 = yes, 0 = no</li>
                     <li><b>auto_columns</b> : 1 = yes, 0 = no</li>
                     <li><b>show_loading</b> : 1 = yes, 0 = no</li>
+                    <li><b>loading_transition</b> : none, fade, scale-up|down, slide-up|down|left|right, custom</li>
                     <li><b>lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox_name</b> : js function name <i>(eg: prettyPhoto)</i></li>
@@ -357,7 +365,7 @@ if (!is_admin()) {
     add_shortcode( 'photomosaic', 'photomosaic_shortcode' );
 } else if (isset($_GET['page'])) { 
     if ($_GET['page'] == "photoMosaic.php") {
-        wp_enqueue_script( 'photomosaic-form-validation', plugins_url('/js/jquery.photoMosaic.wp.form.js', __FILE__ ), array('JQPM'));
+        wp_enqueue_script( 'photomosaic-admin', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('JQPM'));
     }
 }
 
@@ -552,7 +560,7 @@ function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
             $image_title = attribute_escape($_post->post_title);
             $image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
             $image_caption = $_post->post_excerpt;
-            $image_description = $_post->post_content;
+            $image_description = $_post->post_content; // this is where we hide a link_url
 
             if( intval($link_to_url) ) {
                 $url_data = ',url: "' . $image_description . '"';
@@ -565,7 +573,7 @@ function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
                 thumb: "' . $image_medium[0] . '",
                 caption: "' . $image_caption . '",
                 width: "' . $image_full[1] . '",
-                height: "' . $image_full[2] . '"
+                height: "' . $image_full[2] . '",
                 ' . $url_data . '
             }';
 

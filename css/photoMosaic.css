@@ -12,7 +12,7 @@
     text-indent:0; text-transform:none; vertical-align:baseline; white-space:normal; word-spacing:normal;
 }
 
-.photoMosaic { overflow:hidden; margin-bottom:20px; }
+.photoMosaic { position:relative; overflow:hidden; margin-bottom:20px; }
     .photoMosaic ol { list-style:none !important; float:left !important; margin:0 !important; padding:0 !important; }
     .photoMosaic ol li { list-style:none !important; overflow:hidden !important; margin:0 !important; padding:0 !important; }
 

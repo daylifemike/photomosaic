@@ -1,5 +1,17 @@
 (function($) {
     $(document).ready(function(){
+
+        var $tabContainers = $('.tab');
+        var $tabs = $('.nav-tab');
+
+        $tabs.click(function() {
+            var hash = $(this).attr('href');
+            $tabs.removeClass('nav-tab-active').filter(this).addClass('nav-tab-active');
+            $tabContainers.hide().filter(hash).show();
+            return false;
+        }).eq(0).click();
+
+
         var $lb = $('input[name="lightbox"]'),
             $custom_lb = $('input[name="custom_lightbox"]'),
             $custom_lb_name = $('input[name="custom_lightbox_name"]'),
@@ -116,4 +128,4 @@
             return returnState;
         });
     });
-})(photomosaicJQ152);
+})(JQPM);

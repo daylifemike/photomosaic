@@ -1,6 +1,8 @@
 /* 
- *  PhotoMosaic starts around line ~#40 
+ *  PhotoMosaic starts around line ~#60
  */
+
+(function(window){window['PhotoMosaic']={};})(window);
 
 
 /*
@@ -30,13 +32,28 @@ return"";},includes:function(needle,haystack){return haystack.indexOf(this.otag+
 var ctx={};ctx[iterator]=_context;return ctx;}},is_object:function(a){return a&&typeof a=="object";},is_array:function(a){return Object.prototype.toString.call(a)==='[object Array]';},trim:function(s){return s.replace(/^\s*|\s*$/g,"");},map:function(array,fn){if(typeof array.map=="function"){return array.map(fn);}else{var r=[];var l=array.length;for(var i=0;i<l;i++){r.push(fn(array[i]));}
 return r;}}};return({name:"mustache.js",version:"0.3.1-dev",to_html:function(template,view,partials,send_fun){var renderer=new Renderer();if(send_fun){renderer.send=send_fun;}
 renderer.render(template,view,partials);if(!send_fun){return renderer.buffer.join("\n");}}});}();
-window['PhotoMosaic']={};
 window['PhotoMosaic'].Mustache=Mustache;
 })(window);
 
+/* Modernizr 2.6.2 (Custom Build) | MIT & BSD
+ * Build: http://modernizr.com/download/#-csstransforms-csstransitions-testprop-testallprops-domprefixes
+ */
+(function(window){
+window['PhotoMosaic'].Modernizr=function(a,b,c){function x(a){j.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&j[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.2",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k,l={}.toString,m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.csstransforms=function(){return!!D("transform")},p.csstransitions=function(){return D("transition")};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" PM_"+(b?"":"no-")+a),e[a]=b}return e},x(""),i=k=null,e._version=d,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return B([a])},e.testAllProps=D,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" PM_js PM_"+s.join(" PM_"):""),e}(this,this.document);
+})(window);
+
 /*
-    jQuery photoMosaic v1.7
-    requires jQuery 1.5+ & Mustache (included above)
+    imagesLoaded.js — Because you can't do ".load()"" on cached images.
+    See http://desandro.github.com/imagesloaded/ for more info.
+*/
+(function(c,n){var l="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";c.fn.imagesLoaded=function(f){function m(){var b=c(i),a=c(h);d&&(h.length?d.reject(e,b,a):d.resolve(e));c.isFunction(f)&&f.call(g,e,b,a)}function j(b,a){b.src===l||-1!==c.inArray(b,k)||(k.push(b),a?h.push(b):i.push(b),c.data(b,"imagesLoaded",{isBroken:a,src:b.src}),o&&d.notifyWith(c(b),[a,e,c(i),c(h)]),e.length===k.length&&(setTimeout(m),e.unbind(".imagesLoaded")))}var g=this,d=c.isFunction(c.Deferred)?c.Deferred():
+0,o=c.isFunction(d.notify),e=g.find("img").add(g.filter("img")),k=[],i=[],h=[];c.isPlainObject(f)&&c.each(f,function(b,a){if("callback"===b)f=a;else if(d)d[b](a)});e.length?e.bind("load.imagesLoaded error.imagesLoaded",function(b){j(b.target,"error"===b.type)}).each(function(b,a){var d=a.src,e=c.data(a,"imagesLoaded");if(e&&e.src===d)j(a,e.isBroken);else if(a.complete&&a.naturalWidth!==n)j(a,0===a.naturalWidth||0===a.naturalHeight);else if(a.readyState||a.complete)a.src=l,a.src=d}):m();return d?d.promise(g):
+g}})(JQPM);
+
+
+/*
+    jQuery photoMosaic v2
+    requires jQuery 1.7+, Mustache, Modernizr, & ImagesLoaded (included above)
 */
 
 (function($) {
@@ -51,11 +68,9 @@ window['PhotoMosaic'].Mustache=Mustache;
     }
 
     // for debugging
-    if (!window['photoMosaic']) {
-        window['photoMosaic'] = {
-            '$' : $, // accessable reference to namespaced jQuery
-            'mosaics' : [] // configured instances are added to this array
-        };
+    if (window['PhotoMosaic']) {
+        window['PhotoMosaic']['$'] = $;
+        window['PhotoMosaic']['mosaics'] = [];
     }
 
     var photoMosaic = function() { };
@@ -77,6 +92,7 @@ window['PhotoMosaic'].Mustache=Mustache;
                 auto_columns : false,
                 center : true,
                 show_loading : false,
+                loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
                 modal_name : null,
                 modal_group : true,
                 modal_ready_callback : null
@@ -101,18 +117,20 @@ window['PhotoMosaic'].Mustache=Mustache;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
             this.template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic" style="width:{{width}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
+                '<div id="photoMosaic_' + this.id + '" class="photoMosaic loading {{transition}}" style="width:{{width}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                     '{{#columns}}' +
                         '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}} !important;">' +
                             '{{#images}}' +
-                                '<li style="width:{{#width}}{{constraint}}{{/width}}px; height:{{#height}}{{constraint}}{{/height}}px; margin:0 {{^last}}0 {{padding}}px 0{{/last}} !important;">' +
+                                '<li class="loading" style="width:{{#width}}{{constraint}}{{/width}}px; height:{{#height}}{{constraint}}{{/height}}px; margin:0 {{^last}}0 {{padding}}px 0{{/last}} !important;">' +
                                     '{{#link}}<a href="{{path}}" {{#external}}target="_blank"{{/external}} {{#modal}}rel="{{modal}}"{{/modal}} {{#caption}}title="{{caption}}"{{/caption}}>{{/link}}' +
+                                    '{{^link}}<span>{{/link}}' +
                                         '<img src="{{src}}" style="' +
                                                 'width:{{#width}}{{adjusted}}{{/width}}px; ' +
                                                 'height:{{#height}}{{adjusted}}{{/height}}px; ' +
                                                 '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
                                             'title="{{caption}}"/>' +
                                     '{{#link}}</a>{{/link}}' +
+                                    '{{^link}}</span>{{/link}}' +
                                 '</li>' +
                             '{{/images}}' +
                         '</ol>' +
@@ -166,7 +184,7 @@ window['PhotoMosaic'].Mustache=Mustache;
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
-            if (this.hasDims()) {
+            if (!this.hasDims()) {
                 this.opts.gallery = this.prepData(this.opts.gallery);
                 this.render();
             } else {
@@ -178,7 +196,19 @@ window['PhotoMosaic'].Mustache=Mustache;
         },
 
         render: function() {
+            var self = this;
+
             this.obj.html( this.makeMosaic() );
+            this.obj.imagesLoaded({
+                progress: function (isBroken, $images, $proper, $broken) {
+                    $($proper[$proper.length - 1]).parents('li').removeClass('loading');
+                },
+                always: function () {
+                    setTimeout(function() {
+                        self.obj.children('.photoMosaic').removeClass('loading');
+                    }, 1000);
+                }
+            });
             this.modalCallback();
         },
 
@@ -289,6 +319,7 @@ window['PhotoMosaic'].Mustache=Mustache;
             // construct template object &
             // get column heights (img height adjusted for col width)
             var json = {
+                    transition: this.getTransition(),
                     width: this.opts.width,
                     center: this.opts.center,
                     columns:[]
@@ -508,25 +539,20 @@ window['PhotoMosaic'].Mustache=Mustache;
         },
         
         preloadify: function() {
-            var deferred = $.Deferred();
-            var promises = [];
             var $images = $('<div>').attr({
                     'id': this.preload,
                     'class' : 'PM_preloadify'
                 });
 
             $.each(this.opts.gallery, function(i) {
-                var dfd = $.Deferred();
                 var image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src;
-                var $item = $('<img>').error(dfd.resolve).load(dfd.resolve).attr({src : image_url});
-
+                var $item = $('<img>').attr({src : image_url});
                 $images.append($item);
-                promises.push(dfd);
             });
 
-            $.when.apply(null, promises).done(deferred.resolve, $('body').append($images));
-            
-            return deferred.promise(); 
+            $('body').append($images);
+
+            return $images.imagesLoaded();
         },
 
         addPreloadData: function(gallery) {
@@ -655,6 +681,15 @@ window['PhotoMosaic'].Mustache=Mustache;
             return this.hasSpecifiedDims;
         },
 
+        getTransition: function() {
+            var transition = 'none';
+
+            if ( PhotoMosaic.Modernizr.csstransitions && PhotoMosaic.Modernizr.csstransforms ) {
+                transition = this.opts.loading_transition
+            }
+            return 'transition-' + transition;
+        },
+
         modalCallback: function() {
             var $node = this.obj.children().eq(0)[0];
             if($.isFunction(this.opts.modal_ready_callback)){
@@ -671,7 +706,7 @@ window['PhotoMosaic'].Mustache=Mustache;
                 this.photoMosaic.init(this, options, i);
 
                 // for debugging
-                window['photoMosaic']['mosaics'].push({
+                window['PhotoMosaic']['mosaics'].push({
                     'el' : this,
                     'opts' : options
                 });

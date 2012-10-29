@@ -17,28 +17,34 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 class photomosaic_plugin_options {
 
 	function PM_getOptions() {
-		$options = get_option('photomosaic_options');
+        $defaults = array(
+            'padding' => 2,
+            'columns' => 3,
+            'width' => 300,
+            'height' => 0,
+            'links' => true,
+            'random' => false,
+            'force_order' => false,
+            'link_to_url' => false,
+            'external_links' => false,
+            'auto_columns' => false,
+            'center' => true,
+            'show_loading' => false,
+            'loading_transition' => 'fade',
+            'lightbox' => true,
+            'custom_lightbox' => false,
+            'custom_lightbox_name' => 'prettyPhoto',
+            'custom_lightbox_params' => '{}'
+        );
+
+        $options = get_option('photomosaic_options');
 		
 		if (!is_array($options)) {
-			$options['padding'] = 2;
-			$options['columns'] = 3;
-			$options['width'] = 300;
-			$options['height'] = 0;
-			$options['links'] = true;
-			$options['random'] = false;
-			$options['force_order'] = false;
-			$options['lightbox'] = true;
-			$options['custom_lightbox'] = false;
-			$options['custom_lightbox_name'] = 'prettyPhoto';
-			$options['custom_lightbox_params'] = '{}';
-			$options['link_to_url'] = false;
-			$options['external_links'] = false;
-			$options['auto_columns'] = false;
-			$options['center'] = true;
-			$options['show_loading'] = false;
-
+			$options = $defaults;
 			update_option('photomosaic_options', $options);
-		}
+		} else {
+            $options = $options + $defaults;
+        }
 		return $options;
 	}
 
@@ -46,22 +52,9 @@ class photomosaic_plugin_options {
 		if(isset($_POST['pm_save'])) {
 			$options = photomosaic_plugin_options::PM_getOptions();
 
-			$options['padding'] = stripslashes($_POST['padding']);
-			$options['columns'] =  stripslashes($_POST['columns']);
-			$options['width'] = stripslashes($_POST['width']);
-			$options['height'] = stripslashes($_POST['height']);
-			$options['links'] = stripslashes($_POST['links']);
-			$options['random'] = stripslashes($_POST['random']);
-			$options['force_order'] = stripslashes($_POST['force_order']);
-			$options['lightbox'] = stripslashes($_POST['lightbox']);
-			$options['custom_lightbox'] = stripslashes($_POST['custom_lightbox']);
-			$options['custom_lightbox_name'] = stripslashes($_POST['custom_lightbox_name']);
-			$options['custom_lightbox_params'] = stripslashes($_POST['custom_lightbox_params']);
-			$options['link_to_url'] = stripslashes($_POST['link_to_url']);
-			$options['external_links'] = stripslashes($_POST['external_links']);
-			$options['auto_columns'] = stripslashes($_POST['auto_columns']);
-			$options['center'] = stripslashes($_POST['center']);
-			$options['show_loading'] = stripslashes($_POST['show_loading']);
+            foreach ($options as $k => $v) {
+                $options[$k] = trim(stripslashes($_POST[$k]));
+            }
 
 			update_option('photomosaic_options', $options);
 		} else {
@@ -179,6 +172,22 @@ class photomosaic_plugin_options {
                             <label><input name="show_loading" type="checkbox" value="1" <?php if($options['show_loading']) echo "checked='checked'"; ?> /> Show Loading Spinner</label>
                         </p>
                         <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">displays a "loading gallery..." spinner until the mosaic is ready</span>
+                    </div>
+                    <div style="width:25%;float:left;">
+                        <p>Image Loading Transition = <?php echo $options['loading_transition']; ?></p>
+                        <p>
+                            <select name="loading_transition">
+                              <option value="none" <?php if($options['loading_transition'] == 'none') echo "selected"; ?> >None</option>
+                              <option value="fade" <?php if($options['loading_transition'] == 'fade') echo "selected"; ?> > Fade</option>
+                              <option value="scale-up" <?php if($options['loading_transition'] == 'scale-up') echo "selected"; ?> >Scale Up</option>
+                              <option value="scale-down" <?php if($options['loading_transition'] == 'scale-down') echo "selected"; ?> >Scale Down</option>
+                              <option value="slide-up" <?php if($options['loading_transition'] == 'slide-up') echo "selected"; ?> >Slide Up</option>
+                              <option value="slide-down" <?php if($options['loading_transition'] == 'slide-down') echo "selected"; ?> >Slide Down</option>
+                              <option value="slide-left" <?php if($options['loading_transition'] == 'slide-left') echo "selected"; ?> >Slide Left</option>
+                              <option value="slide-right" <?php if($options['loading_transition'] == 'slide-right') echo "selected"; ?> >Slide Right</option>
+                            </select>
+                        </p>
+                        <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">a subtle 'arrival' effect on an image after it has been loaded</span>
                     </div>
                 </div>
 
@@ -332,30 +341,31 @@ if (!is_admin()) {
 function photomosaic_shortcode( $atts ) {
 	global $post;
 	$post_id = intval($post->ID);
-	$options = get_option('photomosaic_options');
-	
+    $options = photomosaic_plugin_options::PM_getOptions();
+
 	extract(shortcode_atts(array(
-		'id'                       => $post_id,
-		'padding'                  => $options['padding'],
-		'columns'                  => $options['columns'],
-		'width'                    => $options['width'],
-		'height'                   => $options['height'],
-		'links'                    => $options['links'],
-		'random'                   => $options['random'],
-		'force_order'              => $options['force_order'],
-		'link_to_url'              => $options['link_to_url'],
-		'external_links'           => $options['external_links'],
-		'auto_columns'             => $options['auto_columns'],
-		'center'               	   => $options['center'],
-		'show_loading'             => $options['show_loading'],
-		'lightbox'                 => $options['lightbox'],
-		'custom_lightbox'          => $options['custom_lightbox'],
-		'custom_lightbox_name'     => $options['custom_lightbox_name'],
-		'custom_lightbox_params'   => $options['custom_lightbox_params'],
-		'include'                  => '',
-		'exclude'                  => ''
+        'id'                       => $post_id,
+        'padding'                  => $options['padding'],
+        'columns'                  => $options['columns'],
+        'width'                    => $options['width'],
+        'height'                   => $options['height'],
+        'links'                    => $options['links'],
+        'random'                   => $options['random'],
+        'force_order'              => $options['force_order'],
+        'link_to_url'              => $options['link_to_url'],
+        'external_links'           => $options['external_links'],
+        'auto_columns'             => $options['auto_columns'],
+        'center'               	   => $options['center'],
+        'show_loading'             => $options['show_loading'],
+        'loading_transition'       => $options['loading_transition'],
+        'lightbox'                 => $options['lightbox'],
+        'custom_lightbox'          => $options['custom_lightbox'],
+        'custom_lightbox_name'     => $options['custom_lightbox_name'],
+        'custom_lightbox_params'   => $options['custom_lightbox_params'],
+        'include'                  => '',
+        'exclude'                  => ''
 	), $atts));
-	
+
 	$unique = time() + rand(21,40);
 	
 	$output_buffer = '
@@ -452,6 +462,7 @@ function photomosaic_shortcode( $atts ) {
                     external_links: '. $opts_external_links .',
                     auto_columns: '. $opts_auto_columns .',
                     show_loading: '. $opts_show_loading .',
+                    loading_transition: "'. $loading_transition .'",
 			';
 			
 			if($options['lightbox'] || $options['custom_lightbox']) {

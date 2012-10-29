@@ -111,11 +111,6 @@ g}})(JQPM);
                 this.opts.width = this.obj.width();
             }
 
-            this.opts.columns = this.autoCols();
-
-            this.col_mod = (this.opts.width - (this.opts.padding * (this.opts.columns - 1))) % this.opts.columns;
-            this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
-
             this.template = ' ' +
                 '<div id="photoMosaic_' + this.id + '" class="photoMosaic loading {{transition}}" style="width:{{width}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                     '{{#columns}}' +
@@ -181,6 +176,11 @@ g}})(JQPM);
             var self = this;
 
             this.opts.gallery = this.getGalleryData();
+
+            this.opts.columns = this.autoCols();
+
+            this.col_mod = (this.opts.width - (this.opts.padding * (this.opts.columns - 1))) % this.opts.columns;
+            this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
@@ -529,12 +529,12 @@ g}})(JQPM);
                 }
             });
 
-            $.each(to_delete, function(i){
+            for (var i = to_delete.length - 1; i >= 0; i--) {
                 console.log('PhotoMosaic: ERROR: The following image failed to load and was skipped.\n' + images[to_delete[i]].src);
                 var rest = images.slice( to_delete[i] + 1 );
                 images.length = to_delete[i];
                 images.push.apply(images, rest);
-            });
+            }
             
             return images;
         },

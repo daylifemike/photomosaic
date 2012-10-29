@@ -34,7 +34,7 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 * Change: merges PhotoMosaic (WP) and PhotoMosaic (JS)
 
 = 1.8 =
-* Enhancement: moves to PhotoMosaic (JS) v1.8
+* Enhancement: moves to PhotoMosaic (JS) v1.7.4
 
 = 1.7 =
 * Enhancement: updates jQuery requirements to 1.7+ (includes 1.8.2)

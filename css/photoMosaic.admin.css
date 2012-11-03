@@ -1,0 +1,112 @@
+@charset "utf-8";
+/* photoMosaic admin */
+
+	h1 {
+	    margin: .5em 200px 0 0;
+	    line-height: 1.2em;
+	    font-size: 2.8em;
+	    font-weight: 200;
+	}
+	.wrap h2.nav-tab-wrapper { padding:0.5em 0.5em 0; }
+	h3 { padding-top:1em; }
+	.tab { margin-top:2em; padding:0 2em; }
+	.tab form label { font-weight:bold; }
+	#PMtrans { margin:0 0 0 1em; display:none; }
+
+#transformer-container { display:none; }
+
+#transformer { width:300px;  margin:0 auto; position:relative; }
+
+#transformer img {
+	display: block;
+    position: relative;
+    width: 100%;
+}
+
+#transformer .cover { overflow:hidden; }
+
+#transformer .final {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 4px solid #ff0000;
+    box-sizing: border-box;
+    pointer-events: none;
+    z-index: 1;
+}
+
+#transformer .onionskin {
+    width: 300px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    outline: 4px solid #0000ff;
+    -webkit-transform-origin: 0 0;
+}
+
+#transformer .onionskin img {
+    opacity: 0.5;
+    cursor: move;
+}
+
+#transformer .onionskin #resize-handle,
+.ui-resizable-handle.ui-resizable-se {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background: #00c2ff;
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    z-index: 1337;
+    cursor: nw-resize;
+}
+
+#transformer .test,
+#transformer #done { display:none; }
+
+#transformer.testing .onionskin,
+#transformer.testing .cover,
+#transformer.testing .final { display:none; }
+#transformer.testing #done { display:block; }
+#transformer.testing .test {
+    display: block;
+    border: 1px solid black;
+    overflow: hidden;
+}
+#transformer .test img {
+    opacity: 1;
+
+    -webkit-transform: scale(1) transform(0,0);
+    -moz-transform: scale(1) transform(0,0);
+    -o-transform: scale(1) transform(0,0);
+    -ms-transform: scale(1) transform(0,0);
+    transform: scale(1) transform(0,0);
+
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -o-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+
+    -webkit-transition: all 0.3s ease-out 0s;
+    -moz-transition: all 0.3s ease-out 0s;
+    -o-transition: all 0.3s ease-out 0s;
+    -ms-transition: all 0.3s ease-out 0s;
+    transition: all 0.3s ease-out 0s;
+}
+
+#transformer .test img.reset {
+    opacity: 1;
+
+}

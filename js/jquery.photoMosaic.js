@@ -95,7 +95,8 @@ g}})(JQPM);
                 loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
                 modal_name : null,
                 modal_group : true,
-                modal_ready_callback : null
+                modal_ready_callback : null,
+                log_gallery_data : false
             };
             
             this.opts = $.extend({}, defaults, options);
@@ -184,7 +185,7 @@ g}})(JQPM);
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
-            if (!this.hasDims()) {
+            if (this.hasDims()) {
                 this.opts.gallery = this.prepData(this.opts.gallery);
                 this.render();
             } else {
@@ -199,6 +200,7 @@ g}})(JQPM);
             var self = this;
 
             this.obj.html( this.makeMosaic() );
+
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     $($proper[$proper.length - 1]).parents('li').removeClass('loading');
@@ -209,7 +211,12 @@ g}})(JQPM);
                     }, 1000);
                 }
             });
+
             this.modalCallback();
+
+            if (this.opts.log_gallery_data) {
+                this.logGalleryData();
+            }
         },
 
         makeMosaic: function() {
@@ -696,6 +703,21 @@ g}})(JQPM);
             if($.isFunction(this.opts.modal_ready_callback)){
                 this.opts.modal_ready_callback.apply(this, [$node]);
             }
+        },
+
+        logGalleryData: function() {
+            var response = [];
+            for (var i = 0; i < this.opts.gallery.length; i++) {
+                response.push({
+                    src: this.opts.gallery[i].src,
+                    thumb: this.opts.gallery[i].thumb,
+                    caption: this.opts.gallery[i].caption,
+                    width: this.opts.gallery[i].width.original,
+                    height: this.opts.gallery[i].height.original,
+                });
+            }
+            console.log("PhotoMosaic: Generate Gallery Data...");
+            console.log( JSON.stringify(response) );
         }
 
     });

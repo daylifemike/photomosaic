@@ -31,6 +31,8 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 * Bug Fix: multiple galleries shoud no longer swap places or exchange images
 
 = 1.9 =
+** prep for v2 work **
+*** no user-facing changes ***
 * Change: merges PhotoMosaic (WP) and PhotoMosaic (JS)
 
 = 1.8 =

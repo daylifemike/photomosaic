@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>jQuery photoMosaic</title>
+<link rel="stylesheet" type="text/css" href="css/photoMosaic.screen.css" />
+<script src="data/photoMosaic.data.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+<script src="js/jquery.photoMosaic.js" type="text/javascript"></script>
+
+<link rel="stylesheet" type="text/css" href="css/prettyPhoto.css" />
+<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$('#target').photoMosaic({
+            input: 'json',
+            gallery: 'PMalbum',
+            auto_columns : true,
+            show_loading: true,
+            loading_transition : 'fade',
+            modal_name : 'prettyPhoto',
+            modal_ready_callback: function($pm) {
+                $('a[rel^="prettyPhoto"]', $pm).prettyPhoto({
+                    theme: 'dark_rounded',
+                    overlay_gallery: false
+                });
+            }		
+		});
+        
+	});
+</script>
+<style type="text/css">
+	body{background:#dfdfdf; color:#000000; font-size:12px;}
+	#container{width:450px; margin:15px auto 0px auto;}
+</style>
+
+</head>
+<body>
+    <div id="container">
+    	<div id="target">
+    	
+        <!--  This is the way you would construct your gallery for {input:'html'}
+   			<ul>
+				<li>
+				    <a href="images/moleskineh.jpg">
+				        <img src="images/moleskineh_thumb.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
+				    </a>
+				</li>
+				<li><a href="#2"><img src="images/888.jpg" title="'888' - By doug.siefken (siefken @ flickr)"/></a></li>
+				<li><a href="#3"><img src="images/l_t.jpg" title="'l_t' - Ros K (ros-k @ flickr)"/></a></li>
+				<li><a href="#4"><img src="images/lumpini-park-lights.jpg" title="'Lumpini Park Lights' - By Mike Behnken (mikebehnken @ flickr)"/></a></li>
+				<li><a href="#5"><img src="images/crazy-hills-of-san-fran.jpg" title="'Crazy Hills of San Francisco' - By Håkan Dahlström (dahlstroms @ flickr)"/></a></li>
+				<li><a href="#6"><img src="images/christmas-25.jpg" title="'Christmas #25' - By Kevin Dooley (pagedooley @ flickr)"/></a></li>
+				<li><a href="#7"><img src="images/mammoths.jpg" title="'mammoths' - By paul (dex) [dexxus @  flickr]"/></a></li>
+				<li><a href="#8"><img src="images/empire-state-pigeon.jpg" title="'Empire State Pigeon' - By ZeroOne (villes @ flickr)"/></a></li>
+				<li><a href="#9"><img src="images/paris-s-eveille.jpg" title="'Paris s'éveille' - By gadl (gadl @ flickr)"/></a></li>
+				<li><a href="#10"><img src="images/koyaanisqatsi-patchwork.jpg" title="'koyaanisqatsi patchwork' - By alvazer (alvazer @ flickr)"/></a></li>
+				<li><a href="#11"><img src="images/living-off-the-land.jpg" title="'Living Off the Land' - By MikeBehnken (mikebehnken @ flickr)"/></a></li>
+				<li><a href="#12"><img src="images/water-tower-perspective.jpg" title="'water tower perspective' - By Paulo Brandão (paulobrandao @ flickr)"/></a></li>
+            </ul>
+         -->
+        
+		</div>
+    </div>
+</body>
+</html>

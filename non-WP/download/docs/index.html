@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>PhotoMosaic Documentation</title>
+    <link rel="stylesheet" href="default.screen.css" />
+    <link rel="stylesheet" href="prettify/prettify.css" />
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="prettify/prettify.js"></script>
+    <script src=""></script>
+    <script>
+        $(document).ready(function(){
+            // Syntax Highlighting
+            prettyPrint();
+            
+            // fancy scrolling
+            $('a[href*=#]').click(function() {
+                if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'')
+                    && location.hostname == this.hostname) {
+                    var $target = $(this.hash);
+                    $target = $target.length && $target || $('[name=' + this.hash.slice(1) +']');
+                    if ($target.length) {
+                        var targetOffset = $target.offset().top;
+                        $('html,body').animate({scrollTop: targetOffset}, 1000);
+                        return false;
+                    }
+                }
+            });
+            
+            
+        });
+    </script>
+</head>
+<body>
+    <div id="container">
+        <h1>Welcome to PhotoMosaic <span>(v2.0)</span></h1>
+        <p>
+            Thanks for purchasing PhotoMosaic. This documentation should answer most questions you may have but you can always contact me by leaving a 
+            comment on the CodeCanyon item page or by emailing me from my <a href="http://codecanyon.net/user/makfak">author page</a>.
+        </p>
+        
+        <nav>
+            <h3>Table of Contents</h3>
+            <ul>
+                <li>
+                    <a href="#SettingUp">Setting up your PhotoMosaic</a>
+                </li>
+                <li>
+                    <a href="#AddingContent">Adding Content</a>
+                    <ul>
+                        <li><a href="#ACJSON">JSON</a></li>
+                        <li><a href="#ACXML">XML</a></li>
+                        <li><a href="#ACHTML">HTML</a></li>
+                    </ul>                
+                </li>
+                <li>
+                    <a href="#Loading">A Note About Loading</a>
+                </li>
+                <li>
+                    <a href="#Customization">Customization</a>
+                    <ul>
+                        <li><a href="#CustomizeAP">Available Parameters</a></li>
+                        <li><a href="#CustomizeUP">Understanding the Parameters</a></li>
+                        <li><a href="#CustomizeCP">Passing-in Parameters</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        
+        <a name="SettingUp"></a>
+        <h3>Setting up your PhotoMosaic</h3>
+        <ol>
+            <li>
+                Add jQuery to your site (if it isn't already there)
+                <pre class="prettyprint">&lt;script src="http://code.jquery.com/jquery-latest.min.js">&lt;/script></pre>
+            </li>
+            <li>
+                Include the PhotoMosaic JS
+                <pre class="prettyprint">&lt;script src="/photoMosaic/js/jquery.photoMosaic.js">&lt;/script></pre>
+            </li>
+            <li>
+                Include your photos (assumes default JSON input - see <a href="#AddingContent">#AddingContent</a>)
+                <pre class="prettyprint">&lt;script src="/photoMosaic/js/photoMosaic.data.json">&lt;/script></pre>
+            </li>
+            <li>
+                Include the PhotoMosaic CSS
+                <pre class="prettyprint">&lt;link rel="stylesheet" href="/photoMosaic/css/photoMosaic.screen.css" /></pre>
+            </li>
+            <li>
+                Call PhotoMosaic in your jQuery Document.Ready function.
+<pre class="prettyprint">&lt;script>
+    $(document).ready(function(){
+        $('#myElement').photoMosaic();
+    });
+&lt;/script></pre>
+                <p>
+                    The jQuery object that you call PhotoMosaic on ( $('#myElement') ) will serve a couple of purposes depending on your input 
+                    method.  For a 'json' or 'xml' input the jQuery object will serve as the target element to which PhotoMosaic will insert itself. 
+                    For a 'html' input the jQuery object should be the UL that PhotoMosaic will use to construct the gallery.  This element 
+                    will be replaced by the PhotoMosaic output.
+                </p>
+                <p>See <a href="#AddingContent">Adding Content</a> for more info about input types.</p>
+            </li>
+        </ol>
+        <p><b>Remember</b>:  PhotoMosaic is a jQuery plugin.  You need to include jQuery BEFORE you include PhotoMosaic.</p>
+        <p>You will also, likely, need to change the paths in the above snippets to reflect the reality of your site's setup.</p>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        <a name="AddingContent"></a>
+        <h3>Adding Content</h3>
+        <p>PhotoMosaic accepts content from 3 sources, a JSON object, an XML file, or an HTML list (UL).</p>
+        <a name="ACJSON"></a>
+        <h4>JSON</h4>
+        <p>
+            PhotoMosaic's default <b>input</b> format is 'json', causing PhotoMosaic to look for a JSON object named "PMalbum".  You can also pass in 
+            your own JSON object (or a reference to it).  This JSON object can contain any number of photos, each of which has 
+            a src and a caption. Each photo can also have an optional url for links to external sites/pages as well as that photo's specific width and height information (see the example below).
+        </p>
+        <p>
+            Multiple PhotoMosaic instances can exist on a page.  For more detail about passing a differently named JSON object to PhotoMosaic,
+            take a look at <a href="#CustomizeUP">Understanding Parameters : gallery</a>.
+        </p>
+        <p>
+            Your JSON object can be placed inline in your page (in a SCRIPT tag) or be included in an external file (as mentioned above).
+            Take a look at the demo to see the external method in action.
+        </p>
+<pre class="prettyprint">var PMalbum = [
+    {
+        src: "images/photo1.jpg",
+        caption: "This is a caption",
+        url: "http://www.example.com",
+        thumb: "images/photo1_thumb.jpg",
+        width: "800",
+        height "600"
+    },
+    {
+        src: "images/photo2.jpg",
+        caption: "This is a caption",
+        thumb: "images/photo2_thumb.jpg"
+    },
+    {
+        src: "images/photo3.jpg",
+        caption: "This is a caption",
+        url: "http://www.example2.com"
+    }
+];</pre>
+
+        <a name="ACXML"></a>
+        <h4>XML</h4>
+        <p>
+            PhotoMosaic can also accept a properly formed XML document.  See <a href="#CustomizeUP">Understanding Parameters : gallery</a> for more information about passing PhotoMosaic a path to your XML file. Like the JSON input, each photo can also have an optional url for links to external sites/pages as well as that photo's specific width and height information.
+        </p>
+<pre class="prettyprint">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?> 
+&lt;photos>
+    &lt;photo>
+        &lt;title>This is a captionh&lt;/title>
+        &lt;src>images/photo1.jpg&lt;/src>
+        &lt;url>http://www.exmaple.com&lt;/url>
+        &lt;thumb>images/photo1_thumb.jpg&lt;/thumb>
+        &lt;width>800&lt;/width>
+        &lt;height>600&lt;/height>
+    &lt;/photo>
+    &lt;photo>
+        &lt;title>This is a captionh&lt;/title>
+        &lt;src>images/photo2.jpg&lt;/src>
+        &lt;thumb>images/photo2_thumb.jpg&lt;/thumb>
+    &lt;/photo>
+    &lt;photo>
+        &lt;title>This is a captionh&lt;/title>
+        &lt;src>images/photo3.jpg&lt;/src>
+        &lt;url>http://www.exmaple.com2&lt;/url>
+    &lt;/photo>
+&lt;/photos>
+</pre>
+
+        <a name="ACHTML"></a>
+        <h4>HTML</h4>
+        <p>
+            PhotoMosaic can also parse a HTML list (UL) to construct a list of photos. Only one album can be constructed from inline HTML.
+            This parsing is ridged and must follow the form seen below.
+        </p>
+        <p>
+            If <b>links</b> is true and the images in your UL are children of an Anchor, PhotoMosaic will use the URL of the Anchor as 
+            the link to the fullsized image.  If no Anchor is found, the SRC on the IMG will be used as the fullsized image.  If <b>links</b> 
+            is false, PhotoMosaic will use the IMG SRC as it's reference.  All captions are pulled from the IMG TITLE.
+        </p>
+<pre class="prettyprint">&lt;ul>
+    &lt;li>
+        &lt;a href="image1.jpg">
+            &lt;img src="image1.jpg" title="title01" />
+        &lt;/a>
+        &lt;span>this is image01's caption&lt;/span>
+    &lt;/li>
+    &lt;li>
+        &lt;a href="image2.jpg">
+            &lt;img src="image2.jpg" title="title02" />
+        &lt;/a>
+        &lt;!-- removing the SPAN will prevent the caption from displaying for this image -->
+    &lt;/li>
+&lt;/ul></pre>
+        
+
+
+
+
+
+
+
+
+
+
+        <a name="Loading"></a>
+        <h3>A Note About Loading</h3>
+        <p>
+            In order for PhotoMosaic to generate its layout it needs to know each image's dimensions (width &amp; height).  This means that, generally speaking, PhotoMosaic can't begin to construct it's layout until after all of the images have finished loading.  If your gallery has a large number of images or if the images themselves are large (dimensions and/or filesize) this can cause a substantial delay between the time when your page finishes loading and when your mosaic renders.
+        </p>
+        <p>
+            If you look at the examples in the JSON and XML sections of <a href="#AddingContent">AddingContent</a> you'll see that the data for each photo can include 'thumb', 'width', and 'height' data.
+        </p>
+        <p>
+            If the data for a photo contains 'thumb' information, the thumb is the image used in the mosaic itself and the 'src' info is opened in the lightbox.  If no 'thumb' info is present the 'src' image is used in both the mosaic and the lightbox.  Specifying a 'thumb' lets you use much smaller images in your mosaic and can speed up loading significantly.
+        </p>
+        <p>
+            Including 'width' and 'height' info for each photo allows PhotoMosaic to bypass the preloading process.  This means that, rather than only being able to show the entire mosaic after all the images have loaded, each image can be shown as soon as it's loaded - independent of the other images.
+        </p>
+        <p>
+            Providing incorrect 'width' and 'height' data will cause your photo to be misshappen when they render.
+        </p>
+        <p>
+            If an images are missing dimension data, the mosaic won't render until those images have been preloaded.  If you're going to include dimension data you will only see the performance boost if you do it for <b>all</b> of the photos in your gallery.
+        </p>
+        <p>
+            PhotoMosaic performs a number of checks on the data you provide and on it's own math - trying to insure that the final render is beautiful.  If your mosaics aren't rendering or are rendering correctly, be sure to check your browser's console for information.  PhotoMosaic will often tell you exactly what's wrong.
+        </p>
+
+
+
+
+
+
+
+
+
+        <a name="Customization"></a>
+        <h3>Customization</h3>
+            <a name="CustomizeAP"></a>
+            <h4>Available Parameters</h4>
+            <p>Below is a list of PhotoMosaic's customizable parameters.  </p>
+<pre class="prettyprint">
+input                    : 'json',      // json, xml, html (str)
+gallery                  : PMalbum,     // a ref to a json object (var), a json object (arr), a xml path (str)
+padding                  : 2,           // (int)
+columns                  : 3,           // (int)
+width                    : 300,         // 'auto' (str) or (int)
+height                   : 'auto',      // 'auto' (str) or (int)
+links                    : true,        // (bool)
+external_links           : false,       // (bool)
+random                   : false,       // (bool)
+force_order              : false,       // (bool)
+auto_columns             : false,       // calculates the number of columns based on the number of images (bool)
+center                   : true         // centers the gallery to it's parent 
+show_loading             : false,       // (bool)
+loading_transition       : 'fade'       // none, fade, scale-up|down, slide-top|right|bottom|left, custom (str)
+modal_name               : null,        // (str) or null
+modal_group              : true,        // (bool)
+modal_ready_callback     : null,        // (function) or null
+log_gallery_data         : false        // helper method that print gallery data to the console
+</pre>
+            <a name="CustomizeUP"></a>
+            <h4>Understanding the Parameters</h4>
+            <p>While most of the parameters accepted by PhotoMosaic are self-explanitory a few require some more detail.</p>
+            <div>
+                <h5>input</h5>
+                <p>
+                    Defines the type of source for the albums and photos (see <a href="#AddingContent">AddingContent</a>) and is
+                    tied to the <b>gallery</b> option.
+                </p>
+            </div>
+            <div>
+                <h5>gallery</h5>
+                <p>
+                    The <b>gallery</b> parameter changes behavior depending on the value of the <b>input</b> parameter.  The default
+                    value is 'PMalbum'; meaning that PhotoMosaic expects to find a JSON object with that name already present in the global
+                    namespace (see <a href="#AddingContent">AddingContent</a>).
+                </p>
+<pre class="prettyprint">-- default input --
+input : 'json'
+
+-- default gallery --
+gallery : PMalbum</pre>
+                <p>
+                    You can also pass-in unreferenced JSON objects or references to JSON objects, rather than rely on the 'PMalbum' loose
+                    in the global namespace.
+                </p>
+                <p>NOTE: the referenced object is a variable NOT a string.</p>
+<pre class="prettyprint">-- unreferenced JSON object --
+gallery : [...]
+
+-- referenced JSON object --
+var myGallery = [...]
+...
+gallery : myGallery</pre>
+                <p>
+                    When the <b>input</b> value is 'xml' the <b>gallery</b> param expects a to be passed the path to the XML document containing the gallery
+                    information. 
+                </p>
+<pre class="prettyprint">-- default input --
+input : 'xml'
+
+-- default gallery --
+gallery : '../path/to/gallery_info.xml'</pre>
+            </div>
+            <div>
+                <h5>padding</h5>
+                <p>
+                    This is the number of pixels between images, both on the sides, and top & bottom.  This doesn't behave like CSS "padding" 
+                    where, a "padding" of 3, would put 6 pixels between images. A PhotoMosaic <b>padding</b> of 3 will put 3 pixels between images. 
+                </p>
+            </div>
+            <div>
+                <h5>width</h5>
+                <p>
+                    PhotoMosaic adjusts itself to fill the specified <b>width</b>.  <b>Padding</b> is not applied to the outside edge of images
+                    in the first and last columns.  Images in the first column will be flush with the left side of the container and images in
+                    the last column will be flush with the right side of the container.  If set to 'auto' the mosaic will size itself to the 
+                    containing element.
+                </p>
+            </div>
+            <div>
+                <h5>height</h5>
+                <p>
+                    PhotoMosaic's default <b>height</b> is set to "auto".  When images are sized to fit the column width their height will be 
+                    scaled to maintain the original aspect ratio.  A <b>height</b> can be specified (in pixels) which will cause PhotoMosaic 
+                    to scale and crop images (maintaing aspect ratio) to fill to the desired height.
+                </p>
+            </div>
+            <div>
+                <h5>links</h5>
+                <p>
+                    PhotoMosaic resizes images to create its effect. The <b>links</b> parameter wraps the images in your PhotoMosaic in a link 
+                    that points to the unresized image.  This is most useful when paired with a lightbox (see <b>modal_*</b> below) - the original,
+                    unresized, image is shown in your lightbox.
+                </p>
+            </div>
+            <div>
+                <h5>external_links</h5>
+                <p>
+                    This will apply a 'target="_blank"' to any links generated by the <b>links</b> parameter.
+                </p>
+            </div>
+            <div>
+                <h5>random</h5>
+                <p>
+                    PhotoMosaic orders the images to maximize the mosaic effect. If you want your PhotoMosaic to look different every time, 
+                    use <b>random</b> to have PhotoMosaic shuffle your images every time it loads.
+                </p>
+            </div>
+            <div>
+                <h5>force_order</h5>
+                <p>
+                    PhotoMosaic orders the images to maximize the mosaic effect. <b>Force_order</b> doesn't reorder your images. This can lead to sub-optimal cropping.
+                </p>
+            </div>
+            <div>
+                <h5>auto_columns</h5>
+                <p>
+                    This causes PhotoMosaic to ignore the 'columns' param and use the and 'width' params to determine 
+                    the optimal number of columns for a given gallery size.  In this case, the 'width' param is used as a max-width. The generated mosaic can be smaller than the specified 'width' but will never be larger. 
+                </p>
+            </div>
+            <div>
+                <h5>loading_transition</h5>
+                <p>
+                    This is the type of animation that each image uses to show itself once it has finished loading.  
+                    All <b>loading_transitions</b> use pure CSS Transforms and Transitions.  Modernizr is used to 
+                    determine if the browser supports CSS Transforms/Transitions, falling back to the "none" transition.
+                </p>
+                <p>
+                    If <b>loading_transition</b> is set to "custom", 'transition-custom' is added to the '.photoMosaic' element 
+                    to be used as a hook for setting your transition.  PhotoMosaic uses Modernizr to add prefixed ('PM_') classes to the HTML element.  PhotoMosaic's CSS will handle the transition and the animation's end-state.  You need only supply the starting point.
+                </p>
+                <p>
+                    An example of a "custom" transition (this is the 'custom' transition in the demo):
+<pre class="prettyprint">--- Rotates, Scales, & Fades ---
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-custom li.loading img {
+    opacity:0;
+    -webkit-transform: rotate( -5deg ) scale( 0.95 );
+    -moz-transform: rotate( -5deg ) scale( 0.95 );
+    -o-transform: rotate( -5deg ) scale( 0.95 );
+    -ms-transform: rotate( -5deg ) scale( 0.95 );
+    transform: rotate( -5deg ) scale( 0.95 );
+}
+</pre>
+                </p>
+            </div>
+            <div>
+                <h5>modal_*</h5>
+                <p>
+                    The params 'modal_name', 'modal_group', & 'modal_ready_callback' make it easy for you to hook PhotoMosaic into your favorite lightbox.
+                </p>
+                <p>
+                    Almost every lightbox plugin suggests using an element's REL attribute as a hook. The value set in the 'modal_name' param is added to the image link REL so it's likely that this will be the name of you lightbox.
+                </p>
+                <pre class="prettyprint">modal_name : 'myLightbox'</pre>
+<pre class="prettyprint">-- Example Link --
+&lt;a href="..." rel="myLightbox">...&lt;/a>
+
+-- Example Lightbox Call --
+$('a[rel^="myLightbox"]').myLightbox();</pre>
+            <p>
+                If 'modal_group' is <b>true</b> a suffix will be added to the 'modal_name' ("[group_id]") to aid in creating 'groups' or 'galleries'
+                used for traversal within the lightbox.  Much like invoking the lightbox, the convention is the lightbox name followed by brackets
+                containing the gallery identifier.
+            </p>
+                <pre class="prettyprint">modal_group : true</pre>
+<pre class="prettyprint">-- Example Link --
+&lt;a href="..." rel="myLightbox[photo_mosaic_12345]">...&lt;/a></pre>
+            <p>
+                The 'modal_ready_callback' accepts a function that fires once PhotoMosaic has been added to your page and is in a DOMReady state.
+                The function is passed a jQuery object containing the PhotoMosaic instance.  This gives you a root element to use a parent and 
+                allows you to provide a context to any jQuery calls you may make.  The point being to prevent accidently binding multiple lightbox 
+                calls to a single element. While you may think of a clever use for this callback, the intent is to allow you to call your lightbox 
+                here, insuring that your lightbox doesn't finish binding it's events before PhotoMosaic has arrived on the page.
+            </p>
+            <p>Think of it as a custom Document.Ready event.</p>
+<pre class="prettyprint">modal_ready_function : function($photomosaic){
+    $('a[rel^="myLightbox"]', $photomosaic).myLightbox();
+}</pre>
+            </div>
+            <div>
+                <h5>log_gallery_data</h5>
+                <p>
+                    This option is only really useful for testing.
+                </p>
+                <p>
+                    If set to 'true', PhotoMosaic will log (to the console) 
+                    a complete <b>gallery</b> object once all of the images have loaded.  This is useful if you want to take advantage of the faster loading available to datasets that include 'width' and 'height' but don't have that information for your images (or aren't thrilled at the amount of work it would take to fill it in).  The logged data include all of the data from your original dataset plus the newly collected width and height info.
+                </p>
+<pre class="prettyprint">
+--- the data you supplied ---
+var PMalbum = [
+    {
+        src: "images/photo1.jpg",
+        caption: "This is a caption",
+        url: "http://www.example.com"
+    },
+    {
+        src: "images/photo2.jpg",
+        caption: "This is a caption"
+    },
+    {
+        src: "images/photo3.jpg",
+        caption: "This is a caption",
+        url: "http://www.example2.com"
+    }
+];
+
+--- the data logged ---
+var PMalbum = [
+    {
+        src: "images/photo1.jpg",
+        caption: "This is a caption",
+        url: "http://www.example.com",
+        width: "700",
+        height: "500"
+    },
+    {
+        src: "images/photo2.jpg",
+        caption: "This is a caption",
+        width: "924",
+        height: "683"
+    },
+    {
+        src: "images/photo3.jpg",
+        caption: "This is a caption",
+        url: "http://www.example2.com",
+        width: "1920",
+        height: "1080"
+    }
+];
+</pre>
+                <p>
+                    It is recommended that you only turn this on when you want PhotoMosaic to help you fill-in your data.
+                </p>
+            </div>
+            
+            <a name="CustomizeCP"></a>
+            <h4>Passing-in Parameters</h4>
+            <p>
+                If you're new to jQuery and jQuery Plugins I recommend you read this article to get you up-to-speed on the basics --
+                <a href="http://docs.jquery.com/How_jQuery_Works">How Jquery Works</a>.
+            </p>
+            <p>
+                PhotoMosaic conforms to jQuery's recommended plugin behavior.  All parameters are passed into the function as an object.
+                Any params passed-in with the function call override the default value for that param 
+                (and only that param).  The order of the params in the object doesn't matter.
+            </p>
+            <p>A standard PhotoMosaic call (without any customizations).</p>
+            <pre class="prettyprint">$('#myElement').photoMosaic();</pre>
+            <p>Below is an example of a call with some custom params being passed in.</p>
+<pre class="prettyprint">$('#myElement').photoMosaic({
+    input: 'json',
+    gallery: my_photos,
+    columns: 4,
+    padding: 5
+});</pre>
+            <p>If it makes it easier to understand - you can write the previous snippet another way.</p>
+<pre class="prettyprint">var params = {
+    input: 'json',
+    gallery: my_photos,
+    columns: 4,
+    padding: 5
+}
+
+$('#myElement').photoMosaic(params);</pre>
+            
+
+
+
+        <h3>Congratulations!</h3>
+        <p>This documentation should have gotten PhotoMosaic up-and-running on your site.</p>
+        <p>
+            If you have any questions, please contact me by leaving a comment on the CodeCanyon item page or by emailing 
+            me from my <a href="http://codecanyon.net/user/makfak">author page</a>.
+        </p>
+        <p>Good Luck!</p>
+    </div>
+</body>
+</html>

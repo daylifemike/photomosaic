@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>jQuery photoMosaic</title>
+<link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.11.custom.css" />
+<link rel="stylesheet" type="text/css" href="css/default.screen.css" />
+<link rel="stylesheet" type="text/css" href="css/prettyPhoto.css" />
+<link rel="stylesheet" type="text/css" href="css/photoMosaic.screen.css" />
+
+<script src="data/photoMosaic.data.js" type="text/javascript"></script>
+
+<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js" type="text/javascript"></script>
+<script src="js/jquery.prettyPhoto.js" type="text/javascript"></script>
+<script src="js/jquery.photoMosaic.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+
+		$('#slider-cols').slider({
+            value: 3,
+            min: 2,
+            max: 6,
+            step: 1,
+            slide: function( event, ui ) {
+                $('#cols').val( ui.value );
+                $('.ex-cols').text( ui.value );
+            }
+        });
+        $('#cols').val( $('#slider-cols').slider('value') );
+        $('.ex-cols').text( $('#slider-cols').slider('value') );
+        $('[name="auto_cols"]').change(function(){
+            $('.ex-autocols').text( $('[name="auto_cols"]').is(':checked') );
+        }).change();
+        
+        $('#slider-width').slider({
+            value: 300,
+            min: 200,
+            max: 600,
+            step: 1,
+            slide: function( event, ui ) {
+                $('#width').val( ui.value );
+                $('.ex-width').text( _getWidth(ui.value) );
+            }
+        });
+        $('#width').val( $('#slider-width').slider('value') ); 
+        $('[name="auto_width"]').change(function(){
+            $('.ex-width').text( _getWidth($('#slider-width').slider('value')) );
+        }).change();
+        
+        $('#slider-height').slider({
+            value: 400,
+            min: 300,
+            max: 800,
+            step: 1,
+            slide: function( event, ui ) {
+                $('#height').val( ui.value );
+                $('.ex-height').text( _getHeight(ui.value) );
+            }
+        });
+        $('#height').val( $('#slider-height').slider('value') ); 
+        $('[name="auto_height"]').change(function(){
+            $('.ex-height').text( _getHeight($('#slider-height').slider('value')) );
+        }).change();
+               
+        $('#slider-padding').slider({
+            value: 2,
+            min: 0,
+            max: 10,
+            step: 1,
+            slide: function( event, ui ) {
+                $('#padding').val( ui.value );
+                $('.ex-padding').text( ui.value );
+            }
+        });
+        $('#padding').val( $('#slider-padding').slider('value') );
+        $('.ex-padding').text( $('#slider-padding').slider('value') );        
+
+        $('[name="loading_transition"]').change(function(){
+            $('.ex-trans').text( $('[name="loading_transition"]').val() );
+        }).change();
+
+        $('#random').change(function() {
+            $('.ex-random').text( ($('#random').is(':checked')) ? true : false );
+        });
+        $('.ex-random').text( ($('#random').is(':checked')) ? true : false );
+        
+        $('#go').click(function(){
+            $('.PM_preloadify').remove();
+            $('#target').empty().each(function(){
+                delete this.photoMosaic
+            }).photoMosaic({
+                force_order: true,
+                columns: parseInt( $('#cols').val() ),
+                auto_columns: $('[name="auto_cols"]').is(':checked'),
+                width: _getWidth(),
+                height: _getHeight(),
+                padding: parseInt( $('#padding').val() ),
+                loading_transition: $('[name="loading_transition"]').val(),
+                random: $('#random').is(':checked'),
+	            modal_name : 'prettyPhoto',
+	            modal_ready_callback : function(mosaic) {
+	                $('a[rel^="prettyPhoto"]', mosaic).prettyPhoto({
+	                    theme: 'dark_rounded',
+	                    overlay_gallery: false
+	                });
+                    
+                    var $credit = $('<p/>').html('All artwork by <a href="http://www.hellozso.com">ZSO</a>').addClass('credit');
+                    $(mosaic).after($credit);
+	            }
+            });
+        }).click();
+	});
+
+    var _getWidth = function(w) {
+        var string = (w) ? '"auto"' : 'auto';
+        var width = w || parseInt( $('#width').val() );
+        var auto = $('[name="auto_width"]').is(':checked');
+        return (auto) ? string : width;
+    };
+    var _getHeight = function(h) {
+        var string = (h) ? '"auto"' : 'auto';
+        var height = h || parseInt( $('#height').val() );
+        var auto = $('[name="auto_height"]').is(':checked');
+        return (auto) ? string : height;
+    };
+</script>
+</head>
+<body>
+    <div id="container">
+    	<h1>PhotoMosaic : a jQuery Plugin</h1>
+    	<div id="pmui">
+            <h3>PhotoMosaic Call</h3>
+            <code>
+				$('#target').photoMosaic({<br>
+				&nbsp;&nbsp;    input: "json",<br>
+                &nbsp;&nbsp;    gallery: "PMalbum",<br>
+                &nbsp;&nbsp;    columns: <span class="ex-cols"></span>,<br>
+                &nbsp;&nbsp;    auto_columns: <span class="ex-autocols"></span>,<br>
+                &nbsp;&nbsp;    width: <span class="ex-width"></span>,<br>
+                &nbsp;&nbsp;    height: <span class="ex-height"></span>,<br>
+				&nbsp;&nbsp;    padding: <span class="ex-padding"></span>,<br>
+                &nbsp;&nbsp;    loading_transition: <span class="ex-trans"></span>,<br>
+				&nbsp;&nbsp;    random: <span class="ex-random"></span>,<br>
+                &nbsp;&nbsp;    modal_name: 'imgs'<br>
+                &nbsp;&nbsp;    modal_group: true<br>
+                &nbsp;&nbsp;    modal_callback: function() {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;    $('a[rel^="imgs"]').prettyPhoto();<br>
+                &nbsp;&nbsp;    }<br>
+				});
+            </code>
+            <h3>Some Available Parameters</h3>
+            <form>
+                <p>
+                    <label for='cols'>
+                        # of Columns (<span class="ex-cols"></span>)
+                        <span class="check">
+                            <input name="auto_cols" type="checkbox" value="1" checked="checked" />
+                            Auto-Columns
+                        </span>
+                    </label>
+                    <input id="cols" value="3" name='cols' type='hidden'/>
+                    <div id="slider-cols"></div>
+                </p>
+                <p>
+                    <label for='width'>
+                        Width (<span class="ex-width"></span>)
+                        <span class="check">
+                            <input name="auto_width" type="checkbox" value="1" checked="checked" />
+                            Auto-Width
+                        </span>
+                    </label>
+                    <input id="width" value="" name='width' type='hidden'/>
+                    <div id="slider-width"></div>
+                </p>
+                <p>
+                    <label for='height'>
+                        Height (<span class="ex-height"></span>)
+                        <span class="check">
+                            <input name="auto_height" type="checkbox" value="1" checked="checked" />
+                            Auto-Height
+                        </span>
+                    </label>
+                    <input id="height" value="" name='height' type='hidden'/>
+                    <div id="slider-height"></div>
+                </p>
+                <p>
+                    <label for='padding'>Padding (<span class="ex-padding"></span>)</label>
+                    <input id="padding" value="" name='padding' type='hidden'/>
+                    <div id="slider-padding"></div>
+                </p>
+                <p>
+                    <label for='loading_transition'>Loading Transition</label>
+                    <select name="loading_transition">
+                      <option value="none">None</option>
+                      <option value="fade" selected="selected"> Fade</option>
+                      <option value="scale-up">Scale Up</option>
+                      <option value="scale-down">Scale Down</option>
+                      <option value="slide-up">Slide Up</option>
+                      <option value="slide-down">Slide Down</option>
+                      <option value="slide-left">Slide Left</option>
+                      <option value="slide-right">Slide Right</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                </p>
+                <p>
+                    <label for='random'>Random</label>
+                    <input type="checkbox" id="random" value="random" name='random'/>
+                </p>
+                <input type="button" value='Submit' id="go"/>
+            </form>
+            
+    	</div>
+    	<div id="target"></div>
+    	<div class="clear"></div>
+    </div>
+</body>
+</html>

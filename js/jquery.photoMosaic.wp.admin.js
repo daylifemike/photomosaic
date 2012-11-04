@@ -124,8 +124,11 @@
                     'padding':'10px',
                     'background-color':'#f8dfdf'
                 });
+                scrollTo(0,0);
+                return false;
+            } else {
+                return;
             }
-            return returnState;
         });
     });
 })(JQPM);

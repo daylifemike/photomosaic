@@ -4,13 +4,14 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.0
+Version: 2.1
 
 == Description ==
 
 PhotoMosaic takes advantage of the built in gallery features of WordPress.
 The plugin automatically adds any images attached to the post or page into the gallery.
 Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page content. 
+
 
 == Installation == 
 
@@ -21,7 +22,16 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 4. Additional information and configuration is on the PhotoMosaic Admin page 
     (/wp-admin/admin.php?page=photoMosaic.php)
 
+
 == Changelog ==
+
+= 2.1 =
+** JS stays at v2.0 **
+*** no user-facing changes ***
+* Refactor: moved to WP 'init' event (should eliminate some Debug statements)
+* Refactor: moved from "attribute_escape" (deprecated in 2.8) to "esc_attr"
+* Refactor: made things much more object-y
+
 = 2.0 =
 * Enhancement: significant increase to loading performance
 * Enhancement: significant decrease in page memory usage

@@ -5,18 +5,47 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.0
+Version: 2.1
 */
-
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
     die('Illegal Entry');
 }
 
-//============================== PhotoMosaic options ========================//
-class photomosaic_plugin_options {
+add_action('init', array('PhotoMosaic', 'init'));
 
-    function PM_getOptions() {
+
+class PhotoMosaic {
+
+    function init() {
+        $options = get_option('photomosaic_options');
+
+        add_filter( 'widget_text', 'do_shortcode' ); // Widget
+        add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
+
+        wp_register_script( 'photomosaic_jquery', plugins_url('/js/jquery-1.8.2.min.js', __FILE__ ));
+        wp_enqueue_script('photomosaic_jquery');
+
+        if (!is_admin()) {
+            if($options['lightbox']) {
+                wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/prettyPhoto/prettyPhoto.css', __FILE__ ));
+                wp_enqueue_script( 'photomosaic_prettyphoto_js', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('photomosaic_jquery'));
+            }
+
+            wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photoMosaic.css', __FILE__ ));
+            wp_enqueue_script( 'photomosaic_base_js', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ), array('photomosaic_jquery'));
+
+            add_shortcode( 'photoMosaic', array('PhotoMosaic', 'shortcode') );
+            add_shortcode( 'photomosaic', array('PhotoMosaic', 'shortcode') );
+
+        } else if (isset($_GET['page'])) { 
+            if ($_GET['page'] == "photoMosaic.php") {
+                wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic_jquery'));
+            }
+        }
+    }
+
+    function getOptions() {
         $defaults = array(
             'padding' => 2,
             'columns' => 3,
@@ -43,36 +72,294 @@ class photomosaic_plugin_options {
             $options = $defaults;
             update_option('photomosaic_options', $options);
         } else {
-            $options = $options + $defaults;
+            $options = $options + $defaults; // "+" means dup keys aren't overwritten
         }
         return $options;
     }
 
-    function update() {
-        if(isset($_POST['pm_save'])) {
-            $options = photomosaic_plugin_options::PM_getOptions();
+    function adminPage() {
+        if(isset($_POST['photomosaic_save'])) {
+            $options = PhotoMosaic::getOptions();
 
             foreach ($options as $k => $v) {
-                $options[$k] = trim(stripslashes($_POST[$k]));
+                if ( !array_key_exists($k, $_POST) ) {
+                    $_POST[$k] = "";
+                }
+                $options[$k] = trim( stripslashes( $_POST[$k] ) );
             }
 
             update_option('photomosaic_options', $options);
-        } else {
-            photomosaic_plugin_options::PM_getOptions();
         }
 
-        add_menu_page('PhotoMosaic', 'PhotoMosaic', 'edit_themes', basename(__FILE__), array('photomosaic_plugin_options', 'display'));
+        add_menu_page('PhotoMosaic', 'PhotoMosaic', 'edit_themes', basename(__FILE__), array('PhotoMosaic', 'renderAdminPage'));
     }
 
-// -------------------------
-// --- OPTIONS PAGE --------
-// -------------------------
-    function display() {
-        $options = photomosaic_plugin_options::PM_getOptions();
+    function shortcode( $atts ) {
+        global $post;
+        $post_id = intval($post->ID);
+        $options = PhotoMosaic::getOptions();
+
+        extract(shortcode_atts(array(
+            'id'                       => $post_id,
+            'padding'                  => $options['padding'],
+            'columns'                  => $options['columns'],
+            'width'                    => $options['width'],
+            'height'                   => $options['height'],
+            'links'                    => $options['links'],
+            'random'                   => $options['random'],
+            'force_order'              => $options['force_order'],
+            'link_to_url'              => $options['link_to_url'],
+            'external_links'           => $options['external_links'],
+            'auto_columns'             => $options['auto_columns'],
+            'center'                   => $options['center'],
+            'show_loading'             => $options['show_loading'],
+            'loading_transition'       => $options['loading_transition'],
+            'lightbox'                 => $options['lightbox'],
+            'custom_lightbox'          => $options['custom_lightbox'],
+            'custom_lightbox_name'     => $options['custom_lightbox_name'],
+            'custom_lightbox_params'   => $options['custom_lightbox_params'],
+            'include'                  => '',
+            'exclude'                  => ''
+        ), $atts));
+
+        $unique = floor(((time() + rand(21,40)) * rand(1,5)) / rand(1,5));
+
+        $output_buffer = '
+            <script type="text/javascript" data-photomosaic-gallery="true">
+                var PMalbum'.$unique.' = [';
+
+        if ( !empty($atts['nggid']) ) {
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $link_to_url);
+        } else {
+            $output_buffer .= PhotoMosaic::galleryFromWP($id, $link_to_url, $include, $exclude);
+        }
+
+        $output_buffer .='];
+            </script><script type="text/javascript" data-photomosaic-call="true">';
+
+        if(intval($height) == 0){
+            $opts_height = "'auto'";
+        } else {
+            $opts_height = intval($height);
+        }
+
+        if(intval($width) == 0){
+            $opts_width = "'auto'";
+        } else {
+            $opts_width = intval($width);
+        }
+
+        if(intval($center)){
+            $opts_center = "true";
+        } else {
+            $opts_center = "false";
+        }
+
+        if(intval($links)){
+            $opts_links = "true";
+        } else {
+            $opts_links = "false";
+        }
+
+        if(intval($random)){
+            $opts_random = "true";
+        } else {
+            $opts_random = "false";
+        }
+
+        if(intval($force_order)){
+            $opts_force_order = "true";
+        } else {
+            $opts_force_order = "false";
+        }
+
+        if(intval($external_links)){
+            $opts_external_links = "true";
+        } else {
+            $opts_external_links = "false";
+        }
+
+        if(intval($auto_columns)){
+            $opts_auto_columns = "true";
+        } else {
+            $opts_auto_columns = "false";
+        }
+
+        if(intval($show_loading)){
+            $opts_show_loading = "true";
+        } else {
+            $opts_show_loading = "false";
+        }
+
+        if(intval($lightbox)){
+            $lightbox = "true";
+        } else {
+            $lightbox = "false";
+        }
+
+        if(intval($custom_lightbox)){
+            $custom_lightbox = "true";
+            // just in case
+            $lightbox = "false";
+        } else {
+            $custom_lightbox = "false";
+        }
+
+        $output_buffer .='
+                JQPM(document).ready(function($) {
+                    $("#photoMosaicTarget'.$unique.'").photoMosaic({
+                        gallery: PMalbum'.$unique.',
+                        padding: '. intval($padding) .',
+                        columns: '. intval($columns) .',
+                        width: '. $opts_width .',
+                        height: '. $opts_height .',
+                        center: '. $opts_center .',
+                        links: '. $opts_links .',
+                        external_links: '. $opts_external_links .',
+                        auto_columns: '. $opts_auto_columns .',
+                        show_loading: '. $opts_show_loading .',
+                        loading_transition: "'. $loading_transition .'",
+                ';
+
+                if($options['lightbox'] || $options['custom_lightbox']) {
+                    $output_buffer .='
+                        modal_name: "pmlightbox",
+                        modal_group: true,';
+
+                    if($options['lightbox']) {
+                        $output_buffer .='
+                            modal_ready_callback : function($photomosaic){
+                                $("a[rel^=\'pmlightbox\']", $photomosaic).prettyPhoto({
+                                    overlay_gallery: false
+                                });
+                            },
+                        ';
+                    } elseif ($options['custom_lightbox']) {
+                        $output_buffer .='
+                            modal_ready_callback : function($photomosaic){
+                                jQuery("a[rel^=\'pmlightbox\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
+                            },
+                        ';
+                    }
+                }
+
+                $output_buffer .='
+                        random: '. $opts_random .',
+                        force_order: '. $opts_force_order .'
+                    });
+                });
+            </script>
+            <div id="photoMosaicTarget'.$unique.'"></div>';
+        return preg_replace('/\s+/', ' ', $output_buffer);
+    }
+
+
+    function galleryFromWP($id, $link_to_url, $include, $exclude){
+        $output_buffer = '';
+
+        if ( !empty($include) ) {
+            $include = preg_replace( '/[^0-9,]+/', '', $include );
+            $_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
+
+            $attachments = array();
+
+            foreach ( $_attachments as $key => $val ) {
+                $attachments[$val->ID] = $_attachments[$key];
+            }
+        } elseif ( !empty($exclude) ) {
+            $exclude = preg_replace( '/[^0-9,]+/', '', $exclude );
+            $attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
+        } else {
+            $attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
+        }
+
+        if ( !empty($attachments) ) {
+            $i = 0;
+            $len = count($attachments);
+            foreach ( $attachments as $aid => $attachment ) {
+
+                $image_full = wp_get_attachment_image_src( $aid , 'full');
+                $image_medium = wp_get_attachment_image_src( $aid , 'medium');
+                $_post = & get_post($aid);
+                $image_title = esc_attr($_post->post_title);
+                $image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
+                $image_caption = $_post->post_excerpt;
+                $image_description = $_post->post_content; // this is where we hide a link_url
+
+                if( intval($link_to_url) ) {
+                    $url_data = ',url: "' . $image_description . '"';
+                } else {
+                    $url_data = '';
+                }
+
+                $output_buffer .='{
+                    src: "' . $image_full[0] . '",
+                    thumb: "' . $image_medium[0] . '",
+                    caption: "' . $image_caption . '",
+                    width: "' . $image_full[1] . '",
+                    height: "' . $image_full[2] . '",
+                    ' . $url_data . '
+                }';
+
+                if($i != $len - 1) {
+                    $output_buffer .=',';
+                }
+
+                $i++;
+            }
+        }
+
+        return $output_buffer;
+    }
+
+
+
+    function galleryFromNextGen($galleryID, $link_to_url) {
+        global $wpdb, $post;
+        $output_buffer ='';
+
+        $picturelist = nggdb::get_gallery($galleryID);
+
+        $i = 0;
+        $len = count($picturelist);
+        foreach ($picturelist as $key => $picture) {
+            if( intval($link_to_url) ) {
+                $str = $picture->description;
+                $pattern = '#(www\.|https?:\/\/){1}[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\S*)#i';
+                if ( preg_match_all($pattern, $str, $matches, PREG_PATTERN_ORDER) ) {
+                    $url_data = ',url: "' . $matches[0][0] . '"';
+                } else {
+                    $url_data = '';
+                }
+            } else {
+                $url_data = '';
+            }
+
+            $output_buffer .='{
+                src: "' . $picture->imageURL . '",
+                thumb: "' . $picture->thumbURL . '",
+                caption: "' . $picture->description . '",
+                width: "' . $picture->meta_data['width'] . '",
+                height: "' . $picture->meta_data['height'] . '"
+                ' . $url_data . '
+            }';
+
+            if($i != $len - 1) {
+                $output_buffer .=',';
+            }
+
+            $i++;
+        }
+        return $output_buffer;
+    }
+
+
+    function renderAdminPage() {
+        $options = PhotoMosaic::getOptions();
         ?>
         <style>
             h1 {
-                margin: .2em 200px 0 0;
+                margin: 0.5em 200px 0 0;
                 line-height: 1.2em;
                 font-size: 2.8em;
                 font-weight: 200;
@@ -103,6 +390,7 @@ class photomosaic_plugin_options {
                     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
                     Any options not specified in an gallery instance will default the settings chosen here.
                 </p>
+                <ul id="photomosaic-error-list"></ul>
                 <form method="post" action="#" enctype="multipart/form-data" id="photomosaic-options">
                     <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Layout</h3>
                     <div style="overflow:hidden;">
@@ -275,8 +563,9 @@ class photomosaic_plugin_options {
                         </div>
                     </div>
 
-                    <p style="margin-top:30px;"><input class="button-primary" type="submit" name="pm_save" value="Save Changes" /></p>
-                    <ul id="photomosaic-error-list"></ul>
+                    <p style="margin-top:30px;">
+                        <input class="button-primary" type="submit" name="photomosaic_save" value="Save Changes" />
+                    </p>
                 </form>
             </div>
             
@@ -333,309 +622,13 @@ class photomosaic_plugin_options {
             </div>
         </div>
         <?php
-    }
-}
-
-function PM_getOption($option) {
-    global $mytheme;
-    return $mytheme->option[$option];
-}
-
-// register functions
-add_filter('widget_text', 'do_shortcode'); // Widget
-add_action('admin_menu', array('photomosaic_plugin_options', 'update'));
-
-$options = get_option('photomosaic_options');
-
-
-//============================== insert HTML header tag ========================//
-wp_register_script( 'JQPM', plugins_url('/js/jquery-1.8.2.min.js', __FILE__ ));
-
-wp_enqueue_script('JQPM');
-if (!is_admin()) {
-    if($options['lightbox']) {
-        wp_enqueue_style( 'prettyphoto-styles', plugins_url('/includes/prettyPhoto/prettyPhoto.css', __FILE__ ));
-        wp_enqueue_script( 'prettyphoto-script', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('JQPM'));
-    }
-
-    wp_enqueue_style( 'photomosaic-custom-styles', plugins_url('/css/photoMosaic.css', __FILE__ ));
-    wp_enqueue_script( 'photomosaic-custom-script', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ), array('JQPM'));
-
-    add_shortcode( 'photoMosaic', 'photomosaic_shortcode' );
-    add_shortcode( 'photomosaic', 'photomosaic_shortcode' );
-} else if (isset($_GET['page'])) { 
-    if ($_GET['page'] == "photoMosaic.php") {
-        wp_enqueue_script( 'photomosaic-admin', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('JQPM'));
-    }
-}
-
-
-function photomosaic_shortcode( $atts ) {
-    global $post;
-    $post_id = intval($post->ID);
-    $options = photomosaic_plugin_options::PM_getOptions();
-
-    extract(shortcode_atts(array(
-        'id'                       => $post_id,
-        'padding'                  => $options['padding'],
-        'columns'                  => $options['columns'],
-        'width'                    => $options['width'],
-        'height'                   => $options['height'],
-        'links'                    => $options['links'],
-        'random'                   => $options['random'],
-        'force_order'              => $options['force_order'],
-        'link_to_url'              => $options['link_to_url'],
-        'external_links'           => $options['external_links'],
-        'auto_columns'             => $options['auto_columns'],
-        'center'                   => $options['center'],
-        'show_loading'             => $options['show_loading'],
-        'loading_transition'       => $options['loading_transition'],
-        'lightbox'                 => $options['lightbox'],
-        'custom_lightbox'          => $options['custom_lightbox'],
-        'custom_lightbox_name'     => $options['custom_lightbox_name'],
-        'custom_lightbox_params'   => $options['custom_lightbox_params'],
-        'include'                  => '',
-        'exclude'                  => ''
-    ), $atts));
-
-    $unique = time() + rand(21,40);
-
-    $output_buffer = '
-        <script type="text/javascript" data-photomosaic-gallery="true">
-            var PMalbum'.$unique.' = [';
-
-    if ( !empty($atts['nggid']) ) {
-        $output_buffer .= PMBuildJsonFromNGG($atts['nggid'], $link_to_url);
-    } else {
-        $output_buffer .= PMBuildJsonFromPost($id, $link_to_url, $include, $exclude);
-    }
-
-    $output_buffer .='];
-        </script><script type="text/javascript" data-photomosaic-call="true">';
-
-    if(intval($height) == 0){
-        $opts_height = "'auto'";
-    } else {
-        $opts_height = intval($height);
-    }
-
-    if(intval($width) == 0){
-        $opts_width = "'auto'";
-    } else {
-        $opts_width = intval($width);
-    }
-
-    if(intval($center)){
-        $opts_center = "true";
-    } else {
-        $opts_center = "false";
-    }
-
-    if(intval($links)){
-        $opts_links = "true";
-    } else {
-        $opts_links = "false";
-    }
-
-    if(intval($random)){
-        $opts_random = "true";
-    } else {
-        $opts_random = "false";
-    }
-
-    if(intval($force_order)){
-        $opts_force_order = "true";
-    } else {
-        $opts_force_order = "false";
-    }
-
-    if(intval($external_links)){
-        $opts_external_links = "true";
-    } else {
-        $opts_external_links = "false";
-    }
-
-    if(intval($auto_columns)){
-        $opts_auto_columns = "true";
-    } else {
-        $opts_auto_columns = "false";
-    }
-
-    if(intval($show_loading)){
-        $opts_show_loading = "true";
-    } else {
-        $opts_show_loading = "false";
-    }
-
-    if(intval($lightbox)){
-        $lightbox = "true";
-    } else {
-        $lightbox = "false";
-    }
-
-    if(intval($custom_lightbox)){
-        $custom_lightbox = "true";
-        // just in case
-        $lightbox = "false";
-    } else {
-        $custom_lightbox = "false";
-    }
-
-    $output_buffer .='
-            JQPM(document).ready(function($) {
-                $("#photoMosaicTarget'.$unique.'").photoMosaic({
-                    gallery: PMalbum'.$unique.',
-                    padding: '. intval($padding) .',
-                    columns: '. intval($columns) .',
-                    width: '. $opts_width .',
-                    height: '. $opts_height .',
-                    center: '. $opts_center .',
-                    links: '. $opts_links .',
-                    external_links: '. $opts_external_links .',
-                    auto_columns: '. $opts_auto_columns .',
-                    show_loading: '. $opts_show_loading .',
-                    loading_transition: "'. $loading_transition .'",
-            ';
-
-            if($options['lightbox'] || $options['custom_lightbox']) {
-                $output_buffer .='
-                    modal_name: "pmlightbox",
-                    modal_group: true,';
-
-                if($options['lightbox']) {
-                    $output_buffer .='
-                        modal_ready_callback : function($photomosaic){
-                            $("a[rel^=\'pmlightbox\']", $photomosaic).prettyPhoto({
-                                overlay_gallery: false
-                            });
-                        },
-                    ';
-                } elseif ($options['custom_lightbox']) {
-                    $output_buffer .='
-                        modal_ready_callback : function($photomosaic){
-                            jQuery("a[rel^=\'pmlightbox\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
-                        },
-                    ';
-                }
-            }
-
-            $output_buffer .='
-                    random: '. $opts_random .',
-                    force_order: '. $opts_force_order .'
-                });
-            });
-        </script>
-        <div id="photoMosaicTarget'.$unique.'"></div>';
-    return preg_replace('/\s+/', ' ', $output_buffer);
-}
-
-
-function PMBuildJsonFromPost($id, $link_to_url, $include, $exclude){
-    $output_buffer = '';
-
-    if ( !empty($include) ) {
-        $include = preg_replace( '/[^0-9,]+/', '', $include );
-        $_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
-
-        $attachments = array();
-
-        foreach ( $_attachments as $key => $val ) {
-            $attachments[$val->ID] = $_attachments[$key];
-        }
-    } elseif ( !empty($exclude) ) {
-        $exclude = preg_replace( '/[^0-9,]+/', '', $exclude );
-        $attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
-    } else {
-        $attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
-    }
-
-    if ( !empty($attachments) ) {
-        $i = 0;
-        $len = count($attachments);
-        foreach ( $attachments as $aid => $attachment ) {
-
-            $image_full = wp_get_attachment_image_src( $aid , 'full');
-            $image_medium = wp_get_attachment_image_src( $aid , 'medium');
-            $_post = & get_post($aid);
-            $image_title = attribute_escape($_post->post_title);
-            $image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
-            $image_caption = $_post->post_excerpt;
-            $image_description = $_post->post_content; // this is where we hide a link_url
-
-            if( intval($link_to_url) ) {
-                $url_data = ',url: "' . $image_description . '"';
-            } else {
-                $url_data = '';
-            }
-
-            $output_buffer .='{
-                src: "' . $image_full[0] . '",
-                thumb: "' . $image_medium[0] . '",
-                caption: "' . $image_caption . '",
-                width: "' . $image_full[1] . '",
-                height: "' . $image_full[2] . '",
-                ' . $url_data . '
-            }';
-
-            if($i != $len - 1) {
-                $output_buffer .=',';
-            }
-
-            $i++;
-        }
-    }
-
-    return $output_buffer;
-}
-
-function PMBuildJsonFromNGG($galleryID, $link_to_url) {
-    global $wpdb, $post;
-    $output_buffer ='';
-
-    //Set sort order value, if not used (upgrade issue)
-    $ngg_options['galSort'] = ($ngg_options['galSort']) ? $ngg_options['galSort'] : 'pid';
-    $ngg_options['galSortDir'] = ($ngg_options['galSortDir'] == 'DESC') ? 'DESC' : 'ASC';
-
-    // get gallery values
-    $picturelist = nggdb::get_gallery($galleryID, $ngg_options['galSort'], $ngg_options['galSortDir']);
-
-    $i = 0;
-    $len = count($picturelist);
-    foreach ($picturelist as $key => $picture) {
-        if( intval($link_to_url) ) {
-            $str = $picture->description;
-            $pattern = '#(www\.|https?:\/\/){1}[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\S*)#i';
-            if ( preg_match_all($pattern, $str, $matches, PREG_PATTERN_ORDER) ) {
-                $url_data = ',url: "' . $matches[0][0] . '"';
-            } else {
-                $url_data = '';
-            }
-        } else {
-            $url_data = '';
-        }
-
-        $output_buffer .='{
-            src: "' . $picture->imageURL . '",
-            thumb: "' . $picture->thumbURL . '",
-            caption: "' . $picture->description . '",
-            width: "' . $picture->meta_data['width'] . '",
-            height: "' . $picture->meta_data['height'] . '"
-            ' . $url_data . '
-        }';
-
-        if($i != $len - 1) {
-            $output_buffer .=',';
-        }
-
-        $i++;
-    }
-    return $output_buffer;
-}
+    } // end display
+} // end PhotoMosaic
 
 
 // Template Tag
 function wp_photomosaic( $atts ){
     if (!is_admin()) {
-        echo photomosaic_shortcode( $atts );
+        echo PhotoMosaic::shortcode( $atts );
     }
 }

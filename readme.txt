@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1
+Version: 2.1.1
 
 == Description ==
 
@@ -24,10 +24,19 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.1.1 =
+* Bug Fix: prevents loading spinner from disappearing early in Firefox
+* Bug Fix: captions weren't properly escaped
+* Bug Fix: corrects malformed JSON when is 'Link to URL' is used
+* Bug Fix: auto-columns now accounts for galleries with less than 3 images (the default number of columns)
+* Cleanup: whitespace
+* Cleanup: valid JSON encoding of PHP-generated gallery JSON
+* Cleanup: removes an unnecessary 'eval' for the JS
+* Demo: corrects 'random' param
+* Demo: Error messages print (better to show an error than nothing at all)
+* Proofing: adds escaping to image descriptions
 
 = 2.1 =
-** JS stays at v2.0 **
-*** no user-facing changes ***
 * Refactor: moved to WP 'init' event (should eliminate some Debug statements)
 * Refactor: moved from "attribute_escape" (deprecated in 2.8) to "esc_attr"
 * Refactor: made things much more object-y
@@ -41,9 +50,7 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 * Bug Fix: multiple galleries shoud no longer swap places or exchange images
 
 = 1.9 =
-** prep for v2 work **
-*** no user-facing changes ***
-* Change: merges PhotoMosaic (WP) and PhotoMosaic (JS)
+* Refactor: merges PhotoMosaic (WP) and PhotoMosaic (JS)
 
 = 1.8 =
 * Enhancement: moves to PhotoMosaic (JS) v1.7.4

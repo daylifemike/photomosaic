@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1
+Version: 2.1.1
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
@@ -16,6 +16,9 @@ add_action('init', array('PhotoMosaic', 'init'));
 
 
 class PhotoMosaic {
+
+    // http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+    public $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function init() {
         $options = get_option('photomosaic_options');
@@ -283,21 +286,27 @@ class PhotoMosaic {
                 $_post = & get_post($aid);
                 $image_title = esc_attr($_post->post_title);
                 $image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
-                $image_caption = $_post->post_excerpt;
+                $image_caption = esc_attr($_post->post_excerpt);
                 $image_description = $_post->post_content; // this is where we hide a link_url
 
+                // people do stupid things
+                // if the image_description isn't a URL it should be escaped to prevent JS errors
+                if (!preg_match('/^PhotoMosaic::$URL_PATTERN$/', $image_description)) {
+                    $image_description = esc_attr($image_description);
+                }
+
                 if( intval($link_to_url) ) {
-                    $url_data = ',url: "' . $image_description . '"';
+                    $url_data = ',"url": "' . $image_description . '"';
                 } else {
                     $url_data = '';
                 }
 
                 $output_buffer .='{
-                    src: "' . $image_full[0] . '",
-                    thumb: "' . $image_medium[0] . '",
-                    caption: "' . $image_caption . '",
-                    width: "' . $image_full[1] . '",
-                    height: "' . $image_full[2] . '",
+                    "src": "' . $image_full[0] . '",
+                    "thumb": "' . $image_medium[0] . '",
+                    "caption": "' . $image_caption . '",
+                    "width": "' . $image_full[1] . '",
+                    "height": "' . $image_full[2] . '"
                     ' . $url_data . '
                 }';
 
@@ -327,7 +336,7 @@ class PhotoMosaic {
                 $str = $picture->description;
                 $pattern = '#(www\.|https?:\/\/){1}[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\S*)#i';
                 if ( preg_match_all($pattern, $str, $matches, PREG_PATTERN_ORDER) ) {
-                    $url_data = ',url: "' . $matches[0][0] . '"';
+                    $url_data = ',"url": "' . $matches[0][0] . '"';
                 } else {
                     $url_data = '';
                 }
@@ -336,11 +345,11 @@ class PhotoMosaic {
             }
 
             $output_buffer .='{
-                src: "' . $picture->imageURL . '",
-                thumb: "' . $picture->thumbURL . '",
-                caption: "' . $picture->description . '",
-                width: "' . $picture->meta_data['width'] . '",
-                height: "' . $picture->meta_data['height'] . '"
+                "src": "' . $picture->imageURL . '",
+                "thumb": "' . $picture->thumbURL . '",
+                "caption": "' . $picture->description . '",
+                "width": "' . $picture->meta_data['width'] . '",
+                "height": "' . $picture->meta_data['height'] . '"
                 ' . $url_data . '
             }';
 
@@ -632,3 +641,4 @@ function wp_photomosaic( $atts ){
         echo PhotoMosaic::shortcode( $atts );
     }
 }
+?>

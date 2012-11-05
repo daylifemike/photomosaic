@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>jQuery photoMosaic</title>
+<title>PhotoMosaic</title>
 <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.11.custom.css" />
 <link rel="stylesheet" type="text/css" href="css/default.screen.css" />
 <link rel="stylesheet" type="text/css" href="css/prettyPhoto.css" />
@@ -15,9 +15,9 @@
 <script src="js/jquery.photoMosaic.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-	$(document).ready(function(){
+    $(document).ready(function(){
 
-		$('#slider-cols').slider({
+        $('#slider-cols').slider({
             value: 3,
             min: 2,
             max: 6,
@@ -90,7 +90,6 @@
             $('#target').empty().each(function(){
                 delete this.photoMosaic
             }).photoMosaic({
-                force_order: true,
                 columns: parseInt( $('#cols').val() ),
                 auto_columns: $('[name="auto_cols"]').is(':checked'),
                 width: _getWidth(),
@@ -98,19 +97,19 @@
                 padding: parseInt( $('#padding').val() ),
                 loading_transition: $('[name="loading_transition"]').val(),
                 random: $('#random').is(':checked'),
-	            modal_name : 'prettyPhoto',
-	            modal_ready_callback : function(mosaic) {
-	                $('a[rel^="prettyPhoto"]', mosaic).prettyPhoto({
-	                    theme: 'dark_rounded',
-	                    overlay_gallery: false
-	                });
+                modal_name : 'prettyPhoto',
+                modal_ready_callback : function(mosaic) {
+                    $('a[rel^="prettyPhoto"]', mosaic).prettyPhoto({
+                        theme: 'dark_rounded',
+                        overlay_gallery: false
+                    });
                     
                     var $credit = $('<p/>').html('All artwork by <a href="http://www.hellozso.com">ZSO</a>').addClass('credit');
                     $(mosaic).after($credit);
-	            }
+                }
             });
         }).click();
-	});
+    });
 
     var _getWidth = function(w) {
         var string = (w) ? '"auto"' : 'auto';
@@ -128,26 +127,26 @@
 </head>
 <body>
     <div id="container">
-    	<h1>PhotoMosaic : a jQuery Plugin</h1>
-    	<div id="pmui">
+        <h1>PhotoMosaic : a jQuery &amp; Wordpress plugin</h1>
+        <div id="pmui">
             <h3>PhotoMosaic Call</h3>
             <code>
-				$('#target').photoMosaic({<br>
-				&nbsp;&nbsp;    input: "json",<br>
+                $('#target').photoMosaic({<br>
+                &nbsp;&nbsp;    input: "json",<br>
                 &nbsp;&nbsp;    gallery: "PMalbum",<br>
                 &nbsp;&nbsp;    columns: <span class="ex-cols"></span>,<br>
                 &nbsp;&nbsp;    auto_columns: <span class="ex-autocols"></span>,<br>
                 &nbsp;&nbsp;    width: <span class="ex-width"></span>,<br>
                 &nbsp;&nbsp;    height: <span class="ex-height"></span>,<br>
-				&nbsp;&nbsp;    padding: <span class="ex-padding"></span>,<br>
-                &nbsp;&nbsp;    loading_transition: <span class="ex-trans"></span>,<br>
-				&nbsp;&nbsp;    random: <span class="ex-random"></span>,<br>
-                &nbsp;&nbsp;    modal_name: 'imgs'<br>
-                &nbsp;&nbsp;    modal_group: true<br>
+                &nbsp;&nbsp;    padding: <span class="ex-padding"></span>,<br>
+                &nbsp;&nbsp;    loading_transition: "<span class="ex-trans"></span>",<br>
+                &nbsp;&nbsp;    random: <span class="ex-random"></span>,<br>
+                &nbsp;&nbsp;    modal_name: "imgs",<br>
+                &nbsp;&nbsp;    modal_group: true,<br>
                 &nbsp;&nbsp;    modal_callback: function() {<br>
                 &nbsp;&nbsp;&nbsp;&nbsp;    $('a[rel^="imgs"]').prettyPhoto();<br>
                 &nbsp;&nbsp;    }<br>
-				});
+                });
             </code>
             <h3>Some Available Parameters</h3>
             <form>
@@ -210,9 +209,9 @@
                 <input type="button" value='Submit' id="go"/>
             </form>
             
-    	</div>
-    	<div id="target"></div>
-    	<div class="clear"></div>
+        </div>
+        <div id="target"></div>
+        <div class="clear"></div>
     </div>
 </body>
 </html>

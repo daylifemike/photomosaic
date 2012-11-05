@@ -49,6 +49,15 @@
 	-ms-transform-origin: center center;
 	transform-origin: center center;
 
+	-webkit-transition: all 0.3s ease-out 0s;
+	-moz-transition: all 0.3s ease-out 0s;
+	-o-transition: all 0.3s ease-out 0s;
+	-ms-transition: all 0.3s ease-out 0s;
+	transition: all 0.3s ease-out 0s;
+}
+
+/* DEMO ONLY */
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading ol li img {
 	-webkit-transition: all 0.5s ease-out 0.5s;
 	-moz-transition: all 0.5s ease-out 0.5s;
 	-o-transition: all 0.5s ease-out 0.5s;

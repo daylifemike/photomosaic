@@ -1,5 +1,16 @@
 /* PhotoMosaic - Changelog */
 
+= 2.1.1 =
+* Bug Fix: prevents loading spinner from disappearing early in Firefox
+* Bug Fix: auto-columns now accounts for galleries with less than 3 images (the default number of columns)
+* Cleanup: whitespace
+* Cleanup: removes an unnecessary 'eval' for the JS
+* Demo: corrects 'random' param
+* Demo: Error messages print (better to show an error than nothing at all)
+
+= 2.1 =
+* No Change: version number update to coinside with PhotoMosaic (WP) release
+
 = 2.0 =
 * Enhancement: significant increase to loading performance
 * Enhancement: significant decrease in page memory usage
@@ -13,13 +24,9 @@
 * Bug Fix: multiple galleries shoud no longer swap places or exchange images
 
 = 1.9 =
-** prep for v2 work **
-*** no user-facing changes ***
 * Change: merges PhotoMosaic (WP) and PhotoMosaic (JS)
 
 = 1.8 =
-** prep for v2 work **
-*** no user-facing changes ***
 * Refactor: Crockford Style
 * Refactor: DRYing out preloadify
 * Refactor: Rename for reability

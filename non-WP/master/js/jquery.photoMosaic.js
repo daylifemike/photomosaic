@@ -1,8 +1,12 @@
 /* 
- *  PhotoMosaic starts around line ~#60
+ *  PhotoMosaic v2.1.1 starts around line ~#70
  */
 
-(function(window){window['PhotoMosaic']={};})(window);
+(function (window) {
+    if (!window.PhotoMosaic) {
+        window.PhotoMosaic = {};
+    }
+}(window));
 
 /*
     mustache.js — Logic-less templates in JavaScript
@@ -31,16 +35,24 @@ return"";},includes:function(needle,haystack){return haystack.indexOf(this.otag+
 var ctx={};ctx[iterator]=_context;return ctx;}},is_object:function(a){return a&&typeof a=="object";},is_array:function(a){return Object.prototype.toString.call(a)==='[object Array]';},trim:function(s){return s.replace(/^\s*|\s*$/g,"");},map:function(array,fn){if(typeof array.map=="function"){return array.map(fn);}else{var r=[];var l=array.length;for(var i=0;i<l;i++){r.push(fn(array[i]));}
 return r;}}};return({name:"mustache.js",version:"0.3.1-dev",to_html:function(template,view,partials,send_fun){var renderer=new Renderer();if(send_fun){renderer.send=send_fun;}
 renderer.render(template,view,partials);if(!send_fun){return renderer.buffer.join("\n");}}});}();
-window['PhotoMosaic'].Mustache=Mustache;
-})(window);
+
+if (!window.PhotoMosaic) {
+    window.PhotoMosaic = {};
+}
+window.PhotoMosaic.Mustache = Mustache;
+
+}(window));
 
 /*
     Modernizr 2.6.2 (Custom Build) | MIT & BSD
     Build: http://modernizr.com/download/#-csstransforms-csstransitions-testprop-testallprops-domprefixes
 */
 (function(window){
-window['PhotoMosaic'].Modernizr=function(a,b,c){function x(a){j.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&j[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.2",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k,l={}.toString,m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.csstransforms=function(){return!!D("transform")},p.csstransitions=function(){return D("transition")};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" PM_"+(b?"":"no-")+a),e[a]=b}return e},x(""),i=k=null,e._version=d,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return B([a])},e.testAllProps=D,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" PM_js PM_"+s.join(" PM_"):""),e}(this,this.document);
-})(window);
+if (!window.PhotoMosaic) {
+    window.PhotoMosaic = {};
+}
+window.PhotoMosaic.Modernizr=function(a,b,c){function x(a){j.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&j[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.2",e={},f=!0,g=b.documentElement,h="modernizr",i=b.createElement(h),j=i.style,k,l={}.toString,m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.csstransforms=function(){return!!D("transform")},p.csstransitions=function(){return D("transition")};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof f!="undefined"&&f&&(g.className+=" PM_"+(b?"":"no-")+a),e[a]=b}return e},x(""),i=k=null,e._version=d,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return B([a])},e.testAllProps=D,g.className=g.className.replace(/(^|\s)no-js(\s|$)/,"$1$2")+(f?" PM_js PM_"+s.join(" PM_"):""),e}(this,this.document);
+}(window));
 
 /*
     imagesLoaded.js — Because you can't do ".load()"" on cached images.
@@ -48,19 +60,18 @@ window['PhotoMosaic'].Modernizr=function(a,b,c){function x(a){j.cssText=a}functi
 */
 (function(c,n){var l="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";c.fn.imagesLoaded=function(f){function m(){var b=c(i),a=c(h);d&&(h.length?d.reject(e,b,a):d.resolve(e));c.isFunction(f)&&f.call(g,e,b,a)}function j(b,a){b.src===l||-1!==c.inArray(b,k)||(k.push(b),a?h.push(b):i.push(b),c.data(b,"imagesLoaded",{isBroken:a,src:b.src}),o&&d.notifyWith(c(b),[a,e,c(i),c(h)]),e.length===k.length&&(setTimeout(m),e.unbind(".imagesLoaded")))}var g=this,d=c.isFunction(c.Deferred)?c.Deferred():
 0,o=c.isFunction(d.notify),e=g.find("img").add(g.filter("img")),k=[],i=[],h=[];c.isPlainObject(f)&&c.each(f,function(b,a){if("callback"===b)f=a;else if(d)d[b](a)});e.length?e.bind("load.imagesLoaded error.imagesLoaded",function(b){j(b.target,"error"===b.type)}).each(function(b,a){var d=a.src,e=c.data(a,"imagesLoaded");if(e&&e.src===d)j(a,e.isBroken);else if(a.complete&&a.naturalWidth!==n)j(a,0===a.naturalWidth||0===a.naturalHeight);else if(a.readyState||a.complete)a.src=l,a.src=d}):m();return d?d.promise(g):
-g}})(jQuery);
+g}}(jQuery));
 
 
 /*
-    jQuery photoMosaic v2
+    jQuery photoMosaic v2.1.1
     requires jQuery 1.7+ (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 
-(function($) {
-
-    if(typeof console === "undefined") {
+(function ($) {
+    if (console === 'undefined') {
         console = {
-            log: function(msg) {
+            log: function (msg) {
                 console.errors.push(msg);
             },
             errors: []
@@ -68,38 +79,40 @@ g}})(jQuery);
     }
 
     // for debugging
-    if (window['PhotoMosaic']) {
-        window['PhotoMosaic']['$'] = $;
-        window['PhotoMosaic']['mosaics'] = [];
+    if (window.PhotoMosaic) {
+        window.PhotoMosaic.$ = $;
+        window.PhotoMosaic.mosaics = [];
     }
 
-    var photoMosaic = function() { };
+    var photoMosaic = function () { };
 
     $.extend(photoMosaic.prototype, {
 
-        init: function(el, options, i) {
-            var defaults = {
-                input : 'json', // json, html, xml
-                gallery : 'PMalbum', // json object, xml file path
-                padding : 2,
-                columns : 3,
-                width : 'auto', // auto (str) or (int) 
-                height : 'auto', // auto (str) or (int)
-                links : true,
-                external_links: false,
-                random : false,
-                force_order : false,
-                auto_columns : false,
-                center : true,
-                show_loading : false,
-                loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
-                modal_name : null,
-                modal_group : true,
-                modal_ready_callback : null,
-                log_gallery_data : false
-            };
-            
-            this.opts = $.extend({}, defaults, options);
+        defaults: {
+            input : 'json', // json, html, xml
+            gallery : 'PMalbum', // json object, xml file path
+            padding : 2,
+            columns : 3,
+            width : 'auto', // auto (str) or (int)
+            height : 'auto', // auto (str) or (int)
+            links : true,
+            external_links: false,
+            random : false,
+            force_order : false,
+            auto_columns : false,
+            center : true,
+            show_loading : false,
+            loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
+            modal_name : null,
+            modal_group : true,
+            modal_ready_callback : null,
+            log_gallery_data : false
+        },
+
+        init: function (el, options, i) {
+            var self = this;
+
+            this.opts = $.extend({}, this.defaults, options);
             this.obj = $(el);
             this.id = (Date.parse(new Date()) + Math.round(Math.random() * 10000));
 
@@ -107,8 +120,8 @@ g}})(jQuery);
 
             this.images = [];
             this.columns = [];
-            
-            if(this.opts.width === 'auto') {
+
+            if (this.opts.width === 'auto') {
                 this.opts.width = this.obj.width();
             }
 
@@ -139,42 +152,40 @@ g}})(jQuery);
                 '</div>';
 
             // Error Checks
-            if ( this.opts.input === 'xml' && this.opts.gallery === '' ) {
+            if (this.opts.input === 'xml' && this.opts.gallery === '') {
                 console.log("PhotoMosaic: ERROR: No XML file path specified.");
                 return;
             }
-            if ( this.opts.input ==='xml' && this.opts.gallery === 'PMalbum' ) {
+            if (this.opts.input === 'xml' && this.opts.gallery === 'PMalbum') {
                 console.log('PhotoMosaic: ERROR: No XML file path specified.');
                 return;
             }
-            if ( this.opts.input === 'json' && this.opts.gallery === '' ) {
+            if (this.opts.input === 'json' && this.opts.gallery === '') {
                 console.log("PhotoMosaic: ERROR: No JSON object defined.");
                 return;
             }
-            if ( this.opts.input === 'json' && this.opts.gallery.length === 0 ) {
+            if (this.opts.input === 'json' && this.opts.gallery.length === 0) {
                 console.log("PhotoMosaic: ERROR: Specified gallery data is empty.");
                 return;
             }
-            if ( this.opts.input ==='json' && this.opts.gallery === 'PMalbum' ) {
-                if ( typeof(PMalbum) !== 'undefined' ) {
+            if (this.opts.input === 'json' && this.opts.gallery === 'PMalbum') {
+                if (PMalbum !== 'undefined') {
                     this.opts.gallery = PMalbum;
                 } else {
                     console.log('PhotoMosaic: ERROR: The JSON object "PMalbum" can not be found.');
                     return;
                 }
             }
-            if ( this.opts.gallery.length - 1 < this.current_album ) {
+            if (this.opts.gallery.length - 1 < this.current_album) {
                 console.log('PhotoMosaic: ERROR: "start_album" uses a 0-index (0 = the first album).'
-                     + 'No album was found at the specified index ('+ this.current_album +')');
+                     + 'No album was found at the specified index (' + this.current_album + ')');
                 return;
             }
-            
-            // loading message
-            if ( this.opts.show_loading ) {
-                this.obj.html( PhotoMosaic.Mustache.to_html(this.loading_template, {}) );
-            }
 
-            var self = this;
+            // loading message
+            if (this.opts.show_loading) {
+                this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {}));
+            }
 
             this.opts.gallery = this.getGalleryData();
 
@@ -189,24 +200,26 @@ g}})(jQuery);
                 this.opts.gallery = this.prepData(this.opts.gallery);
                 this.render();
             } else {
-                $.when(this.preloadify()).then(function() {
+                $.when(this.preloadify()).then(function () {
                     self.opts.gallery = self.addPreloadData(self.opts.gallery);
                     self.render();
                 });
             }
         },
 
-        render: function() {
+        render: function () {
             var self = this;
 
-            this.obj.html( this.makeMosaic() );
+            this.obj.html(this.makeMosaic());
 
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
-                    $($proper[$proper.length - 1]).parents('li').removeClass('loading');
+                    setTimeout(function () {
+                        $($proper[$proper.length - 1]).parents('li').removeClass('loading');
+                    }, 0);
                 },
                 always: function () {
-                    setTimeout(function() {
+                    setTimeout(function () {
                         self.obj.children('.photoMosaic').removeClass('loading');
                     }, 1000);
                 }
@@ -219,11 +232,11 @@ g}})(jQuery);
             }
         },
 
-        makeMosaic: function() {
+        makeMosaic: function () {
             var self = this;
 
             // get image sizes, set modalhook, & get link paths
-            $.each(this.opts.gallery, function(i) {
+            $.each(this.opts.gallery, function (i) {
                 var image = $.extend(true, {}, this); // jQuery deep copy
                 var image_url = (image.thumb && image.thumb !== '') ? image.thumb : image.src;
                 var modal_text;
@@ -239,13 +252,13 @@ g}})(jQuery);
                 // modal hooks
                 if (self.opts.modal_name) {
                     if (self.opts.modal_group) {
-                        modal_text = self.opts.modal_name + '[' + self.id + ']';    
+                        modal_text = self.opts.modal_name + '[' + self.id + ']';
                     } else {
                         modal_text = self.opts.modal_name;
                     }
                     image.modal = modal_text;
                 }
-                
+
                 // link paths
                 if (self.opts.links && image.url) {
                     image.link = true;
@@ -268,7 +281,7 @@ g}})(jQuery);
 
             // alt sort images by height (tall, short, tall, short)
             if (!this.opts.force_order) {
-                this.images.sort(function(a,b) {
+                this.images.sort(function (a, b) {
                     if (self.opts.random) {
                         return (0.5 - Math.random());
                     } else {
@@ -277,10 +290,10 @@ g}})(jQuery);
                 });
                 this.images.reverse();
             }
-            
+
             var order = [];
             var bool = true;
-            
+
             if (!this.opts.force_order) {
                 while (this.images.length > 0) {
                     if (bool) {
@@ -308,7 +321,7 @@ g}})(jQuery);
 
                 current_col++;
             }
-            
+
             // unfortunate special-case "force order"
             if (this.opts.force_order) {
                 var forced_cols = [];
@@ -323,7 +336,7 @@ g}})(jQuery);
                 }
                 this.columns = forced_cols;
             }
-            
+
             // construct template object &
             // get column heights (img height adjusted for col width)
             var json = {
@@ -333,7 +346,7 @@ g}})(jQuery);
                     columns:[]
                 };
             var col_heights = [];
-            
+
             for (var i = 0; i < this.columns.length; i++) {
                 var col_height = 0;
 
@@ -342,13 +355,13 @@ g}})(jQuery);
                 }
                 col_height = col_height + (this.columns[i].length - 1) * this.opts.padding;
                 col_heights.push(col_height);
-                
+
                 json.columns[i] = {};
                 json.columns[i].images = this.columns[i];
                 json.columns[i].height = col_height;
                 json.columns[i].padding = this.opts.padding;
             }
-            
+
             // normalize column heights
             var shortest_col = this.getSmallest(col_heights);
             var tallest_col = this.getBiggest(col_heights);
@@ -369,36 +382,40 @@ g}})(jQuery);
 
             return PhotoMosaic.Mustache.to_html(this.template, json);
         },
-        
-        adjustHeights: function(json, target_height) {
+
+        adjustHeights: function (json, target_height) {
             json = this.markLastColumn(json);
-            
+
             for (i = 0; i < json.columns.length; i++) {
                 json = this.markLastImageInColumn(json, i);
-                    
-                if(json.columns[i].height > target_height) {
+
+                if (json.columns[i].height > target_height) {
                     json.columns[i] = this.scaleColumnDown(json.columns[i], target_height);
                 } else {
                     json.columns[i] = this.scaleColumnUp(json.columns[i], target_height);
                 }
             }
-            
+
             return json;
         },
-        
-        autoCols: function(){
+
+        autoCols: function (){
             var max_width = this.opts.width;
-            var num_images = eval(this.opts.gallery).length;
+            var num_images = this.opts.gallery.length;
             var cols = 0;
             var ratio = {w:4, h:3};
             var i = 0;
 
-            if(this.opts.auto_columns) {
-                while(cols === 0) {
-                    if(num_images <= ((i + ratio.w) * (i + ratio.h))) {
-                        cols = i + ratio.w;
-                    } else {
-                        ++i;
+            if (this.opts.auto_columns) {
+                if (num_images < this.opts.columns) {
+                    cols = num_images;
+                } else {
+                    while(cols === 0) {
+                        if (num_images <= ((i + ratio.w) * (i + ratio.h))) {
+                            cols = i + ratio.w;
+                        } else {
+                            ++i;
+                        }
                     }
                 }
                 return cols;
@@ -406,8 +423,8 @@ g}})(jQuery);
                 return this.opts.columns;
             }
         },
-        
-        scaleColumnDown: function(col, height) {
+
+        scaleColumnDown: function (col, height) {
             var count = col.images.length;
             var diff = col.height - height;
             var mod = diff % count;
@@ -418,7 +435,7 @@ g}})(jQuery);
             var largest = this.findLargestImage(col.images);
 
             for (var i = 0; i < count; i++) {
-                if(i === largest.index) {
+                if (i === largest.index) {
                     col.images[i].height.constraint = col.images[i].height.adjusted - divy_mod;
                 } else {
                     col.images[i].height.constraint = col.images[i].height.adjusted - divy;
@@ -429,11 +446,11 @@ g}})(jQuery);
                     value : Math.floor((col.images[i].height.adjusted - col.images[i].height.constraint) / 2)
                 };
             }
-            
+
             return col;
         },
-        
-        scaleColumnUp: function(col, height) {
+
+        scaleColumnUp: function (col, height) {
             var count = col.images.length;
             var diff = height - col.height;
             var mod = diff % count;
@@ -444,7 +461,7 @@ g}})(jQuery);
             var smallest_image = this.findSmallestImage(col.images);
  
             for (var i = 0; i < count; i++) {
-                if(i === smallest_image.index) {
+                if (i === smallest_image.index) {
                     col.images[i].height.constraint = col.images[i].height.adjusted + divy_mod;
                 } else {
                     col.images[i].height.constraint = col.images[i].height.adjusted + divy;
@@ -461,10 +478,10 @@ g}})(jQuery);
 
             return col;
         },
-        
-        getSmallest: function(list) {
+
+        getSmallest: function (list) {
             var smallest = 0;
-                
+
             for (var i = 0; i < list.length; i++) {
                 if (smallest === 0) {
                     smallest = list[i];
@@ -475,8 +492,8 @@ g}})(jQuery);
 
             return smallest;
         },
-        
-        getBiggest: function(list) {
+
+        getBiggest: function (list) {
             var biggest = 0;
 
             for (var i = 0; i < list.length; i++) {
@@ -488,57 +505,57 @@ g}})(jQuery);
             return biggest;
         },
 
-        findSmallestImage: function(images) {
+        findSmallestImage: function (images) {
             var smallest_height = 0;
             var index_of_smallest = 0;
-                
+
             for (var i = 0; i < images.length; i++) {
-                if(smallest_height === 0) {
+                if (smallest_height === 0) {
                     smallest_height = images[i].height.adjusted;
-                } else if(images[i].height.adjusted < smallest_height) {
+                } else if (images[i].height.adjusted < smallest_height) {
                     smallest_height = images[i].height.adjusted;
                     index_of_smallest = i;
                 }
             }
-            
+
             return { 
                 height : smallest_height,
                 index : index_of_smallest
             };
         },
 
-        findLargestImage: function(images) {
+        findLargestImage: function (images) {
             var largest_height = 0;
             var index_of_largest = 0;
-                
+
             for (var i = 0; i < images.length; i++) {
-                if(images[i].height.adjusted > largest_height) {
+                if (images[i].height.adjusted > largest_height) {
                     largest_height = images[i].height.adjusted;
                     index_of_largest = i;
                 }
             }
-            
+
             return { 
                 height : largest_height,
                 index : index_of_largest
             };
         },
-        
-        markLastColumn: function(json) {
+
+        markLastColumn: function (json) {
             json.columns[json.columns.length - 1].last = true;
             return json;
         },
-        
-        markLastImageInColumn: function(json, i) {
+
+        markLastImageInColumn: function (json, i) {
             json.columns[i].images[json.columns[i].images.length - 1].last = true;
             return json;
         },
-        
-        errorCheck: function(images){
+
+        errorCheck: function (images) {
             var to_delete = [];
 
-            $.each(images, function(i) {
-                if(isNaN(this.height.adjusted)){
+            $.each(images, function (i) {
+                if (isNaN(this.height.adjusted)){
                     to_delete.push(i);
                 }
             });
@@ -549,11 +566,11 @@ g}})(jQuery);
                 images.length = to_delete[i];
                 images.push.apply(images, rest);
             }
-            
+
             return images;
         },
 
-        layoutHasErrors: function(json) {
+        layoutHasErrors: function (json) {
             var hasErrors = false;
 
             for (var i = 0; i < json.columns.length; i++) {
@@ -567,13 +584,13 @@ g}})(jQuery);
             return hasErrors;
         },
 
-        preloadify: function() {
+        preloadify: function () {
             var $images = $('<div>').attr({
                     'id': this.preload,
                     'class' : 'PM_preloadify'
                 });
 
-            $.each(this.opts.gallery, function(i) {
+            $.each(this.opts.gallery, function (i) {
                 var image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src;
                 var $item = $('<img>').attr({src : image_url});
                 $images.append($item);
@@ -584,10 +601,10 @@ g}})(jQuery);
             return $images.imagesLoaded();
         },
 
-        addPreloadData: function(gallery) {
+        addPreloadData: function (gallery) {
             var $preload = $('#' + this.preload);
 
-            $.each(gallery, function(i) {
+            $.each(gallery, function (i) {
                 var image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src;
                 var $img = $preload.find('img[src="'+ image_url +'"]');
 
@@ -602,10 +619,10 @@ g}})(jQuery);
             return gallery;
         },
 
-        prepData: function(gallery) {
+        prepData: function (gallery) {
             var mem = { w:0, h:0 };
 
-            $.each(gallery, function(i) {
+            $.each(gallery, function (i) {
                 mem.w = parseInt(this.width);
                 mem.h = parseInt(this.height);
 
@@ -620,17 +637,17 @@ g}})(jQuery);
             return gallery;
         },
 
-        getGalleryData: function() {
+        getGalleryData: function () {
             var self = this;
             var gallery;
 
             // construct the gallery
-            if ( this.opts.input === 'html' ) {
+            if (this.opts.input === 'html') {
                 gallery = this.constructGalleryFromHTML();
 
-            } else if ( this.opts.input === 'xml' ){
-                $.get(this.opts.gallery, function(data){
-                    if ( $(data).find('photos').length > 0 ) {
+            } else if (this.opts.input === 'xml' ) {
+                $.get(this.opts.gallery, function (data) {
+                    if ($(data).find('photos').length > 0) {
                         gallery = $(data).find('photos');
                         gallery = self.constructGalleryFromXML(gallery);
                     } else {
@@ -639,14 +656,14 @@ g}})(jQuery);
                     }
                 });
 
-            } else if ( this.opts.input === 'json' ) {
+            } else if (this.opts.input === 'json') {
                 gallery = this.opts.gallery;
             }
 
             return gallery;
         },
 
-        constructGalleryFromHTML: function(){
+        constructGalleryFromHTML: function () {
             var gallery = [];
             var $images = this.obj.find('img');
 
@@ -657,32 +674,32 @@ g}})(jQuery);
                 image.caption = $images.eq(i).attr('title');
 
                 gallery.push(image);
-            } 
+            }
 
             return gallery;
         },
 
-        constructGalleryFromXML: function(gallery){
+        constructGalleryFromXML: function (gallery) {
             var response = [];
-            
-            gallery.find('photo').each(function(i){
+
+            gallery.find('photo').each(function (i) {
                 var photo = {};
                 var data = $(this);
-                
+
                 photo.caption = data.children('title').text();
                 photo.src = data.children('src').text();
                 photo.thumb = data.children('thumb').text();
                 photo.url = data.children('url').text();
                 photo.width = data.children('width').text();
                 photo.height = data.children('height').text();
-                
+
                 response.push(photo);
             });
-            
+
             return response;
         },
 
-        hasDims: function() {
+        hasDims: function () {
             var some = false; // set to true if any dims are found
             var all = true; // set to false if any dims aren't found
 
@@ -692,9 +709,9 @@ g}})(jQuery);
 
             for (var i = 0; i < this.opts.gallery.length; i++) {
                 // are w/h properties present?
-                if ( this.opts.gallery[i].hasOwnProperty('width') && this.opts.gallery[i].hasOwnProperty('height') ) {
+                if (this.opts.gallery[i].hasOwnProperty('width') && this.opts.gallery[i].hasOwnProperty('height')) {
                     // is there valid data?
-                    if ( isNaN(parseInt(this.opts.gallery[i].width)) || isNaN(parseInt(this.opts.gallery[i].height)) ) {
+                    if (isNaN(parseInt(this.opts.gallery[i].width)) || isNaN(parseInt(this.opts.gallery[i].height))) {
                         all = false;
                     } else {
                         some = true;
@@ -713,23 +730,23 @@ g}})(jQuery);
             return this.hasSpecifiedDims;
         },
 
-        getTransition: function() {
+        getTransition: function () {
             var transition = 'none';
 
-            if ( PhotoMosaic.Modernizr.csstransitions && PhotoMosaic.Modernizr.csstransforms ) {
+            if (PhotoMosaic.Modernizr.csstransitions && PhotoMosaic.Modernizr.csstransforms) {
                 transition = this.opts.loading_transition
             }
             return 'transition-' + transition;
         },
 
-        modalCallback: function() {
-            var $node = this.obj.children().eq(0)[0];
-            if($.isFunction(this.opts.modal_ready_callback)){
+        modalCallback: function () {
+            var $node = this.obj.children().get(0);
+            if ($.isFunction(this.opts.modal_ready_callback)) {
                 this.opts.modal_ready_callback.apply(this, [$node]);
             }
         },
 
-        logGalleryData: function() {
+        logGalleryData: function () {
             var response = [];
             for (var i = 0; i < this.opts.gallery.length; i++) {
                 response.push({
@@ -737,7 +754,7 @@ g}})(jQuery);
                     thumb: this.opts.gallery[i].thumb,
                     caption: this.opts.gallery[i].caption,
                     width: this.opts.gallery[i].width.original,
-                    height: this.opts.gallery[i].height.original,
+                    height: this.opts.gallery[i].height.original
                 });
             }
             console.log("PhotoMosaic: Generate Gallery Data...");
@@ -746,14 +763,14 @@ g}})(jQuery);
 
     });
 
-    $.fn.photoMosaic = function(options) {
-        this.each(function(i) {
+    $.fn.photoMosaic = function (options) {
+        this.each(function (i) {
             if (!this.photoMosaic) {
                 this.photoMosaic = new photoMosaic();
                 this.photoMosaic.init(this, options, i);
 
                 // for debugging
-                window['PhotoMosaic']['mosaics'].push({
+                window.PhotoMosaic.mosaics.push({
                     'el' : this,
                     'opts' : options
                 });
@@ -762,4 +779,4 @@ g}})(jQuery);
         return this;
     };
 
-})(jQuery);
+}(jQuery));

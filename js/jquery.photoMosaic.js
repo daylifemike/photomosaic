@@ -194,6 +194,8 @@ g}}(JQPM));
             this.col_mod = (this.opts.width - (this.opts.padding * (this.opts.columns - 1))) % this.opts.columns;
             this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
 
+            this.opts.gallery = this.pickImageSize(this.opts.gallery);
+
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
             if (this.hasDims()) {
@@ -659,6 +661,31 @@ g}}(JQPM));
             } else if (this.opts.input === 'json') {
                 gallery = this.opts.gallery;
             }
+
+            return gallery;
+        },
+
+        pickImageSize: function(gallery) {
+            var size = null;
+
+            // currently only supported in PM4WP
+            if (!this.opts.sizes) {
+                return gallery;
+            }
+
+            for (key in this.opts.sizes) {
+                if (!size && this.opts.sizes[key] > this.col_width) {
+                    size = key;
+                }
+            };
+
+            if (!size) {
+                size = 'full';
+            }
+
+            for (var i = 0; i < gallery.length; i++) {
+                gallery[i].thumb = gallery[i].sizes[size];
+            };
 
             return gallery;
         },

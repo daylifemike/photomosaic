@@ -225,6 +225,13 @@ class PhotoMosaic {
                         loading_transition: "'. $loading_transition .'",
                 ';
 
+                $output_buffer .='
+                    sizes: {
+                        medium: '. get_option("medium_size_w") .',
+                        large: '. get_option("large_size_w") .'
+                    },
+                ';
+
                 if($options['lightbox'] || $options['custom_lightbox']) {
                     $output_buffer .='
                         modal_name: "pmlightbox",
@@ -317,8 +324,9 @@ class PhotoMosaic {
             $len = count($attachments);
 
             foreach ( $attachments as $_post ) {
-                $image_full = wp_get_attachment_image_src( $_post->ID , 'full');
-                $image_medium = wp_get_attachment_image_src( $_post->ID , 'medium');
+                $image_full = wp_get_attachment_image_src($_post->ID , 'full');
+                $image_large = wp_get_attachment_image_src($_post->ID , 'large');
+                $image_medium = wp_get_attachment_image_src($_post->ID , 'medium');
                 $image_title = esc_attr($_post->post_title);
                 $image_alttext = get_post_meta($_post->ID, '_wp_attachment_image_alt', true);
                 $image_caption = esc_attr($_post->post_excerpt);
@@ -339,6 +347,11 @@ class PhotoMosaic {
                 $output_buffer .='{
                     "src": "' . $image_full[0] . '",
                     "thumb": "' . $image_medium[0] . '",
+                    "sizes": {
+                        "medium" : "' . $image_medium[0] . '",
+                        "large" : "' . $image_large[0] . '",
+                        "full" : "' . $image_full[0] . '"
+                    },
                     "caption": "' . $image_caption . '",
                     "width": "' . $image_full[1] . '",
                     "height": "' . $image_full[2] . '"

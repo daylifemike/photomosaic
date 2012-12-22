@@ -122,7 +122,8 @@ class PhotoMosaic {
             'custom_lightbox_name'     => $options['custom_lightbox_name'],
             'custom_lightbox_params'   => $options['custom_lightbox_params'],
             'include'                  => '',
-            'exclude'                  => ''
+            'exclude'                  => '',
+            'ids'                      => ''
         ), $atts));
 
         $unique = floor(((time() + rand(21,40)) * rand(1,5)) / rand(1,5));
@@ -134,7 +135,7 @@ class PhotoMosaic {
         if ( !empty($atts['nggid']) ) {
             $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $link_to_url);
         } else {
-            $output_buffer .= PhotoMosaic::galleryFromWP($id, $link_to_url, $include, $exclude);
+            $output_buffer .= PhotoMosaic::galleryFromWP($id, $link_to_url, $include, $exclude, $ids);
         }
 
         $output_buffer .='];
@@ -256,36 +257,70 @@ class PhotoMosaic {
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
+    function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {
+        global $wp_version;
 
-    function galleryFromWP($id, $link_to_url, $include, $exclude){
         $output_buffer = '';
+        $common_params = array(
+            'post_status' => 'inherit',
+            'post_type' => 'attachment',
+            'post_mime_type' => 'image',
+            'order' => 'asc',
+            'orderby' => 'menu_order'
+        );
+        $_attachments = array();
+        $attachments = array();
 
-        if ( !empty($include) ) {
-            $include = preg_replace( '/[^0-9,]+/', '', $include );
-            $_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
-
-            $attachments = array();
+        // IDs are an explicit list -- ignore all the other things
+        if ( !empty($ids) ) {
+            $params = array_merge($common_params, array(
+                'include' => preg_replace( '/[^0-9,]+/', '', $ids )
+            ));
+            $_attachments = get_posts( array_merge($params, $common_params) );
 
             foreach ( $_attachments as $key => $val ) {
                 $attachments[$val->ID] = $_attachments[$key];
             }
-        } elseif ( !empty($exclude) ) {
-            $exclude = preg_replace( '/[^0-9,]+/', '', $exclude );
-            $attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
+        // we want all the children (+) any includes (-) any excludes
         } else {
-            $attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'asc', 'orderby' => 'menu_order') );
+            $params = array_merge($common_params, array(
+                'post_parent' => $id
+            ));
+
+            $attachments = get_children( array_merge($params, $common_params) );
+
+            if ( !empty($include) ) {
+                $params = array_merge($common_params, array(
+                    'include' => preg_replace( '/[^0-9,]+/', '', $include )
+                ));
+
+                $_attachments = get_posts( array_merge($params, $common_params) );
+
+                foreach ( $_attachments as $key => $val ) {
+                    $attachments[$val->ID] = $_attachments[$key];
+                }
+            }
+
+            if ( !empty($exclude) ) {
+                $exclude = preg_replace( '/[^0-9,]+/', '', $exclude );
+                $exclude = explode(",", $exclude);
+                foreach ( $attachments as $_a ) {
+                    if ( in_array($_a->ID, $exclude) ) {
+                        unset($attachments[$_a->ID]);
+                    }
+                }
+            }
         }
 
         if ( !empty($attachments) ) {
             $i = 0;
             $len = count($attachments);
-            foreach ( $attachments as $aid => $attachment ) {
 
-                $image_full = wp_get_attachment_image_src( $aid , 'full');
-                $image_medium = wp_get_attachment_image_src( $aid , 'medium');
-                $_post = & get_post($aid);
+            foreach ( $attachments as $_post ) {
+                $image_full = wp_get_attachment_image_src( $_post->ID , 'full');
+                $image_medium = wp_get_attachment_image_src( $_post->ID , 'medium');
                 $image_title = esc_attr($_post->post_title);
-                $image_alttext = get_post_meta($aid, '_wp_attachment_image_alt', true);
+                $image_alttext = get_post_meta($_post->ID, '_wp_attachment_image_alt', true);
                 $image_caption = esc_attr($_post->post_excerpt);
                 $image_description = $_post->post_content; // this is where we hide a link_url
 

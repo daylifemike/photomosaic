@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1.1
+Version: 2.1.2
 
 == Description ==
 
@@ -24,6 +24,11 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.1.2 =
+* Bug Fix: corrects default shortcode behavior in WPv3.5
+* Enhancement: updates to match new [gallery ids='...'] behavior (new in WPv3.5)
+* Enhancement: detects best image size based on width of the columns
+
 = 2.1.1 =
 * Bug Fix: prevents loading spinner from disappearing early in Firefox
 * Bug Fix: captions weren't properly escaped

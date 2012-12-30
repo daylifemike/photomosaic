@@ -1,5 +1,8 @@
 /* PhotoMosaic - Changelog */
 
+= 2.1.2 =
+* Bug Fix: correct show_loading and input:HTML errors
+
 = 2.1.1 =
 * Bug Fix: prevents loading spinner from disappearing early in Firefox
 * Bug Fix: auto-columns now accounts for galleries with less than 3 images (the default number of columns)

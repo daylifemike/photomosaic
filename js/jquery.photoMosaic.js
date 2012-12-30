@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.1.1 starts around line ~#70
+ *  PhotoMosaic v2.1.2 starts around line ~#70
  */
 
 (function (window) {
@@ -64,7 +64,7 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.1.1
+    jQuery photoMosaic v2.1.2
     requires jQuery 1.7+ (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 
@@ -182,12 +182,13 @@ g}}(JQPM));
                 return;
             }
 
+            this.opts.gallery = this.getGalleryData();
+
             // loading message
+            // must follow getGalleryData() for HTML input to work
             if (this.opts.show_loading) {
                 this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {}));
             }
-
-            this.opts.gallery = this.getGalleryData();
 
             this.opts.columns = this.autoCols();
 

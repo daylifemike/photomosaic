@@ -12,7 +12,13 @@
     mustache.js — Logic-less templates in JavaScript
     See http://mustache.github.com/ for more info.
 */
-(function(window){var Mustache=function(){var Renderer=function(){};Renderer.prototype={otag:"{{",ctag:"}}",pragmas:{},buffer:[],pragmas_implemented:{"IMPLICIT-ITERATOR":true},context:{},render:function(template,context,partials,in_recursion){if(!in_recursion){this.context=context;this.buffer=[];}
+(function(window){
+
+if (!window.PhotoMosaic) {
+    window.PhotoMosaic = {};
+}
+
+window.PhotoMosaic.Mustache = function(){var Renderer=function(){};Renderer.prototype={otag:"{{",ctag:"}}",pragmas:{},buffer:[],pragmas_implemented:{"IMPLICIT-ITERATOR":true},context:{},render:function(template,context,partials,in_recursion){if(!in_recursion){this.context=context;this.buffer=[];}
 if(!this.includes("",template)){if(in_recursion){return template;}else{this.send(template);return;}}
 template=this.render_pragmas(template);var html=this.render_section(template,context,partials);if(in_recursion){return this.render_tags(html,context,partials,in_recursion);}
 this.render_tags(html,context,partials,in_recursion);},send:function(line){if(line!=""){this.buffer.push(line);}},render_pragmas:function(template){if(!this.includes("%",template)){return template;}
@@ -35,11 +41,6 @@ return"";},includes:function(needle,haystack){return haystack.indexOf(this.otag+
 var ctx={};ctx[iterator]=_context;return ctx;}},is_object:function(a){return a&&typeof a=="object";},is_array:function(a){return Object.prototype.toString.call(a)==='[object Array]';},trim:function(s){return s.replace(/^\s*|\s*$/g,"");},map:function(array,fn){if(typeof array.map=="function"){return array.map(fn);}else{var r=[];var l=array.length;for(var i=0;i<l;i++){r.push(fn(array[i]));}
 return r;}}};return({name:"mustache.js",version:"0.3.1-dev",to_html:function(template,view,partials,send_fun){var renderer=new Renderer();if(send_fun){renderer.send=send_fun;}
 renderer.render(template,view,partials);if(!send_fun){return renderer.buffer.join("\n");}}});}();
-
-if (!window.PhotoMosaic) {
-    window.PhotoMosaic = {};
-}
-window.PhotoMosaic.Mustache = Mustache;
 
 }(window));
 

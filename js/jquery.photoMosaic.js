@@ -683,12 +683,12 @@ g}}(JQPM));
             var size = null;
 
             // currently only supported in PM4WP
-            if (!this.opts.sizes) {
+            if (!this.opts.sizes || !gallery[0].sizes) {
                 return gallery;
             }
 
             for (key in this.opts.sizes) {
-                if (!size && this.opts.sizes[key] > this.col_width) {
+                if (!size && (this.opts.sizes[key] > this.col_width)) {
                     size = key;
                 }
             };

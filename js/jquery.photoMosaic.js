@@ -752,7 +752,13 @@ g}}(JQPM));
                 // are w/h properties present?
                 if (this.opts.gallery[i].hasOwnProperty('width') && this.opts.gallery[i].hasOwnProperty('height')) {
                     // is there valid data?
-                    if (isNaN(parseInt(this.opts.gallery[i].width)) || isNaN(parseInt(this.opts.gallery[i].height))) {
+                    // in some cases WP reports 0 for both the height and width
+                    if (
+                        isNaN(parseInt(this.opts.gallery[i].width)) ||
+                        isNaN(parseInt(this.opts.gallery[i].height)) ||
+                        this.opts.gallery[i].width == 0 ||
+                        this.opts.gallery[i].height == 0
+                    ) {
                         all = false;
                     } else {
                         some = true;

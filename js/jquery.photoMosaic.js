@@ -70,15 +70,6 @@ g}}(JQPM));
 */
 
 (function ($) {
-    if (console === 'undefined') {
-        console = {
-            log: function (msg) {
-                console.errors.push(msg);
-            },
-            errors: []
-        };
-    }
-
     // for debugging
     if (window.PhotoMosaic) {
         window.PhotoMosaic.$ = $;
@@ -88,6 +79,27 @@ g}}(JQPM));
     var photoMosaic = function () { };
 
     $.extend(photoMosaic.prototype, {
+
+        // IE sucks so hard
+        log: {
+            info: function (msg) {
+                this.prefix(msg);
+            },
+
+            error: function (msg) {
+                this.prefix("ERROR: " + msg);
+            },
+
+            prefix: function (msg) {
+                this.print("PhotoMosaic: " + msg);
+            },
+
+            print: function (msg) {
+                if (console !== 'undefined') {
+                    console.log(msg);
+                }
+            }
+        },
 
         defaults: {
             input : 'json', // json, html, xml
@@ -154,32 +166,32 @@ g}}(JQPM));
 
             // Error Checks
             if (this.opts.input === 'xml' && this.opts.gallery === '') {
-                console.log("PhotoMosaic: ERROR: No XML file path specified.");
+                this.log.error("No XML file path specified.");
                 return;
             }
             if (this.opts.input === 'xml' && this.opts.gallery === 'PMalbum') {
-                console.log('PhotoMosaic: ERROR: No XML file path specified.');
+                this.log.error('No XML file path specified.');
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery === '') {
-                console.log("PhotoMosaic: ERROR: No JSON object defined.");
+                this.log.error("No JSON object defined.");
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery.length === 0) {
-                console.log("PhotoMosaic: ERROR: Specified gallery data is empty.");
+                this.log.error("Specified gallery data is empty.");
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery === 'PMalbum') {
                 if (PMalbum !== 'undefined') {
                     this.opts.gallery = PMalbum;
                 } else {
-                    console.log('PhotoMosaic: ERROR: The JSON object "PMalbum" can not be found.');
+                    this.log.error("The JSON object 'PMalbu' can not be found.");
                     return;
                 }
             }
             if (this.opts.gallery.length - 1 < this.current_album) {
-                console.log('PhotoMosaic: ERROR: "start_album" uses a 0-index (0 = the first album).'
-                     + 'No album was found at the specified index (' + this.current_album + ')');
+                this.log.error("'start_album' uses a 0-index (0 = the first album). \
+                    No album was found at the specified index (" + this.current_album + ")");
                 return;
             }
 
@@ -379,8 +391,8 @@ g}}(JQPM));
 
             // ERROR CHECK: don't load if the layout is broken
             if (this.layoutHasErrors(json)) {
-                console.log("PhotoMosaic: ERROR: Your gallery's height is too small for your current settings " +
-                    "and won't render correctly.");
+                this.log.error("Your gallery's height is too small for your current settings \
+                    and won't render correctly.");
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
@@ -565,7 +577,7 @@ g}}(JQPM));
             });
 
             for (var i = to_delete.length - 1; i >= 0; i--) {
-                console.log('PhotoMosaic: ERROR: The following image failed to load and was skipped.\n' + images[to_delete[i]].src);
+                this.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
                 var rest = images.slice( to_delete[i] + 1 );
                 images.length = to_delete[i];
                 images.push.apply(images, rest);
@@ -655,7 +667,7 @@ g}}(JQPM));
                         gallery = $(data).find('photos');
                         gallery = self.constructGalleryFromXML(gallery);
                     } else {
-                        console.log("PhotoMosaic: ERROR: The XML either couldn't be found or was malformed.");
+                        this.log.error("The XML either couldn't be found or was malformed.");
                         return;
                     }
                 });
@@ -751,7 +763,7 @@ g}}(JQPM));
             };
 
             if (some && !all) {
-                console.log("PhotoMosaic: ERROR: Width / Height data not present for all images.");
+                this.log.error("Width / Height data not present for all images.");
             }
 
             this.hasSpecifiedDims = all;
@@ -786,8 +798,8 @@ g}}(JQPM));
                     height: this.opts.gallery[i].height.original
                 });
             }
-            console.log("PhotoMosaic: Generate Gallery Data...");
-            console.log( JSON.stringify(response) );
+            this.log.info("Generate Gallery Data...");
+            this.log.print( JSON.stringify(response) );
         }
 
     });

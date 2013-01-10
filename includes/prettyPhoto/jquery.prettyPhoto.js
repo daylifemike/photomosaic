@@ -98,7 +98,8 @@
 		doresize = true, scroll_pos = _get_scroll();
 	
 		// Window/Keyboard events
-		$(window).unbind('resize').resize(function(){ _center_overlay(); _resize_overlay(); });
+		// $(window).unbind('resize').resize(function(){ _center_overlay(); _resize_overlay(); });
+		$(window).resize(function(){ _center_overlay(); _resize_overlay(); });
 		
 		if(pp_settings.keyboard_shortcuts) {
 			$(document).unbind('keydown').keydown(function(e){

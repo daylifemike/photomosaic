@@ -35,6 +35,7 @@ class PhotoMosaic {
                 wp_enqueue_script( 'photomosaic_prettyphoto_js', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('photomosaic_jquery'));
             }
 
+            wp_enqueue_script( 'photomosaic_jstween', plugins_url('/js/jstween-1.1.js', __FILE__ ), array('photomosaic_jquery'));
             wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photoMosaic.css', __FILE__ ));
             wp_enqueue_script( 'photomosaic_base_js', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ), array('photomosaic_jquery'));
 
@@ -227,6 +228,7 @@ class PhotoMosaic {
 
                 $output_buffer .='
                     sizes: {
+                        thumbnail: '. get_option("thumbnail_size_w") .',
                         medium: '. get_option("medium_size_w") .',
                         large: '. get_option("large_size_w") .'
                     },

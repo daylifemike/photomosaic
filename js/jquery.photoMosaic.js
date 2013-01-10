@@ -357,7 +357,7 @@ g}}(JQPM));
             // get column heights (img height adjusted for col width)
             var json = {
                     transition: this.getTransition(),
-                    width: this.opts.width,
+                    width: (this.col_width * this.columns.length) + (this.opts.padding * (this.columns.length - 1)),
                     center: this.opts.center,
                     columns:[]
                 };
@@ -369,6 +369,7 @@ g}}(JQPM));
                 for (var j = 0; j < this.columns[i].length; j++) {
                     col_height = col_height + this.columns[i][j].height.adjusted;
                 }
+
                 col_height = col_height + (this.columns[i].length - 1) * this.opts.padding;
                 col_heights.push(col_height);
 
@@ -381,7 +382,7 @@ g}}(JQPM));
             // normalize column heights
             var shortest_col = this.getSmallest(col_heights);
             var tallest_col = this.getBiggest(col_heights);
-            var average_col_height = Math.floor((shortest_col + tallest_col) / 2);
+            var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
                 json = this.adjustHeights(json, average_col_height);
@@ -442,20 +443,26 @@ g}}(JQPM));
 
         scaleColumnDown: function (col, height) {
             var count = col.images.length;
-            var diff = col.height - height;
-            var mod = diff % count;
-            var divy = Math.floor(diff / count);
-            var divy_mod = divy + mod;
-            var offset = Math.floor(divy / 2);
-            var offset_mod = Math.floor((divy + mod) / 2);
-            var largest = this.findLargestImage(col.images);
+            var total_padding = (this.opts.padding * (count - 1));
+            var smallest = this.findSmallestImage(col.images);
+            var column = {
+                current : col.height - total_padding,
+                target : height - total_padding,
+                images : 0
+            };
+            var image = {
+                current : 0,
+                target : 0
+            };
+            var mod = 0;
 
             for (var i = 0; i < count; i++) {
-                if (i === largest.index) {
-                    col.images[i].height.constraint = col.images[i].height.adjusted - divy_mod;
-                } else {
-                    col.images[i].height.constraint = col.images[i].height.adjusted - divy;
-                }
+                image.current = col.images[i].height.adjusted;
+                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
+                column.images += image.target;
+                col.images[i].height.constraint = image.target;
+                // just as wide as it was
+                // but the height crops (is shorter) than it was
                 col.images[i].width.constraint = col.images[i].width.adjusted;
                 col.images[i].adjustment = {
                     type : 'top',
@@ -463,34 +470,49 @@ g}}(JQPM));
                 };
             }
 
+            mod = column.target - column.images;
+            col.images[smallest.index].height.constraint += mod;
+            col.images[smallest.index].adjustment.value = Math.floor((col.images[smallest.index].height.adjusted - col.images[smallest.index].height.constraint) / 2);
+
             return col;
         },
 
         scaleColumnUp: function (col, height) {
             var count = col.images.length;
-            var diff = height - col.height;
-            var mod = diff % count;
-            var divy = Math.floor(diff / count);
-            var divy_mod = divy + mod;
-            var offset = Math.floor(divy / 2);
-            var offset_mod = Math.floor((divy + mod) / 2);
-            var smallest_image = this.findSmallestImage(col.images);
- 
+            var total_padding = (this.opts.padding * (count - 1));
+            var largest = this.findLargestImage(col.images);
+            var column = {
+                current : col.height - total_padding,
+                target : height - total_padding,
+                images : 0
+            };
+            var image = {
+                current : 0,
+                target : 0
+            };
+            var mod = 0;
+
             for (var i = 0; i < count; i++) {
-                if (i === smallest_image.index) {
-                    col.images[i].height.constraint = col.images[i].height.adjusted + divy_mod;
-                } else {
-                    col.images[i].height.constraint = col.images[i].height.adjusted + divy;
-                }
+                image.current = col.images[i].height.adjusted;
+                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
+                column.images += image.target;
+                col.images[i].height.constraint = image.target;
+                // scale up to match the new height, cropping width
                 col.images[i].width.constraint = col.images[i].width.adjusted;
                 col.images[i].width.adjusted = Math.floor((col.images[i].width.adjusted * col.images[i].height.constraint) / col.images[i].height.adjusted);
                 col.images[i].height.adjusted = col.images[i].height.constraint;
-
                 col.images[i].adjustment = {
                     type : 'left',
                     value : Math.floor((col.images[i].width.adjusted - col.images[i].width.constraint) / 2)
                 };
             }
+
+            mod = column.target - column.images;
+            // we have to rescale one image to fill the gap
+            col.images[largest.index].height.constraint += mod;
+            col.images[largest.index].width.adjusted = Math.floor((col.images[largest.index].width.adjusted * col.images[largest.index].height.constraint) / col.images[largest.index].height.adjusted);
+            col.images[largest.index].height.adjusted = col.images[largest.index].height.constraint;
+            col.images[largest.index].adjustment.value = Math.floor((col.images[largest.index].width.adjusted - col.images[largest.index].width.constraint) / 2);
 
             return col;
         },

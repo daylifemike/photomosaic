@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1.2
+Version: 2.1.3
 
 == Description ==
 
@@ -24,6 +24,13 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.1.3 =
+* Bug Fix: blind attempt to fix reported console.log IE errors
+* Bug Fix: transform-style:preserve-3d causes scaled images to be 'soft' in Safari
+* Bug Fix: WP sometimes reports image dims as 0x0 - PM was failing to load these images
+* Bug Fix: corrects regression that caused NextGen galleries not to load
+* Enhancement: Improves column scaling logic; now much more forgiving of short mosaics.
+
 = 2.1.2 =
 * Bug Fix: corrects default shortcode behavior in WPv3.5
 * Enhancement: updates to match new [gallery ids='...'] behavior (new in WPv3.5)

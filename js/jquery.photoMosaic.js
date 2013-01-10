@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.1.2 starts around line ~#70
+ *  PhotoMosaic v2.1.3 starts around line ~#70
  */
 
 (function (window) {
@@ -65,7 +65,7 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.1.2
+    jQuery photoMosaic v2.1.3
     requires jQuery 1.7+ (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 

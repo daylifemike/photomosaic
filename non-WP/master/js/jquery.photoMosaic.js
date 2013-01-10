@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.1.2 starts around line ~#70
+ *  PhotoMosaic v2.1.3 starts around line ~#70
  */
 
 (function (window) {
@@ -64,20 +64,11 @@ g}}(jQuery));
 
 
 /*
-    jQuery photoMosaic v2.1.2
+    jQuery photoMosaic v2.1.3
     requires jQuery 1.7+ (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 
 (function ($) {
-    if (console === 'undefined') {
-        console = {
-            log: function (msg) {
-                console.errors.push(msg);
-            },
-            errors: []
-        };
-    }
-
     // for debugging
     if (window.PhotoMosaic) {
         window.PhotoMosaic.$ = $;
@@ -87,6 +78,27 @@ g}}(jQuery));
     var photoMosaic = function () { };
 
     $.extend(photoMosaic.prototype, {
+
+        // IE sucks so hard
+        log: {
+            info: function (msg) {
+                this.prefix(msg);
+            },
+
+            error: function (msg) {
+                this.prefix("ERROR: " + msg);
+            },
+
+            prefix: function (msg) {
+                this.print("PhotoMosaic: " + msg);
+            },
+
+            print: function (msg) {
+                if (console !== 'undefined') {
+                    console.log(msg);
+                }
+            }
+        },
 
         defaults: {
             input : 'json', // json, html, xml
@@ -153,32 +165,32 @@ g}}(jQuery));
 
             // Error Checks
             if (this.opts.input === 'xml' && this.opts.gallery === '') {
-                console.log("PhotoMosaic: ERROR: No XML file path specified.");
+                this.log.error("No XML file path specified.");
                 return;
             }
             if (this.opts.input === 'xml' && this.opts.gallery === 'PMalbum') {
-                console.log('PhotoMosaic: ERROR: No XML file path specified.');
+                this.log.error('No XML file path specified.');
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery === '') {
-                console.log("PhotoMosaic: ERROR: No JSON object defined.");
+                this.log.error("No JSON object defined.");
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery.length === 0) {
-                console.log("PhotoMosaic: ERROR: Specified gallery data is empty.");
+                this.log.error("Specified gallery data is empty.");
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery === 'PMalbum') {
                 if (PMalbum !== 'undefined') {
                     this.opts.gallery = PMalbum;
                 } else {
-                    console.log('PhotoMosaic: ERROR: The JSON object "PMalbum" can not be found.');
+                    this.log.error("The JSON object 'PMalbu' can not be found.");
                     return;
                 }
             }
             if (this.opts.gallery.length - 1 < this.current_album) {
-                console.log('PhotoMosaic: ERROR: "start_album" uses a 0-index (0 = the first album).'
-                     + 'No album was found at the specified index (' + this.current_album + ')');
+                this.log.error("'start_album' uses a 0-index (0 = the first album). \
+                    No album was found at the specified index (" + this.current_album + ")");
                 return;
             }
 
@@ -344,7 +356,7 @@ g}}(jQuery));
             // get column heights (img height adjusted for col width)
             var json = {
                     transition: this.getTransition(),
-                    width: this.opts.width,
+                    width: (this.col_width * this.columns.length) + (this.opts.padding * (this.columns.length - 1)),
                     center: this.opts.center,
                     columns:[]
                 };
@@ -356,6 +368,7 @@ g}}(jQuery));
                 for (var j = 0; j < this.columns[i].length; j++) {
                     col_height = col_height + this.columns[i][j].height.adjusted;
                 }
+
                 col_height = col_height + (this.columns[i].length - 1) * this.opts.padding;
                 col_heights.push(col_height);
 
@@ -368,7 +381,7 @@ g}}(jQuery));
             // normalize column heights
             var shortest_col = this.getSmallest(col_heights);
             var tallest_col = this.getBiggest(col_heights);
-            var average_col_height = Math.floor((shortest_col + tallest_col) / 2);
+            var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
                 json = this.adjustHeights(json, average_col_height);
@@ -378,8 +391,8 @@ g}}(jQuery));
 
             // ERROR CHECK: don't load if the layout is broken
             if (this.layoutHasErrors(json)) {
-                console.log("PhotoMosaic: ERROR: Your gallery's height is too small for your current settings " +
-                    "and won't render correctly.");
+                this.log.error("Your gallery's height is too small for your current settings \
+                    and won't render correctly.");
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
@@ -429,20 +442,26 @@ g}}(jQuery));
 
         scaleColumnDown: function (col, height) {
             var count = col.images.length;
-            var diff = col.height - height;
-            var mod = diff % count;
-            var divy = Math.floor(diff / count);
-            var divy_mod = divy + mod;
-            var offset = Math.floor(divy / 2);
-            var offset_mod = Math.floor((divy + mod) / 2);
-            var largest = this.findLargestImage(col.images);
+            var total_padding = (this.opts.padding * (count - 1));
+            var smallest = this.findSmallestImage(col.images);
+            var column = {
+                current : col.height - total_padding,
+                target : height - total_padding,
+                images : 0
+            };
+            var image = {
+                current : 0,
+                target : 0
+            };
+            var mod = 0;
 
             for (var i = 0; i < count; i++) {
-                if (i === largest.index) {
-                    col.images[i].height.constraint = col.images[i].height.adjusted - divy_mod;
-                } else {
-                    col.images[i].height.constraint = col.images[i].height.adjusted - divy;
-                }
+                image.current = col.images[i].height.adjusted;
+                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
+                column.images += image.target;
+                col.images[i].height.constraint = image.target;
+                // just as wide as it was
+                // but the height crops (is shorter) than it was
                 col.images[i].width.constraint = col.images[i].width.adjusted;
                 col.images[i].adjustment = {
                     type : 'top',
@@ -450,34 +469,49 @@ g}}(jQuery));
                 };
             }
 
+            mod = column.target - column.images;
+            col.images[smallest.index].height.constraint += mod;
+            col.images[smallest.index].adjustment.value = Math.floor((col.images[smallest.index].height.adjusted - col.images[smallest.index].height.constraint) / 2);
+
             return col;
         },
 
         scaleColumnUp: function (col, height) {
             var count = col.images.length;
-            var diff = height - col.height;
-            var mod = diff % count;
-            var divy = Math.floor(diff / count);
-            var divy_mod = divy + mod;
-            var offset = Math.floor(divy / 2);
-            var offset_mod = Math.floor((divy + mod) / 2);
-            var smallest_image = this.findSmallestImage(col.images);
- 
+            var total_padding = (this.opts.padding * (count - 1));
+            var largest = this.findLargestImage(col.images);
+            var column = {
+                current : col.height - total_padding,
+                target : height - total_padding,
+                images : 0
+            };
+            var image = {
+                current : 0,
+                target : 0
+            };
+            var mod = 0;
+
             for (var i = 0; i < count; i++) {
-                if (i === smallest_image.index) {
-                    col.images[i].height.constraint = col.images[i].height.adjusted + divy_mod;
-                } else {
-                    col.images[i].height.constraint = col.images[i].height.adjusted + divy;
-                }
+                image.current = col.images[i].height.adjusted;
+                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
+                column.images += image.target;
+                col.images[i].height.constraint = image.target;
+                // scale up to match the new height, cropping width
                 col.images[i].width.constraint = col.images[i].width.adjusted;
                 col.images[i].width.adjusted = Math.floor((col.images[i].width.adjusted * col.images[i].height.constraint) / col.images[i].height.adjusted);
                 col.images[i].height.adjusted = col.images[i].height.constraint;
-
                 col.images[i].adjustment = {
                     type : 'left',
                     value : Math.floor((col.images[i].width.adjusted - col.images[i].width.constraint) / 2)
                 };
             }
+
+            mod = column.target - column.images;
+            // we have to rescale one image to fill the gap
+            col.images[largest.index].height.constraint += mod;
+            col.images[largest.index].width.adjusted = Math.floor((col.images[largest.index].width.adjusted * col.images[largest.index].height.constraint) / col.images[largest.index].height.adjusted);
+            col.images[largest.index].height.adjusted = col.images[largest.index].height.constraint;
+            col.images[largest.index].adjustment.value = Math.floor((col.images[largest.index].width.adjusted - col.images[largest.index].width.constraint) / 2);
 
             return col;
         },
@@ -564,7 +598,7 @@ g}}(jQuery));
             });
 
             for (var i = to_delete.length - 1; i >= 0; i--) {
-                console.log('PhotoMosaic: ERROR: The following image failed to load and was skipped.\n' + images[to_delete[i]].src);
+                this.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
                 var rest = images.slice( to_delete[i] + 1 );
                 images.length = to_delete[i];
                 images.push.apply(images, rest);
@@ -654,7 +688,7 @@ g}}(jQuery));
                         gallery = $(data).find('photos');
                         gallery = self.constructGalleryFromXML(gallery);
                     } else {
-                        console.log("PhotoMosaic: ERROR: The XML either couldn't be found or was malformed.");
+                        this.log.error("The XML either couldn't be found or was malformed.");
                         return;
                     }
                 });
@@ -670,12 +704,12 @@ g}}(jQuery));
             var size = null;
 
             // currently only supported in PM4WP
-            if (!this.opts.sizes) {
+            if (!this.opts.sizes || !gallery[0].sizes) {
                 return gallery;
             }
 
             for (key in this.opts.sizes) {
-                if (!size && this.opts.sizes[key] > this.col_width) {
+                if (!size && (this.opts.sizes[key] > this.col_width)) {
                     size = key;
                 }
             };
@@ -739,7 +773,13 @@ g}}(jQuery));
                 // are w/h properties present?
                 if (this.opts.gallery[i].hasOwnProperty('width') && this.opts.gallery[i].hasOwnProperty('height')) {
                     // is there valid data?
-                    if (isNaN(parseInt(this.opts.gallery[i].width)) || isNaN(parseInt(this.opts.gallery[i].height))) {
+                    // in some cases WP reports 0 for both the height and width
+                    if (
+                        isNaN(parseInt(this.opts.gallery[i].width)) ||
+                        isNaN(parseInt(this.opts.gallery[i].height)) ||
+                        this.opts.gallery[i].width == 0 ||
+                        this.opts.gallery[i].height == 0
+                    ) {
                         all = false;
                     } else {
                         some = true;
@@ -750,7 +790,7 @@ g}}(jQuery));
             };
 
             if (some && !all) {
-                console.log("PhotoMosaic: ERROR: Width / Height data not present for all images.");
+                this.log.error("Width / Height data not present for all images.");
             }
 
             this.hasSpecifiedDims = all;
@@ -785,8 +825,8 @@ g}}(jQuery));
                     height: this.opts.gallery[i].height.original
                 });
             }
-            console.log("PhotoMosaic: Generate Gallery Data...");
-            console.log( JSON.stringify(response) );
+            this.log.info("Generate Gallery Data...");
+            this.log.print( JSON.stringify(response) );
         }
 
     });

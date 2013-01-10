@@ -1,4 +1,8 @@
 /* PhotoMosaic - Changelog */
+= 2.1.3 =
+* Bug Fix: blind attempt to fix reported console.log IE errors
+* Bug Fix: transform-style:preserve-3d causes scaled images to be 'soft' in Safari
+* Enhancement: Improves column scaling logic; now much more forgiving of short mosaics.
 
 = 2.1.2 =
 * Bug Fix: correct show_loading and input:HTML errors

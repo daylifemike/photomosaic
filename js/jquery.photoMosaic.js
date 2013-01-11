@@ -126,7 +126,7 @@ g}}(JQPM));
             center : true,
             show_loading : false,
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
-            responsive_transition : true,
+            responsive_transition : false,
             modal_name : null,
             modal_group : true,
             modal_ready_callback : null,
@@ -482,11 +482,7 @@ g}}(JQPM));
             for (i = 0; i < json.columns.length; i++) {
                 json = this.markLastImageInColumn(json, i);
 
-                if (json.columns[i].height > target_height) {
-                    json.columns[i] = this.scaleColumnDown(json.columns[i], target_height);
-                } else {
-                    json.columns[i] = this.scaleColumnUp(json.columns[i], target_height);
-                }
+                json.columns[i] = this.scaleColumn(json.columns[i], target_height);
             }
 
             return json;
@@ -517,80 +513,71 @@ g}}(JQPM));
             }
         },
 
-        scaleColumnDown: function (col, height) {
+        scaleColumn: function (col, height) {
             var count = col.images.length;
             var total_padding = (this.opts.padding * (count - 1));
-            var smallest = this.findSmallestImage(col.images);
-            var column = {
-                current : col.height - total_padding,
-                target : height - total_padding,
-                images : 0
-            };
-            var image = {
-                current : 0,
-                target : 0
-            };
+            var column_start = col.height - total_padding;
+            var column_end = height - total_padding;
+            var image = null;
+            var images_height = 0;
+            var image_start = 0;
+            var image_end = 0;
             var mod = 0;
 
+            // image's already have width|height.adjusted set
+            // they need width|height.constraint
             for (var i = 0; i < count; i++) {
-                image.current = col.images[i].height.adjusted;
-                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
-                column.images += image.target;
-                col.images[i].height.constraint = image.target;
-                // just as wide as it was
-                // but the height crops (is shorter) than it was
-                col.images[i].width.constraint = col.images[i].width.adjusted;
-                col.images[i].adjustment = {
-                    type : 'top',
-                    value : Math.floor((col.images[i].height.adjusted - col.images[i].height.constraint) / 2)
-                };
+                image = col.images[i];
+
+                image_start = image.height.adjusted;
+                image_end = Math.floor( column_end * ( Math.floor( (image_start / column_start) * 1000 ) / 1000 ) );
+                images_height += image_end;
+
+                if (col.height > height) {
+                    image = this.scaleImageDown(image, image_end);
+                } else {
+                    image = this.scaleImageUp(image, image_end);
+                }
             }
 
-            mod = column.target - column.images;
-            col.images[smallest.index].height.constraint += mod;
-            col.images[smallest.index].adjustment.value = Math.floor((col.images[smallest.index].height.adjusted - col.images[smallest.index].height.constraint) / 2);
+            mod = column_end - images_height;
 
+            return this.scaleColumnMod(col, mod);
+        },
+
+        scaleColumnMod: function (col, mod) {
+            // var smallest = this.findSmallestImage(col.images);
+            // debugger;
             return col;
         },
 
-        scaleColumnUp: function (col, height) {
-            var count = col.images.length;
-            var total_padding = (this.opts.padding * (count - 1));
-            var largest = this.findLargestImage(col.images);
-            var column = {
-                current : col.height - total_padding,
-                target : height - total_padding,
-                images : 0
+        scaleImageDown: function (image, height) {
+            // vertical crop
+            image.width.constraint = image.width.adjusted;
+            image.height.constraint = height;
+
+            image.adjustment = {
+                type : 'top',
+                value : Math.floor((image.height.adjusted - image.height.constraint) / 2)
             };
-            var image = {
-                current : 0,
-                target : 0
+
+            return image;
+        },
+
+        scaleImageUp: function (image, height) {
+            // scale to fill height / horizontal crop
+            image.width.constraint = image.width.adjusted;
+            image.height.constraint = height;
+
+            image.width.adjusted = Math.floor((image.width.adjusted * height) / image.height.adjusted)
+            image.height.adjusted = height;
+
+            image.adjustment = {
+                type : 'left',
+                value : Math.floor((image.width.adjusted - image.width.constraint) / 2)
             };
-            var mod = 0;
 
-            for (var i = 0; i < count; i++) {
-                image.current = col.images[i].height.adjusted;
-                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
-                column.images += image.target;
-                col.images[i].height.constraint = image.target;
-                // scale up to match the new height, cropping width
-                col.images[i].width.constraint = col.images[i].width.adjusted;
-                col.images[i].width.adjusted = Math.floor((col.images[i].width.adjusted * col.images[i].height.constraint) / col.images[i].height.adjusted);
-                col.images[i].height.adjusted = col.images[i].height.constraint;
-                col.images[i].adjustment = {
-                    type : 'left',
-                    value : Math.floor((col.images[i].width.adjusted - col.images[i].width.constraint) / 2)
-                };
-            }
-
-            mod = column.target - column.images;
-            // we have to rescale one image to fill the gap
-            col.images[largest.index].height.constraint += mod;
-            col.images[largest.index].width.adjusted = Math.floor((col.images[largest.index].width.adjusted * col.images[largest.index].height.constraint) / col.images[largest.index].height.adjusted);
-            col.images[largest.index].height.adjusted = col.images[largest.index].height.constraint;
-            col.images[largest.index].adjustment.value = Math.floor((col.images[largest.index].width.adjusted - col.images[largest.index].width.constraint) / 2);
-
-            return col;
+            return image;
         },
 
         findSmallestImage: function (images) {

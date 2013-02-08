@@ -126,7 +126,11 @@ g}}(JQPM));
             center : true,
             show_loading : false,
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
-            responsive_transition : false,
+            responsive_transition : true,
+            responsive_transition_settings : {
+                duration: 0.3,
+                effect: 'easeOut'
+            },
             modal_name : null,
             modal_group : true,
             modal_ready_callback : null,
@@ -500,6 +504,10 @@ g}}(JQPM));
         },
 
         autoCols: function (){
+            if (!this.opts.auto_columns) {
+                return this.opts.columns;
+            }
+
             var max_width = this.opts.width;
             var num_images = this.opts.gallery.length;
             // this.opts.sizes only supported in PM4WP
@@ -512,16 +520,13 @@ g}}(JQPM));
                 minus : (sizes.medium - (sizes.thumb / 1.2))
             };
 
-            if (!this.opts.auto_columns) {
-                return this.opts.columns;
+            if (num_images < this.opts.columns) {
+                cols = num_images;
             } else {
-                if (num_images < this.opts.columns) {
-                    cols = num_images;
-                } else {
-                    cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
-                }
-                return cols;
+                cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
             }
+
+            return cols;
         },
 
         scaleColumn: function (col, height) {
@@ -941,29 +946,25 @@ g}}(JQPM));
                         height : image.height.constraint + 'px',
                     });
 
-                    if (!this.opts.auto_columns || !this.opts.responsive_transition) {
+                    if (!this.shouldAnimate()) {
                         $a.css({
                             top : image.position.top + 'px',
                             left : image.position.left + 'px'
                         });
                     } else {
                         $a.tween({
-                            top: {
-                                stop: image.position.top,
-                                duration: 0.3,
-                                effect: 'easeOut'
-                            },
-                            left: {
-                                stop: image.position.left,
-                                duration: 0.3,
-                                effect: 'easeOut'
-                            }
+                            top: $.extend({}, this.opts.responsive_transition_settings, {
+                                stop: image.position.top
+                            }),
+                            left: $.extend({}, this.opts.responsive_transition_settings, {
+                                stop: image.position.left
+                            })
                         });
                     }
                 }
             }
 
-            if (this.opts.responsive_transition && this.opts.auto_columns) {
+            if (this.shouldAnimate()) {
                 $.play();
             }
 
@@ -1012,7 +1013,16 @@ g}}(JQPM));
             }
             this.log.info("Generate Gallery Data...");
             this.log.print( JSON.stringify(response) );
-        }
+        },
+
+        shouldAnimate: function () {
+            return (
+                this.opts.auto_columns &&
+                this.opts.responsive_transition
+            );
+        },
+
+        __: function () { return this.version }
 
     });
 

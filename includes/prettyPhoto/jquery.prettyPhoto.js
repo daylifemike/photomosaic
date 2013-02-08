@@ -99,10 +99,13 @@
 	
 		// Window/Keyboard events
 		// $(window).unbind('resize').resize(function(){ _center_overlay(); _resize_overlay(); });
-		$(window).resize(function(){ _center_overlay(); _resize_overlay(); });
+		$(window).unbind('resize.prettyPhoto').bind('resize.prettyPhoto', function(){
+			_center_overlay();
+			_resize_overlay();
+		});
 		
 		if(pp_settings.keyboard_shortcuts) {
-			$(document).unbind('keydown').keydown(function(e){
+			$(document).unbind('keydown.prettyPhoto').bind('keydown.prettyPhoto', function(e){
 				if(typeof $pp_pic_holder != 'undefined'){
 					if($pp_pic_holder.is(':visible')){
 						switch(e.keyCode){
@@ -135,7 +138,7 @@
 			_buildOverlay(this); // Build the overlay {this} being the caller
 			
 			if(settings.allow_resize)
-				$(window).scroll(function(){ _center_overlay(); });
+				$(window).bind('scroll.prettyPhoto', function(){ _center_overlay(); });
 				
 			_center_overlay();
 			
@@ -419,7 +422,7 @@
 				
 				$(this).remove(); // No more need for the prettyPhoto markup
 				
-				$(window).unbind('scroll');
+				$(window).unbind('scroll.prettyPhoto');
 				
 				settings.callback();
 				

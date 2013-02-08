@@ -11,13 +11,50 @@
     $(document).ready(function() {
         $('#target').photoMosaic({
             input:'html',
-            show_loading: true
+            show_loading: true,
+            modal_ready_callback: function(pm) {
+                $(pm).find('li').each(function () {
+                    var $a = $(this).find('a');
+                    var $img = $a.find('img');
+                    var $span = $('<span></span>');
+                    $span.text( $img.attr('title') );
+                    $a.append($span);
+                });
+            }
         });
     }); 
 </script>
 <style type="text/css">
     body{background:#dfdfdf; color:#000000; font-size:12px;}
     #container{width:400px; margin:15px auto 0px auto;}
+
+.photoMosaic ol li {
+    position: relative;
+}
+.photoMosaic ol li img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.photoMosaic span {
+    position:absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    padding: 0.5em;
+    height: 100%;
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0);
+    transition: all 0.3s linear 0s;
+    transform-origin: center center;
+}
+
+.photoMosaic a:hover span {
+    background: rgba(0, 0, 0, 0.6);
+    color: rgba(255, 255, 255, 0.9);
+}
+
 </style>
 
 </head>

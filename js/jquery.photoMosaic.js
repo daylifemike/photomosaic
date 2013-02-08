@@ -383,10 +383,10 @@ g}}(JQPM));
                 var col_height = 0;
 
                 for (var j = 0; j < this.columns[i].length; j++) {
-                    col_height = col_height + this.columns[i][j].height.adjusted;
+                    col_height += this.columns[i][j].height.adjusted;
                 }
 
-                col_height = col_height + (this.columns[i].length - 1) * this.opts.padding;
+                col_height += (this.columns[i].length - 1) * this.opts.padding;
                 col_heights.push(col_height);
 
                 json.columns[i] = {};
@@ -397,11 +397,11 @@ g}}(JQPM));
 
             // normalize column heights
             var shortest_col = Math.min.apply( Math, col_heights );
-            var tallest_col = Math.max.apply( Math, col_heights );
-            var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
+                var tallest_col = Math.max.apply( Math, col_heights );
+                var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
-                json = this.adjustHeights(json, average_col_height);
+                json = this.adjustHeights(json, shortest_col);
             } else {
                 json = this.adjustHeights(json, this.opts.height);
             }
@@ -500,7 +500,13 @@ g}}(JQPM));
 
             adjusted_height = Math.min.apply(Math, column_heights);
 
-            return this.flattenColumns(json, adjusted_height);
+            json.height = adjusted_height;
+
+            json = this.flattenColumns(json, adjusted_height);
+
+            json = this.adjustImagesToConstraint(json);
+
+            return json;
         },
 
         autoCols: function (){
@@ -549,11 +555,7 @@ g}}(JQPM));
                 image_end = Math.floor( column_end * ( Math.floor( (image_start / column_start) * 1000 ) / 1000 ) );
                 images_height += image_end;
 
-                if (col.height > height) {
-                    image = this.scaleImageDown(image, image_end);
-                } else {
-                    image = this.scaleImageUp(image, image_end);
-                }
+                image = this.setImageContraints(image, this.col_width, image_end);
             }
 
             col.height = images_height + total_padding;
@@ -566,6 +568,7 @@ g}}(JQPM));
             var image = null;
             var diff = 0;
             var total_padding = null;
+            var adjusted_height;
 
             for (var i = 0; i < json.columns.length; i++) {
                 column = json.columns[i];
@@ -575,43 +578,58 @@ g}}(JQPM));
 
                 if (diff > 0) {
                     if (column.height > height) {
-                        image = this.scaleImageDown(image, (image.height.constraint - diff) );
+                        adjusted_height = (image.height.constraint - diff);
                     } else {
-                        image = this.scaleImageUp(image, (image.height.constraint + diff) );
+                        adjusted_height = (image.height.constraint + diff);
                     }
+
+                    image = this.setImageContraints(image, null, adjusted_height);
                 }
             }
 
             return json;
         },
 
-        scaleImageDown: function (image, height) {
-            // vertical crop
-            image.width.constraint = this.col_width;
-            image.height.constraint = height;
-
-            image.adjustment = {
-                type : 'top',
-                value : Math.floor((image.height.adjusted - image.height.constraint) / 2)
-            };
-
+        setImageContraints: function (image, width, height) {
+            image.width.constraint = width || image.width.constraint;
+            image.height.constraint = height || image.height.constraint;
             return image;
         },
 
-        scaleImageUp: function (image, height) {
-            // scale to fill height / horizontal crop
-            image.width.constraint = this.col_width;
-            image.height.constraint = height;
+        adjustImagesToConstraint: function (json) {
+            var column;
+            var image;
+            var test_height;
 
-            image.width.adjusted = Math.floor((image.width.adjusted * height) / image.height.adjusted)
-            image.height.adjusted = height;
+            for (var i = 0; i < json.columns.length; i++) {
+                column = json.columns[i];
 
-            image.adjustment = {
-                type : 'left',
-                value : Math.floor((image.width.adjusted - image.width.constraint) / 2)
+                for (var j = 0; j < column.images.length; j++) {
+                    image = column.images[j];
+
+                    // adjusted is still scaled to the column's width
+                    if (image.height.adjusted > image.height.constraint) {
+                        image.adjustment = {
+                            type : 'top',
+                            value : Math.floor((image.height.adjusted - image.height.constraint) / 2)
+                        };
+                    } else {
+                        image.width.adjusted = Math.floor((image.width.adjusted * image.height.constraint) / image.height.adjusted);
+                        image.height.adjusted = image.height.constraint;
+
+                        image.adjustment = {
+                            type : 'left',
+                            value : Math.floor((image.width.adjusted - image.width.constraint) / 2)
+                        };
+                    }
+
+                    column.images[j] = image;
+                };
+
+                json.columns[i] = column;
             };
 
-            return image;
+            return json;
         },
 
         findSmallestImage: function (images) {

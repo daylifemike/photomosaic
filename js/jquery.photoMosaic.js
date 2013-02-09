@@ -239,7 +239,13 @@ g}}(JQPM));
 
             this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
 
-            this.opts.gallery = this.pickImageSize(this.opts.gallery);
+            this._size = this.pickImageSize(this.opts.gallery);
+
+            if (this._size) {
+                for (var i = 0; i < this.opts.gallery.length; i++) {
+                    this.opts.gallery[i].thumb = this.opts.gallery[i].sizes[this._size];
+                };
+            }
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
@@ -790,12 +796,12 @@ g}}(JQPM));
             return gallery;
         },
 
-        pickImageSize: function(gallery) {
+        pickImageSize: function (gallery) {
             var size = null;
 
             // currently only supported in PM4WP
             if (!this.opts.sizes || !gallery[0].sizes) {
-                return gallery;
+                return null;
             }
 
             for (key in this.opts.sizes) {
@@ -808,11 +814,46 @@ g}}(JQPM));
                 size = 'full';
             }
 
-            for (var i = 0; i < gallery.length; i++) {
-                gallery[i].thumb = gallery[i].sizes[size];
-            };
+            return size;
+        },
 
-            return gallery;
+        swapImage: function (image, size) {
+            var self = this;
+            var $img = this.obj.find('#' + image.id);
+            var $a = $img.parent();
+            var $new_img = $('<img/>')
+                                .attr('src', image.sizes[size])
+                                .attr('class', size)
+                                .attr('style', $img.attr('style'));
+
+            if (
+                $a.find('.' + size).length === 0 &&
+                $a.find('img[src="' + image.sizes[size] + '"]').length === 0
+            ) {
+                $a.append($new_img);
+
+                $new_img.imagesLoaded({
+                    fail: function ($images, $proper, $broken) {
+                        $images.remove();
+                    },
+                    done: function ($images) {
+                        var sibs = $images.siblings();
+                        var id = sibs.eq(0).attr('id');
+                        $images.attr('id', id);
+                        $images.tween({
+                            opacity: $.extend({}, self.opts.responsive_transition_settings, {
+                                start: 0,
+                                stop: 100,
+                                onStop: function () {
+                                    $images.css('position', 'absolute');
+                                    sibs.remove();
+                                    $images.removeClass();
+                                }
+                            })
+                        });
+                    }
+                });
+            }
         },
 
         constructGalleryFromHTML: function () {
@@ -917,6 +958,7 @@ g}}(JQPM));
             var $img = null;
             var $a = null;
             var json = null;
+            var size = this.pickImageSize(this.images);
 
 
             this.obj.addClass('resizing');
@@ -930,12 +972,23 @@ g}}(JQPM));
 
             for (var i = 0; i < this.images.length; i++) {
                 image = this.images[i];
+
                 image.width.adjusted = this.col_width;
                 image.height.adjusted = Math.floor((image.height.original * image.width.adjusted) / image.width.original);
+
+                if (size) {
+                    // we get a new image if we need a bigger image
+                    if (this.opts.sizes[size] > this.opts.sizes[this._size]) {
+                        this.swapImage(image, size);
+                    }
+                }
+
+                this.images[i] = image;
             };
 
-            // this should really only get a new image if we need a bigger image
-            // this.opts.gallery = this.pickImageSize(this.opts.gallery);
+            if (size) {
+                this._size = size;
+            }
 
             var json = this.makeMosaicView(true);
 
@@ -947,7 +1000,7 @@ g}}(JQPM));
             for (var i = 0; i < json.columns.length; i++) {
                 for (var j = 0; j < json.columns[i].images.length; j++) {
                     image = json.columns[i].images[j];
-                    $img = this.obj.find('#' + image.id);
+                    $img = this.obj.find('#' + image.id).parent().find('img');
                     $a = $img.parent();
 
                     $img.css({

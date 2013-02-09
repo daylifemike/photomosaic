@@ -128,6 +128,7 @@ g}}(JQPM));
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
             responsive_transition : true,
             responsive_transition_settings : {
+                time: 0,
                 duration: 0.3,
                 effect: 'easeOut'
             },
@@ -824,7 +825,8 @@ g}}(JQPM));
             var $new_img = $('<img/>')
                                 .attr('src', image.sizes[size])
                                 .attr('class', size)
-                                .attr('style', $img.attr('style'));
+                                .attr('style', $img.attr('style'))
+                                .opacity(0);
 
             if (
                 $a.find('.' + size).length === 0 &&
@@ -839,18 +841,12 @@ g}}(JQPM));
                     done: function ($images) {
                         var sibs = $images.siblings();
                         var id = sibs.eq(0).attr('id');
-                        $images.attr('id', id);
-                        $images.tween({
-                            opacity: $.extend({}, self.opts.responsive_transition_settings, {
-                                start: 0,
-                                stop: 100,
-                                onStop: function () {
-                                    $images.css('position', 'absolute');
-                                    sibs.remove();
-                                    $images.removeClass();
-                                }
-                            })
-                        });
+                        $images.attr('id', id)
+                        $images.opacity(100);
+                        sibs.remove();
+                        setTimeout(function () {
+                            $images.removeClass();
+                        }, 0);
                     }
                 });
             }

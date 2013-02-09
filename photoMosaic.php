@@ -56,14 +56,14 @@ class PhotoMosaic {
             'width' => 300,
             'height' => 0,
             'links' => true,
-            'random' => false,
-            'force_order' => false,
+            'order' => 'rows',
             'link_to_url' => false,
             'external_links' => false,
             'auto_columns' => false,
             'center' => true,
             'show_loading' => false,
             'loading_transition' => 'fade',
+            'responsive_transition' => true,
             'lightbox' => true,
             'custom_lightbox' => false,
             'custom_lightbox_name' => 'prettyPhoto',
@@ -78,6 +78,29 @@ class PhotoMosaic {
         } else {
             $options = $options + $defaults; // "+" means dup keys aren't overwritten
         }
+
+        $options = PhotoMosaic::adjustDeprecatedOptions($options);
+
+        return $options;
+    }
+
+    function adjustDeprecatedOptions($options) {
+        // 'random' & 'force_order' - v2.2
+        if (array_key_exists('random', $options)) {
+            if ($options['random']) {
+                $options['order'] = 'random';
+            }
+            unset($options['random']);
+        }
+        if (array_key_exists('force_order', $options)) {
+            if ($options['force_order']) {
+                $options['order'] = 'columns';
+            }
+            unset($options['force_order']);
+        }
+
+        update_option('photomosaic_options', $options);
+
         return $options;
     }
 
@@ -110,14 +133,14 @@ class PhotoMosaic {
             'width'                    => $options['width'],
             'height'                   => $options['height'],
             'links'                    => $options['links'],
-            'random'                   => $options['random'],
-            'force_order'              => $options['force_order'],
+            'order'                    => $options['order'],
             'link_to_url'              => $options['link_to_url'],
             'external_links'           => $options['external_links'],
             'auto_columns'             => $options['auto_columns'],
             'center'                   => $options['center'],
             'show_loading'             => $options['show_loading'],
             'loading_transition'       => $options['loading_transition'],
+            'responsive_transition'    => $options['responsive_transition'],
             'lightbox'                 => $options['lightbox'],
             'custom_lightbox'          => $options['custom_lightbox'],
             'custom_lightbox_name'     => $options['custom_lightbox_name'],
@@ -166,18 +189,6 @@ class PhotoMosaic {
             $opts_links = "false";
         }
 
-        if(intval($random)){
-            $opts_random = "true";
-        } else {
-            $opts_random = "false";
-        }
-
-        if(intval($force_order)){
-            $opts_force_order = "true";
-        } else {
-            $opts_force_order = "false";
-        }
-
         if(intval($external_links)){
             $opts_external_links = "true";
         } else {
@@ -194,6 +205,12 @@ class PhotoMosaic {
             $opts_show_loading = "true";
         } else {
             $opts_show_loading = "false";
+        }
+
+        if(intval($responsive_transition)){
+            $opts_responsive_transition = "true";
+        } else {
+            $opts_responsive_transition = "false";
         }
 
         if(intval($lightbox)){
@@ -224,6 +241,7 @@ class PhotoMosaic {
                         auto_columns: '. $opts_auto_columns .',
                         show_loading: '. $opts_show_loading .',
                         loading_transition: "'. $loading_transition .'",
+                        responsive_transition: '. $opts_responsive_transition .',
                 ';
 
                 $output_buffer .='
@@ -257,8 +275,7 @@ class PhotoMosaic {
                 }
 
                 $output_buffer .='
-                        random: '. $opts_random .',
-                        force_order: '. $opts_force_order .'
+                        order: "'. $options['order'] .'"
                     });
                 });
             </script>
@@ -498,13 +515,13 @@ class PhotoMosaic {
 
                     <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Behavior</h3>
                     <div style="overflow:hidden;">
-                        <div style="width:20%;float:left;">
+                        <div style="width:25%;float:left;">
                             <p>
                                 <label><input name="links" type="checkbox" value="1" <?php if($options['links']) echo "checked='checked'"; ?> /> Image Links</label>
                             </p>
                             <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">wraps images in links that point to the unresized version</span>
                         </div>
-                        <div style="width:20%;float:left;">
+                        <div style="width:25%;float:left;">
                             <p>
                                 <label><input name="link_to_url" type="checkbox" value="1" <?php if($options['link_to_url']) echo "checked='checked'"; ?> /> Link to URL</label>
                             </p>
@@ -516,27 +533,38 @@ class PhotoMosaic {
                                 requires that <b>image links</b> be checked
                             </span>
                         </div>
-                        <div style="width:20%;float:left;">
+                        <div style="width:25%;float:left;">
                             <p>
                                 <label><input name="external_links" type="checkbox" value="1" <?php if($options['external_links']) echo "checked='checked'"; ?> /> Open Links in New Window</label>
                             </p>
                             <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
-                                caues image links that point to a URL to open in a new window/tab
+                                causes image links that point to a URL to open in a new window/tab
                                     <br/><br/>
                                 requires that <b>image links</b> and <b>link to url</b> be checked
                             </span>
                         </div>
-                        <div style="width:20%;float:left;">
+                        <div style="width:25%;float:left;">
+                            <p><label>Order</label></p>
                             <p>
-                                <label><input name="random" type="checkbox" value="1" <?php if($options['random']) echo "checked='checked'"; ?> /> Randomize</label>
+                                <select name="order">
+                                  <option value="rows" <?php if($options['order'] == 'rows') echo "selected"; ?> >Rows</option>
+                                  <option value="columns" <?php if($options['order'] == 'columns') echo "selected"; ?> >Columns</option>
+                                  <option value="masonry" <?php if($options['order'] == 'masonry') echo "selected"; ?> >Masonry</option>
+                                  <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
+                                </select>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">shuffles the image order everytime the page loads</span>
-                        </div>
-                        <div style="width:20%;float:left;">
-                            <p>
-                                <label><input name="force_order" type="checkbox" value="1" <?php if($options['force_order']) echo "checked='checked'"; ?> /> Force Image Order</label>
-                            </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">prevents PhotoMosaic from reordering the images</span>
+                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                                only applies to image sequence direction, not layout (format will still be in columns)
+                                    <br/><br/>
+                                Masonry places the 'next' image in the first empty position moving down the page
+                                    <br/><br/>
+<pre>
+rows   |  columns |  masonry
+1 2 3  |  1 4 7   |  1 2 3
+4 5 6  |  2 5 8   |  6 4 5
+7 8 9  |  3 6 9   |  7 9 8
+</pre>
+                            </span>
                         </div>
                     </div>
                     <div style="overflow:hidden; margin-top:20px;">
@@ -568,6 +596,12 @@ class PhotoMosaic {
                                     <br/><br/>
                                 "custom" adds "transition-custom" class to use as a hook in your own CSS
                             </span>
+                        </div>
+                        <div style="width:25%;float:left;">
+                            <p>
+                                <label><input name="responsive_transition" type="checkbox" value="1" <?php if($options['responsive_transition']) echo "checked='checked'"; ?> /> Show Responsive Transition</label>
+                            </p>
+                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">animates image positions during browser resize</span>
                         </div>
                     </div>
 

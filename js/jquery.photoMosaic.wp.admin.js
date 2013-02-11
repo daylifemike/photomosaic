@@ -1,6 +1,34 @@
 (function($) {
     $(document).ready(function(){
+        // ANCHOR SCROLL
+        $(document).on('click', 'a', function (e) {
+            var hash = this.hash;
+            var name;
+            var offset;
 
+            if (hash.match('#')) {
+                name = hash.split('#')[1];
+                offset = $('a[name="' + name + '"]').offset().top - 40;
+                $('html,body').stop().animate({ scrollTop: offset }, 300);
+                return false;
+            }
+        });
+
+        // JUMPLINKS
+        var $jumplinks = $('.jumplinks ul');
+        $('.question').each(function () {
+            var $li = $('<li></li>');
+            var $a = $('<a></a>');
+            var $this = $(this);
+            var $title = $this.find('h3.title');
+            var $link = $title.prev();
+            $a.prop('href', '#' + $link.prop('name'));
+            $a.text($title.text());
+            $li.append($a);
+            $jumplinks.append($li);
+        });
+
+        // TABS
         var $tabContainers = $('.tab');
         var $tabs = $('.nav-tab');
 
@@ -11,7 +39,7 @@
             return false;
         }).eq(0).click();
 
-
+        // FORM
         var $lb = $('input[name="lightbox"]'),
             $custom_lb = $('input[name="custom_lightbox"]'),
             $custom_lb_name = $('input[name="custom_lightbox_name"]'),

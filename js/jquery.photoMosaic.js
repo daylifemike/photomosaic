@@ -430,6 +430,32 @@ g}}(JQPM));
             return json;
         },
 
+        autoCols: function (){
+            if (!this.opts.auto_columns) {
+                return this.opts.columns;
+            }
+
+            var max_width = this.opts.width;
+            var num_images = this.opts.gallery.length;
+            // this.opts.sizes only supported in PM4WP
+            var sizes = {
+                medium : this.opts.sizes.mediumz || 300,
+                thumb : this.opts.sizes.thumbnailz || 150
+            };
+            var maths = {
+                plus : (sizes.medium + (sizes.thumb / 1.5)),
+                minus : (sizes.medium - (sizes.thumb / 1.2))
+            };
+
+            if (num_images < this.opts.columns) {
+                cols = num_images;
+            } else {
+                cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
+            }
+
+            return cols;
+        },
+
         sortIntoRows: function (imgs) {
             var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
             var col = 0;
@@ -514,32 +540,6 @@ g}}(JQPM));
             json = this.adjustImagesToConstraint(json);
 
             return json;
-        },
-
-        autoCols: function (){
-            if (!this.opts.auto_columns) {
-                return this.opts.columns;
-            }
-
-            var max_width = this.opts.width;
-            var num_images = this.opts.gallery.length;
-            // this.opts.sizes only supported in PM4WP
-            var sizes = {
-                medium : this.opts.sizes.mediumz || 300,
-                thumb : this.opts.sizes.thumbnailz || 150
-            };
-            var maths = {
-                plus : (sizes.medium + (sizes.thumb / 1.5)),
-                minus : (sizes.medium - (sizes.thumb / 1.2))
-            };
-
-            if (num_images < this.opts.columns) {
-                cols = num_images;
-            } else {
-                cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
-            }
-
-            return cols;
         },
 
         scaleColumn: function (col, height) {

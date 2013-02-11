@@ -275,7 +275,7 @@ class PhotoMosaic {
                 }
 
                 $output_buffer .='
-                        order: "'. $options['order'] .'"
+                        order: "'. $order .'"
                     });
                 });
             </script>
@@ -300,9 +300,10 @@ class PhotoMosaic {
         // IDs are an explicit list -- ignore all the other things
         if ( !empty($ids) ) {
             $params = array_merge($common_params, array(
-                'include' => preg_replace( '/[^0-9,]+/', '', $ids )
+                'include' => preg_replace( '/[^0-9,]+/', '', $ids ),
+                'orderby' => 'post__in'
             ));
-            $_attachments = get_posts( array_merge($params, $common_params) );
+            $_attachments = get_posts( array_merge($common_params, $params) );
 
             foreach ( $_attachments as $key => $val ) {
                 $attachments[$val->ID] = $_attachments[$key];
@@ -447,18 +448,37 @@ class PhotoMosaic {
         </style>
         <div class="wrap">
             <h1>PhotoMosaic</h1>
-            <p>
-                PhotoMosaic takes advantage of Wordpress' built-in gallery feature.  Simply add the <code>[photomosaic]</code> shortcode to your 
-                post/page content and any images attached to that post/page will be displayed as a PhotoMosaic gallery.
-            </p>
-            <p>Thank you for purchasing PhotoMosaic for Wordpress</p>
 
             <h2 class="nav-tab-wrapper">
                 <a class="nav-tab" href="#tab-form">Global Settings</a>
                 <a class="nav-tab" href="#tab-shortcode">Shortcode</a>
                 <a class="nav-tab" href="#tab-templatetag">Template Tag</a>
                 <a class="nav-tab" href="#tab-widget">Sidebar Widget</a>
+                <a class="nav-tab" href="#tab-about">About</a>
+                <a class="nav-tab" href="#tab-faq">FAQ</a>
             </h2>
+
+            <style>
+                form h3 { clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6; }
+                form .set { overflow:hidden; }
+                form .margin { margin-top:2em; }
+                form .field { float:left; width:25%; }
+                form .info{ font-size:11px; color:#666666; padding:0 30px 0 3px; display:block; }
+                .question { max-width:650px; margin-bottom:3em; }
+                .question p { margin-left:2em; }
+                .question ol li { margin-left:2em; }
+                .question ul { list-style:disc; list-style-position:inside; margin-left:3em; }
+                .question ol ul { margin-top:0.3em; margin-left:0; }
+                .question h4 { margin:2em 0 0 2em; }
+                .question blockquote { margin-left:4em; font-style:italic; color:#929292; }
+                .jumplinks {
+                    background:#f1f1f1; border:1px solid #dadada; float:right; margin:0 0 1em 1em; padding:1em; max-width:30%;
+                    -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+                }
+                .jumplinks h3 { padding:0.2em 0 0.2em 0; margin-top:0; }
+                .jumplinks ul { list-style:disc; margin:0 0 0 1.5em; }
+                .jumplinks a { text-decoration:none; }
+            </style>
 
             <div class="tab" id="tab-form">
                 <p>
@@ -468,41 +488,41 @@ class PhotoMosaic {
                 </p>
                 <ul id="photomosaic-error-list"></ul>
                 <form method="post" action="#" enctype="multipart/form-data" id="photomosaic-options">
-                    <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Layout</h3>
-                    <div style="overflow:hidden;">
-                        <div style="width:25%;float:left;">
+                    <h3>Layout</h3>
+                    <div class="set">
+                        <div class="field">
                             <p><label>Width <i>(in pixels)</i></label></p>
                             <p><input type="text" name="width" value="<?php echo($options['width']); ?>" /></p>
-                            <span style="font-size:11px; color:#666666;">set to <b>0</b> for auto-sizing</span>
+                            <span class="info">set to <b>0</b> for auto-sizing</span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Height <i>(in pixels)</label></i></p>
                             <p><input type="text" name="height" value="<?php echo($options['height']); ?>" /></p>
-                            <span style="font-size:11px; color:#666666;">set to <b>0</b> for auto-sizing</span>
+                            <span class="info">set to <b>0</b> for auto-sizing</span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="center" type="checkbox" value="1" <?php if($options['center']) echo "checked='checked'"; ?> /> Center Galleries</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 causes the Mosaic to center itself to its container
                             </span>
                         </div>
                     </div>
-                    <div style="overflow:hidden; margin-top:20px;">
-                        <div style="width:25%;float:left;">
+                    <div class="set margin">
+                        <div class="field">
                             <p><label>Padding <i>(in pixels)</i></label></p>
                             <p><input type="text" name="padding" value="<?php echo($options['padding']); ?>" /></p>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Columns</label></p>
                             <p><input type="text" name="columns" value="<?php echo($options['columns']); ?>" /></p>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="auto_columns" type="checkbox" value="1" <?php if($options['auto_columns']) echo "checked='checked'"; ?> /> Auto-Columns</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 causes PhotoMosaic to calculate the optimal number of columns given the number of images in the gallery and the size of its container
                                     <br/><br/>
                                 ignores the <b>columns</b> setting
@@ -513,19 +533,19 @@ class PhotoMosaic {
                     </div>
 
 
-                    <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Behavior</h3>
-                    <div style="overflow:hidden;">
-                        <div style="width:25%;float:left;">
+                    <h3>Behavior</h3>
+                    <div class="set">
+                        <div class="field">
                             <p>
                                 <label><input name="links" type="checkbox" value="1" <?php if($options['links']) echo "checked='checked'"; ?> /> Image Links</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">wraps images in links that point to the unresized version</span>
+                            <span class="info">wraps images in links that point to the unresized version</span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="link_to_url" type="checkbox" value="1" <?php if($options['link_to_url']) echo "checked='checked'"; ?> /> Link to URL</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 causes image links to point to a URL instead of the unresized image
                                     <br/><br/>
                                 define the link URL in the image description
@@ -533,17 +553,17 @@ class PhotoMosaic {
                                 requires that <b>image links</b> be checked
                             </span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="external_links" type="checkbox" value="1" <?php if($options['external_links']) echo "checked='checked'"; ?> /> Open Links in New Window</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 causes image links that point to a URL to open in a new window/tab
                                     <br/><br/>
                                 requires that <b>image links</b> and <b>link to url</b> be checked
                             </span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Order</label></p>
                             <p>
                                 <select name="order">
@@ -553,7 +573,7 @@ class PhotoMosaic {
                                   <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
                                 </select>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 only applies to image sequence direction, not layout (format will still be in columns)
                                     <br/><br/>
                                 Masonry places the 'next' image in the first empty position moving down the page
@@ -567,14 +587,14 @@ rows   |  columns |  masonry
                             </span>
                         </div>
                     </div>
-                    <div style="overflow:hidden; margin-top:20px;">
-                        <div style="width:25%;float:left;">
+                    <div class="set margin">
+                        <div class="field">
                             <p>
                                 <label><input name="show_loading" type="checkbox" value="1" <?php if($options['show_loading']) echo "checked='checked'"; ?> /> Show Loading Spinner</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">displays a "loading gallery..." spinner until the mosaic is ready</span>
+                            <span class="info">displays a "loading gallery..." spinner until the mosaic is ready</span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Image Loading Transition</label></p>
                             <p>
                                 <select name="loading_transition">
@@ -589,7 +609,7 @@ rows   |  columns |  masonry
                                   <option value="custom" <?php if($options['loading_transition'] == 'custom') echo "selected"; ?> >Custom</option>
                                 </select>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 a subtle 'arrival' effect on an image after it has been loaded
                                     <br/><br/>
                                 uses CSS transforms/transitions (CSS3) - non-modern browser behave normally but don't see the effect
@@ -597,36 +617,36 @@ rows   |  columns |  masonry
                                 "custom" adds "transition-custom" class to use as a hook in your own CSS
                             </span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="responsive_transition" type="checkbox" value="1" <?php if($options['responsive_transition']) echo "checked='checked'"; ?> /> Show Responsive Transition</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">animates image positions during browser resize</span>
+                            <span class="info">animates image positions during browser resize</span>
                         </div>
                     </div>
 
-                    <h3 style="clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6">Lightbox</h3>
-                    <div style="overflow:hidden;">
-                        <div style="width:25%;float:left;">
+                    <h3>Lightbox</h3>
+                    <div class="set">
+                        <div class="field">
                             <p>
                                 <label><input name="lightbox" type="checkbox" value="1" <?php if($options['lightbox']) echo "checked='checked'"; ?> /> Use Default Lightbox</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 displays your photos in a prettyPhoto lightbox when clicked.
                                     <br/><br/>
                                 requires that <b>image links</b> be checked
                             </span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p>
                                 <label><input name="custom_lightbox" type="checkbox" value="1" <?php if($options['custom_lightbox']) echo "checked='checked'"; ?> /> Use Custom Lightbox</label>
                             </p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">allows you to specify your own lightbox and params</span>
+                            <span class="info">allows you to specify your own lightbox and params</span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Custom Lightbox Name</label></p>
                             <p><input type="text" name="custom_lightbox_name" value="<?php echo($options['custom_lightbox_name']); ?>" /></p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 this is the name of the JS function called to activate your lightbox <br><i>(ie: prettyPhoto, fancybox, fancyZoom, facebox)</i>
                                     <br><br>
                                 capitalization matters
@@ -635,10 +655,10 @@ rows   |  columns |  masonry
                                 plugin's documentation to find this function name
                             </span>
                         </div>
-                        <div style="width:25%;float:left;">
+                        <div class="field">
                             <p><label>Custom Lightbox Params</label></p>
                             <p><textarea name="custom_lightbox_params"><?php echo($options['custom_lightbox_params']); ?></textarea></p>
-                            <span style="font-size:11px; color:#666666; padding:0 30px 0 3px; display:block;">
+                            <span class="info">
                                 this is a JS object that gets passed into your lightbox function call <br><i>(eg: {theme:'darkness'})</i>
                                     <br><br>
                                 if you aren't familiar with JavaScript and jQuery but have the lightbox enabled elsewhere on your site,
@@ -677,19 +697,19 @@ rows   |  columns |  masonry
                     <li><b>height</b> : any number <i>(in pixels)</i></li>
                     <li><b>center</b> : 1 = yes, 0 = no</li>
                     <li><b>links</b> : 1 = yes, 0 = no</li>
-                    <li><b>random</b> : 1 = yes, 0 = no</li>
-                    <li><b>force_order</b> : 1 = yes, 0 = no</li>
+                    <li><b>order</b> : rows, columns, masonry, random</li>
                     <li><b>link_to_url</b> : 1 = yes, 0 = no</li>
                     <li><b>external_links</b> : 1 = yes, 0 = no</li>
                     <li><b>auto_columns</b> : 1 = yes, 0 = no</li>
                     <li><b>show_loading</b> : 1 = yes, 0 = no</li>
                     <li><b>loading_transition</b> : none, fade, scale-up|down, slide-up|down|left|right, custom</li>
+                    <li><b>responsive_transition</b> :  1 = yes, 0 = no</li>
                     <li><b>lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox_name</b> : js function name <i>(eg: prettyPhoto)</i></li>
                     <li><b>custom_lightbox_params</b> : js object passed to the above function <i>(eg: {theme:'darkness'})</i></li>
                 </ul>
-                <p>The PhotoMosaic shortcode also supports the standard WordPress shortcode <b>include</b> and <b>exclude</b> settings.</p>
+                <p>The PhotoMosaic shortcode also supports the standard WordPress shortcode <b>include</b>, <b>exclude</b>, and <b>ids</b> params.</p>
             </div>
             
             <div class="tab" id="tab-templatetag">
@@ -713,6 +733,198 @@ rows   |  columns |  masonry
                     add a <code>[photomosaic]</code> shortcode to the widget's text (exactly as you would in a page or post).
                 </p>
             </div>
+
+            <div class="tab" id="tab-about">
+                <h2>About</h2>
+                <h3>Current Version : 2.1.3</h3>
+                <p>
+                    PhotoMosaic takes advantage of Wordpress' built-in gallery feature.  Simply add the <code>[photomosaic]</code> shortcode to your 
+                    post/page content and any images attached to that post/page will be displayed as a PhotoMosaic gallery.
+                </p>
+                <p>Thank you for purchasing PhotoMosaic for Wordpress</p>
+            </div>
+
+            <div class="tab" id="tab-faq">
+                <h2>FAQ</h2>
+
+                <div class="jumplinks">
+                    <h3>Contents</h3>
+                    <ul></ul>
+                </div>
+
+                <div class="question">
+                    <a name="makepm"></a>
+                    <h3 class="title">How do I make a PhotoMosaic?</h3>
+                    <p>
+                        PhotoMosaic is an extention of the <code>[gallery]</code> shortcode.  Any place you would use a 
+                        <code>[gallery]</code> shortcode you can use a <code>[photomosaic]</code> shortcode and your 
+                        images will render in a mosaic instead of a grid.
+                    </p>
+                    <p>
+                        See <a href="#createedit">Where do I create/edit my galleries?</a> for more detail.
+                            <br>
+                        See <a href="stepcreate">Where can I get step-by-step instructions for making a gallery</a> 
+                        for step-by-step instructions.
+                    </p>
+                </div>
+
+                <div class="question">
+                    <a name="createedit"></a>
+                    <h3 class="title">Where do I create/edit my galleries?</h3>
+                    <p>
+                        In Wordpress, "galleries" don't exist in a strict sense.  They don't need to be configured in a seperate 
+                        workflow and then added to your post (a la the NextGen Galleries plugin).  Instead, any images uploaded 
+                        to a post (via the "Add Media" button) are automatically attached to that post.  If an image has been 
+                        uploaded via the Media Library, it can also manually attached to a post in the Media Library.  
+                        A "gallery" is all of the images attached to a post.
+                    </p>
+                    <p>
+                        Before WPv3.5, you could access a "gallery" in one of three ways:
+                    </p>
+                    <ol>
+                        <li>the images attached to a post :
+                            <ul>
+                                <li><code>[gallery]</code> = the current post</li>
+                                <li><code>[gallery id="1"]</code> = the post with ID=1</li>
+                            </ul>
+                        </li>
+                        <li>only the images listed on the shortcode : <code>[gallery includes="1,2,3,4,5"]</code></li>
+                        <li>the images attached to a post with exceptions : <code>[gallery exclude="1,2,3"]</code> (assumes we are excluding from images attached to the current post)</li>
+                    </ol>
+                    <p>
+                        In WPv3.5, the Wordpress Team changed the workflow for creating a "gallery".  While the 
+                        <code>[gallery]</code> shortcode will still honor all of the pre-3.5 methods, using the new "Create Gallery" 
+                        tool will generate a shortcode with a list of images to be used (<code>[gallery ids="1,2,3,4,5"]</code>).  This 
+                        method is similar to the old "include" method in that it ignores any images attached to the post.
+                    </p>
+                    <p>
+                        Any <code>[gallery]</code> shortcodes generated using the "Create Gallery" tool are managed by editing 
+                        the shortcode itself.
+                    </p>
+                    <p>
+                        You can read more about the <code>[gallery]</code> shortcode at the 
+                        <a href="http://codex.wordpress.org/Gallery_Shortcode">Wordpress Codex :: Gallery Shortcode</a>.
+                    </p>
+                    <p>
+                        See <a href="stepcreate">Where can I get step-by-step instructions for making a gallery</a> if you need explicit help
+                    </p>
+                </div>
+
+                <div class="question">
+                    <a name="globalshortcode"></a>
+                    <h3 class="title">What's the difference between "Global Settings" and "Shortcode Settings"?</h3>
+                    <p>
+                        Any configurations made on the PhotoMosaic options page (PhotoMosaic > Global Settings) apply to all of your 
+                        PhotoMosaics.  Any time you use the <code>[photomosaic]</code> shortcode, your "Global Settings" will be applied.
+                    </p>
+                    <p>
+                        Your PhotoMosaics can also be configured on the shortcode itself. These "Shortcode Settings" override 
+                        your "Global Settings" making it easy to have a certain mosaic behave differently than others.
+                    </p>
+                    <h4>A simple example:</h4>
+                    <p>
+                        You want all of your mosaics to display in 6 columns so you set "Columns" to "6" globally 
+                        (PhotoMosaic > Global Settings > Columns = 6).  Now any <code>[photomosaic]</code> will have 
+                        6 columns.
+                    </p>
+                    <p>
+                        But there's one very specific mosaic that you'd like to display in 3 columns. Simply set "columns" 
+                        on the shortcode (<code>[photomosaic columns="3"]</code>) and this mosaic (and only this mosaic) will 
+                        display in 3 columns.
+                    </p>
+                    <h4>A complex example:</h4>
+                    <p>
+                        I receive a lot of support requests for the following:
+                    </p>
+                    <blockquote>
+                        I have a Portfolio section.  On the homepage for that section I want to have a mosaic where clicking 
+                        on the image takes the user to that portfolio item's page.  Then, on that item's page, I want another 
+                        mosaic where clicking on the image opens a bigger version of the image in a lightbox.
+                    </blockquote>
+                    <p>
+                        Since the mosaic on the Portfolio homepage will be the one-off, it's best to configure the "Global Settings" 
+                        for the Portfolio Item mosaics.  In this case that means that we want to configure our "Global Settings" 
+                        to open the image in a lightbox when clicked:
+                    </p>
+                    <ul>
+                        <li>Behavior > Image Links = check</li>
+                        <li>Behavior > Link to URL = uncheck</li>
+                        <li>Lightbox > Use Default Lightbox = check</li>
+                    </ul>
+                    <p>
+                        Now, on the Portfolio homepage mosaic, we simply override the specific settings we want to change:
+                    </p>
+                    <ul>
+                        <li>turn on "Link to URL"</li>
+                        <li>turn off "Use Default Lightbox"</li>
+                    </ul>
+                    <p>
+                        Our shortcode should look like this: <code>[photomosaic link_to_url="1" lightbox="0"]</code>.
+                    </p>
+                    <p>
+                        A full list of the shortcode settings can be found under the "Shortcode" tab.
+                    </p>
+                </div>
+
+                <div class="question">
+                    <a name="multiplemosaics"></a>
+                    <h3 class="title">How do I put multiple mosaics on the same page?</h3>
+                    <h4>WPv3.4 and lower:</h4>
+                    <p>
+                        Simply specify a post that has attached images (ID = the ID for the post where the images are attached).
+                    </p>
+                    <p>
+                        <code>[photomosaic id="1"]</code>
+                            <br>
+                        <code>[photomosaic id="2"]</code>
+                    </p>
+                    <h4>WPv3.5 and newer</h4>
+                    <p>
+                        You can use the "Create Gallery" flow to generate as many <code>[gallery ids="1,2,3,4,5"]</code> shortcodes 
+                        as you like.  For all of them, simply replace "gallery" with "photomosaic" 
+                        (<code>[photomosaic ids="1,2,3,4,5"]</code>) and you'll be all set.
+                    </p>
+                </div>
+
+                <div class="question">
+                    <a name="stepbystep"></a>
+                    <h3 class="title">Where can I get step-by-step instructions for making a gallery?</h3>
+                    <h4>WPv3.4 and lower:</h4>
+                    <ol>
+                        <li>edit or create a post</li>
+                        <li>click the "Add Media" icon (above the text editor)</li>
+                        <li>upload the images that you want to appear in your gallery</li>
+                        <li>if you edited any of the infoabout your images - click "Save All Changes"</li>
+                        <li>close the "Add media" window</li>
+                        <li>add <code>[photomosaic]</code> to your post and your gallery will appear in that spot</li>
+                    </ol>
+
+                    <h4>WPv3.5 and newer</h4>
+                    <ol>
+                        <li>edit or create a post</li>
+                        <li>click the "Add Media" icon (above the text editor)</li>
+                        <li>click "Create Gallery" in the left column</li>
+                        <li>either "Upload Files" or use images in the "Media Library"</li>
+                        <li>select the images you'd like to appear in your gallery</li>
+                        <li>click "Create New Gallery" (in the bottom/right corner)</li>
+                        <li>drag to place in the correct order (if necessary)</li>
+                        <li>click "Insert Gallery" (in the bottom/right corner)</li>
+                        <li>edit the shortcode, replacing "gallery" with "photomosaic"</li>
+                    </ol>
+
+                    <h4>NextGen Galleries:</h4>
+                    <ol>
+                        <li>go to Gallery > Add Gallery / Images</li>
+                        <li>select the "Add new gallery" tab</li>
+                        <li>create your gallery</li>
+                        <li>select the "Upload Images" tab (if you weren't taken there automatically)</li>
+                        <li>select the images you want to upload and the select the gallery you want them added to</li>
+                        <li>go to Gallery > Manage Gallery and note the ID of your new gallery</li>
+                        <li>go to the post where you want to insert your gallery and add <code>[photomosaic nggid="*"]</code> (replacing the * with your gallery's ID)</li>
+                    </ol>
+                </div>
+            </div>
+
         </div>
         <?php
     } // end display

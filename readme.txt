@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1.3
+Version: 2.2
 
 == Description ==
 
@@ -24,6 +24,22 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.2 =
+* Refactor: major pattern overhaul
+* Enhancement: new layout uses absolute positioning instead of fixed-markup
+* Enhancement: actively responsive (resize your browser)
+* Enhancement: new auto-columns logic is responsive and generates mosaics with larger images
+* Enhancement: image-size selection is now actively responsive
+* Enhancement: added "Order" setting
+* Enhancement: added "Responsive Transition" setting
+* Enhancement: "Columns" setting now accepts "0" and "auto" for auto-columns
+* Deleted: removed "Force Order" setting (now part of "Order")
+* Deleted: removed "Randomize" setting (now part of "Order")
+* Deleted: removed "Auto-Columns" setting (now part of "Columns")
+* Enhancement: added FAQ section
+* Enhancement: added What's New section
+* Enhancement: uses WP_Pointers to step through new features
+
 = 2.1.3 =
 * Bug Fix: blind attempt to fix reported console.log IE errors
 * Bug Fix: transform-style:preserve-3d causes scaled images to be 'soft' in Safari

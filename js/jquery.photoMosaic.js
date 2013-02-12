@@ -116,12 +116,11 @@ g}}(JQPM));
             input : 'json', // json, html, xml
             gallery : 'PMalbum', // json object, xml file path
             padding : 2,
-            columns : 3,
+            columns : 'auto', // auto (str) or (int)
             width : 'auto', // auto (str) or (int)
             height : 'auto', // auto (str) or (int)
             links : true,
             external_links: false,
-            auto_columns : false,
             order : 'rows', // rows, columns, masonry, random
             center : true,
             show_loading : false,
@@ -136,8 +135,9 @@ g}}(JQPM));
             modal_group : true,
             modal_ready_callback : null,
             log_gallery_data : false
-            // random : false (deprecated: v2.1.3)
-            // force_order : false (deprecated: v2.1.3)
+            // random : false (deprecated: v2.2)
+            // force_order : false (deprecated: v2.2)
+            // auto_columns : false (deprecated: v2.2)
         },
 
         template: ' ' +
@@ -431,9 +431,12 @@ g}}(JQPM));
         },
 
         autoCols: function (){
-            if (!this.opts.auto_columns) {
+            if (!this._auto_cols && this.opts.columns !== 'auto') {
+                this._auto_cols = false;
                 return this.opts.columns;
             }
+
+            this._auto_cols = true;
 
             var max_width = this.opts.width;
             var num_images = this.opts.gallery.length;
@@ -937,11 +940,9 @@ g}}(JQPM));
         bindEvents: function () {
             var self = this;
 
-            $(window).bind('resize', function () {
+            $(window).unbind('resize.photoMosaic').bind('resize.photoMosaic', function () {
                 self.refresh();
             });
-
-            // $(window).trigger('resize');
         },
 
         refresh: function () {
@@ -1084,7 +1085,7 @@ g}}(JQPM));
 
         shouldAnimate: function () {
             return (
-                this.opts.auto_columns &&
+                this._auto_cols &&
                 this.opts.responsive_transition
             );
         },

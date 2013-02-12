@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.1.3
+Version: 2.2
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
@@ -14,17 +14,21 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 
 add_action('init', array('PhotoMosaic', 'init'));
 
-
 class PhotoMosaic {
 
     // http://daringfireball.net/2010/07/improved_regex_for_matching_urls
     public $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+
+    function version () {
+        return '2.2';
+    }
 
     function init() {
         $options = get_option('photomosaic_options');
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
         add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
+        add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
         wp_register_script( 'photomosaic_jquery', plugins_url('/js/jquery-1.8.2.min.js', __FILE__ ));
         wp_enqueue_script('photomosaic_jquery');
@@ -44,6 +48,8 @@ class PhotoMosaic {
 
         } else if (isset($_GET['page'])) { 
             if ($_GET['page'] == "photoMosaic.php") {
+                wp_enqueue_script( 'wp-pointer' );
+                wp_enqueue_style( 'wp-pointer' );
                 wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic_jquery'));
             }
         }
@@ -52,14 +58,13 @@ class PhotoMosaic {
     function getOptions() {
         $defaults = array(
             'padding' => 2,
-            'columns' => 3,
-            'width' => 300,
+            'columns' => 0,
+            'width' => 0,
             'height' => 0,
             'links' => true,
             'order' => 'rows',
             'link_to_url' => false,
             'external_links' => false,
-            'auto_columns' => false,
             'center' => true,
             'show_loading' => false,
             'loading_transition' => 'fade',
@@ -67,7 +72,11 @@ class PhotoMosaic {
             'lightbox' => true,
             'custom_lightbox' => false,
             'custom_lightbox_name' => 'prettyPhoto',
-            'custom_lightbox_params' => '{}'
+            'custom_lightbox_params' => '{}',
+            // non-js params
+            'has_taken_tour' => array(
+                '2.2' => false
+            )
         );
 
         $options = get_option('photomosaic_options');
@@ -77,9 +86,9 @@ class PhotoMosaic {
             update_option('photomosaic_options', $options);
         } else {
             $options = $options + $defaults; // "+" means dup keys aren't overwritten
+            // for testing the tour
+            // $options['has_taken_tour'] = $defaults['has_taken_tour'];
         }
-
-        $options = PhotoMosaic::adjustDeprecatedOptions($options);
 
         return $options;
     }
@@ -97,6 +106,14 @@ class PhotoMosaic {
                 $options['order'] = 'columns';
             }
             unset($options['force_order']);
+        }
+
+        // 'columns' & 'auto_columns' merged - v2.2
+        if (array_key_exists('auto_columns', $options)) {
+            if ($options['auto_columns']) {
+                $options['columns'] = 0;
+            }
+            unset($options['auto_columns']);
         }
 
         update_option('photomosaic_options', $options);
@@ -121,6 +138,17 @@ class PhotoMosaic {
         add_menu_page('PhotoMosaic', 'PhotoMosaic', 'edit_themes', basename(__FILE__), array('PhotoMosaic', 'renderAdminPage'));
     }
 
+    function ajaxHandler () {
+        $options = PhotoMosaic::getOptions();
+        $has_taken_tour = $options['has_taken_tour'];
+        $params = array(
+            'has_taken_tour' => $has_taken_tour
+        );
+        $params['has_taken_tour'][PhotoMosaic::version()] = ($_POST['dismissed'] === 'true');
+        update_option('photomosaic_options', $params);
+        die('success');
+    }
+
     function shortcode( $atts ) {
         global $post;
         $post_id = intval($post->ID);
@@ -136,7 +164,6 @@ class PhotoMosaic {
             'order'                    => $options['order'],
             'link_to_url'              => $options['link_to_url'],
             'external_links'           => $options['external_links'],
-            'auto_columns'             => $options['auto_columns'],
             'center'                   => $options['center'],
             'show_loading'             => $options['show_loading'],
             'loading_transition'       => $options['loading_transition'],
@@ -177,6 +204,12 @@ class PhotoMosaic {
             $opts_width = intval($width);
         }
 
+        if(intval($columns) == 0){
+            $opts_columns = "'auto'";
+        } else {
+            $opts_columns = intval($columns);
+        }
+
         if(intval($center)){
             $opts_center = "true";
         } else {
@@ -193,12 +226,6 @@ class PhotoMosaic {
             $opts_external_links = "true";
         } else {
             $opts_external_links = "false";
-        }
-
-        if(intval($auto_columns)){
-            $opts_auto_columns = "true";
-        } else {
-            $opts_auto_columns = "false";
         }
 
         if(intval($show_loading)){
@@ -232,13 +259,12 @@ class PhotoMosaic {
                     $("#photoMosaicTarget'.$unique.'").photoMosaic({
                         gallery: PMalbum'.$unique.',
                         padding: '. intval($padding) .',
-                        columns: '. intval($columns) .',
+                        columns: '. $opts_columns .',
                         width: '. $opts_width .',
                         height: '. $opts_height .',
                         center: '. $opts_center .',
                         links: '. $opts_links .',
                         external_links: '. $opts_external_links .',
-                        auto_columns: '. $opts_auto_columns .',
                         show_loading: '. $opts_show_loading .',
                         loading_transition: "'. $loading_transition .'",
                         responsive_transition: '. $opts_responsive_transition .',
@@ -389,8 +415,6 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-
-
     function galleryFromNextGen($galleryID, $link_to_url) {
         global $wpdb, $post;
         $output_buffer ='';
@@ -433,6 +457,23 @@ class PhotoMosaic {
 
     function renderAdminPage() {
         $options = PhotoMosaic::getOptions();
+        $options = PhotoMosaic::adjustDeprecatedOptions($options);
+
+        ?>
+            <script>
+                if (!window.PhotoMosaic) {
+                    window.PhotoMosaic = {};
+                }
+            </script>
+        <?php
+            if ( get_bloginfo( 'version' ) > '3.3' ) { // Pointers availble after 3.3
+                $has_taken_tour = $options['has_taken_tour'][PhotoMosaic::version()]
+                ?>
+                <script>
+                    window.PhotoMosaic.has_taken_tour = <?php echo (int)$has_taken_tour; ?>;
+                </script>
+                <?php
+            }
         ?>
         <style>
             h1 {
@@ -445,8 +486,38 @@ class PhotoMosaic {
             h3 { padding-top:1em; }
             .tab { margin-top:2em; padding:0 2em; }
             .tab form label { font-weight:bold; }
+
+            form h3,
+            h3.subhead { clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6; }
+
+            .photomosaic ul { list-style:disc; margin-left:2em; }
+
+            form .set { overflow:hidden; }
+            form .margin { margin-top:2em; }
+            form .field { float:left; width:25%; }
+            form .info{ font-size:11px; color:#666666; padding:0 30px 0 3px; display:block; }
+
+            .question { max-width:650px; margin-bottom:3em; }
+            .question p { margin-left:2em; }
+            .question ol li { margin-left:2em; }
+            .question ul { margin-left:3em; }
+            .question ol ul { margin-top:0.3em; margin-left:0; }
+            .question h4 { margin:2em 0 0 2em; }
+            .question blockquote { margin-left:4em; font-style:italic; color:#929292; }
+            .jumplinks {
+                background:#f1f1f1; border:1px solid #dadada; float:right; margin:0 0 1em 1em; padding:1em; max-width:30%;
+                -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
+            }
+            .jumplinks h3 { padding:0.2em 0 0.2em 0; margin-top:0; }
+            .jumplinks ul { margin:0 0 0 1.5em; }
+            .jumplinks a { text-decoration:none; }
+
+            .updated h3 { padding:0; }
+
+            .wp-pointer-4 .wp-pointer-arrow,
+            .wp-pointer-5 .wp-pointer-arrow { left:145px; }
         </style>
-        <div class="wrap">
+        <div class="wrap photomosaic">
             <h1>PhotoMosaic</h1>
 
             <h2 class="nav-tab-wrapper">
@@ -456,35 +527,22 @@ class PhotoMosaic {
                 <a class="nav-tab" href="#tab-widget">Sidebar Widget</a>
                 <a class="nav-tab" href="#tab-about">About</a>
                 <a class="nav-tab" href="#tab-faq">FAQ</a>
+                <a class="nav-tab" href="#tab-whatsnew">What's New</a>
             </h2>
 
-            <style>
-                form h3 { clear:both; padding-bottom:5px; margin-bottom:0; border-bottom:solid 1px #e6e6e6; }
-                form .set { overflow:hidden; }
-                form .margin { margin-top:2em; }
-                form .field { float:left; width:25%; }
-                form .info{ font-size:11px; color:#666666; padding:0 30px 0 3px; display:block; }
-                .question { max-width:650px; margin-bottom:3em; }
-                .question p { margin-left:2em; }
-                .question ol li { margin-left:2em; }
-                .question ul { list-style:disc; list-style-position:inside; margin-left:3em; }
-                .question ol ul { margin-top:0.3em; margin-left:0; }
-                .question h4 { margin:2em 0 0 2em; }
-                .question blockquote { margin-left:4em; font-style:italic; color:#929292; }
-                .jumplinks {
-                    background:#f1f1f1; border:1px solid #dadada; float:right; margin:0 0 1em 1em; padding:1em; max-width:30%;
-                    -webkit-border-radius:3px; -moz-border-radius:3px; border-radius:3px;
-                }
-                .jumplinks h3 { padding:0.2em 0 0.2em 0; margin-top:0; }
-                .jumplinks ul { list-style:disc; margin:0 0 0 1.5em; }
-                .jumplinks a { text-decoration:none; }
-            </style>
-
             <div class="tab" id="tab-form">
+                <div id="whatsnew-launch" class="updated below-h2" style="display:none;">
+                    <h3>Welcome to PhotoMosaic v.2.2</h3>
+                    <p>There have been a number of changes to PhotoMosaic that you should be aware of.</p>
+                    <p>
+                        <a href="#" id="whatsnew-tour" class="button button-primary">See what's changed</a>
+                        <a href="#" id="whatsnew-dismiss" class="button">Dismiss</a>
+                    </p>
+                </div>
                 <p>
                     These settings will be applied to all of your <code>[photomosaic]</code> galleries.
                     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
-                    Any options not specified in an gallery instance will default the settings chosen here.
+                    Any options not specified on a shortcode will default the settings chosen here.
                 </p>
                 <ul id="photomosaic-error-list"></ul>
                 <form method="post" action="#" enctype="multipart/form-data" id="photomosaic-options">
@@ -501,6 +559,10 @@ class PhotoMosaic {
                             <span class="info">set to <b>0</b> for auto-sizing</span>
                         </div>
                         <div class="field">
+                            <p><label>Padding <i>(in pixels)</i></label></p>
+                            <p><input type="text" name="padding" value="<?php echo($options['padding']); ?>" /></p>
+                        </div>
+                        <div class="field">
                             <p>
                                 <label><input name="center" type="checkbox" value="1" <?php if($options['center']) echo "checked='checked'"; ?> /> Center Galleries</label>
                             </p>
@@ -511,23 +573,14 @@ class PhotoMosaic {
                     </div>
                     <div class="set margin">
                         <div class="field">
-                            <p><label>Padding <i>(in pixels)</i></label></p>
-                            <p><input type="text" name="padding" value="<?php echo($options['padding']); ?>" /></p>
-                        </div>
-                        <div class="field">
                             <p><label>Columns</label></p>
                             <p><input type="text" name="columns" value="<?php echo($options['columns']); ?>" /></p>
-                        </div>
-                        <div class="field">
-                            <p>
-                                <label><input name="auto_columns" type="checkbox" value="1" <?php if($options['auto_columns']) echo "checked='checked'"; ?> /> Auto-Columns</label>
-                            </p>
                             <span class="info">
-                                causes PhotoMosaic to calculate the optimal number of columns given the number of images in the gallery and the size of its container
+                                set to <b>0</b> for auto-columns
                                     <br/><br/>
-                                ignores the <b>columns</b> setting
+                                auto-columns has PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container
                                     <br/><br/>
-                                the <b>width</b> setting is used as max-width
+                                auto-columns is fully responsive
                             </span>
                         </div>
                     </div>
@@ -683,12 +736,13 @@ rows   |  columns |  masonry
             </div>
             
             <div class="tab" id="tab-shortcode">
-                <h3 style="clear:both; padding-bottom:5px; margin:0; border-bottom:solid 1px #e6e6e6">Shortcode : Inline Settings</h3>
+                <h2>Shortcode</h2>
+                <h3 class="subhead">Inline Settings</h3>
                 <p>
                     The PhotoMosaic shortcode has full support for inline attributes (eg. <code>[photomosaic width="600" height="400" random="1"]</code>). 
                     Any inline setting will override the default values set on the "Global Settings" page.  Available settings:
                 </p>
-                <ul style="list-style:disc; margin:0 0 0 20px;">
+                <ul>
                     <li><b>id</b> : the post/page id for the desired gallery</li>
                     <li><b>nggid</b> : the ID for the desired NextGen gallery</li>
                     <li><b>padding</b> : any number <i>(in pixels)</i></li>
@@ -700,7 +754,6 @@ rows   |  columns |  masonry
                     <li><b>order</b> : rows, columns, masonry, random</li>
                     <li><b>link_to_url</b> : 1 = yes, 0 = no</li>
                     <li><b>external_links</b> : 1 = yes, 0 = no</li>
-                    <li><b>auto_columns</b> : 1 = yes, 0 = no</li>
                     <li><b>show_loading</b> : 1 = yes, 0 = no</li>
                     <li><b>loading_transition</b> : none, fade, scale-up|down, slide-up|down|left|right, custom</li>
                     <li><b>responsive_transition</b> :  1 = yes, 0 = no</li>
@@ -713,12 +766,12 @@ rows   |  columns |  masonry
             </div>
             
             <div class="tab" id="tab-templatetag">
-                <h3 style="clear:both; padding-bottom:5px; margin:0; border-bottom:solid 1px #e6e6e6">Template Tag</h3>
+                <h2>Template Tag</h2>
                 <p>
                     PhotoMosaic also supports Wordpress Template Tags (<code>wp_photomosaic()</code>).  This can be added to your theme's
                     template files to automatically add a gallery to every page.
                 </p>
-                <p>The PhotoMosaic template tag accepts an array of the attributes listed above.  For Example:</p>
+                <p>The PhotoMosaic template tag accepts an array of the attributes listed on the "Shortcode" tab.  For Example:</p>
 <pre><code style="display:block">   $atts = array(
         'id' => 1,
         'columns' => 3
@@ -727,7 +780,7 @@ rows   |  columns |  masonry
             </div>
 
             <div class="tab" id="tab-widget">
-                <h3 style="clear:both; padding-bottom:5px; margin:0; border-bottom:solid 1px #e6e6e6">Sidebar Widget</h3>
+                <h2>Sidebar Widget</h2>
                 <p>
                     To use PhotoMosaic in your Widget-enabled sidebar simply add a standard text widget and 
                     add a <code>[photomosaic]</code> shortcode to the widget's text (exactly as you would in a page or post).
@@ -736,7 +789,7 @@ rows   |  columns |  masonry
 
             <div class="tab" id="tab-about">
                 <h2>About</h2>
-                <h3>Current Version : 2.1.3</h3>
+                <h3>Current Version : <?php echo PhotoMosaic::version(); ?></h3>
                 <p>
                     PhotoMosaic takes advantage of Wordpress' built-in gallery feature.  Simply add the <code>[photomosaic]</code> shortcode to your 
                     post/page content and any images attached to that post/page will be displayed as a PhotoMosaic gallery.
@@ -923,6 +976,23 @@ rows   |  columns |  masonry
                         <li>go to the post where you want to insert your gallery and add <code>[photomosaic nggid="*"]</code> (replacing the * with your gallery's ID)</li>
                     </ol>
                 </div>
+            </div>
+
+            <div class="tab" id="tab-whatsnew">
+                <h2>What's New in v<?php echo PhotoMosaic::version(); ?></h2>
+                <ul>
+                    <li>New Layout : now uses a much more flexible Absolute Positioned layout (rather than the old fixed-markup layout).</li>
+                    <li>Actively Responsive : used to only be Passively Responsive (required a reload to see changes)</li>
+                    <li>New Auto-Columns Logic : now generates mosaics with larger images</li>
+                    <li>New "Order" Setting : replaces the akward "Force Order" and "Randomize" settings</li>
+                    <li>New "Responsive Transition" Setting : choose whether responsive reordering animates</li>
+                    <li>Deleted "Force Order" Setting : replaced with new "Order" setting</li>
+                    <li>Deleted "Randomize" Setting : replaced with new "Order" setting</li>
+                    <li>Deleted "Auto-Columns" Setting : merged with "Columns" setting</li>
+                    <li>Updated "Columns" Setting : folded in "Auto-Columns" setting</li>
+                    <li>New "FAQ" Section</li>
+                    <li>New "What's New" Section</li>
+                </ul>
             </div>
 
         </div>

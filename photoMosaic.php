@@ -88,6 +88,7 @@ class PhotoMosaic {
             $options = $options + $defaults; // "+" means dup keys aren't overwritten
             // for testing the tour
             // $options['has_taken_tour'] = $defaults['has_taken_tour'];
+            // update_option('photomosaic_options', $options);
         }
 
         return $options;
@@ -127,11 +128,12 @@ class PhotoMosaic {
 
             foreach ($options as $k => $v) {
                 if ( !array_key_exists($k, $_POST) ) {
-                    $_POST[$k] = "";
+                    $_POST[$k] = $options[$k];
                 }
-                $options[$k] = trim( stripslashes( $_POST[$k] ) );
+                if (is_string($_POST[$k])) {
+                    $options[$k] = trim( stripslashes( $_POST[$k] ) );
+                }
             }
-
             update_option('photomosaic_options', $options);
         }
 
@@ -146,7 +148,7 @@ class PhotoMosaic {
         );
         $params['has_taken_tour'][PhotoMosaic::version()] = ($_POST['dismissed'] === 'true');
         update_option('photomosaic_options', $params);
-        die('success');
+        die(json_encode($params));
     }
 
     function shortcode( $atts ) {

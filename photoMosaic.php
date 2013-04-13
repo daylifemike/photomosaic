@@ -17,7 +17,7 @@ add_action('init', array('PhotoMosaic', 'init'));
 class PhotoMosaic {
 
     // http://daringfireball.net/2010/07/improved_regex_for_matching_urls
-    public $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+    public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
         return '2.2';
@@ -376,6 +376,8 @@ class PhotoMosaic {
         }
 
         if ( !empty($attachments) ) {
+            $pattern = PhotoMosaic::$URL_PATTERN;
+
             $i = 0;
             $len = count($attachments);
 
@@ -388,15 +390,16 @@ class PhotoMosaic {
                 $image_caption = esc_attr($_post->post_excerpt);
                 $image_description = $_post->post_content; // this is where we hide a link_url
 
-                // people do stupid things
-                // if the image_description isn't a URL it should be escaped to prevent JS errors
-                if (!preg_match('/^PhotoMosaic::$URL_PATTERN$/', $image_description)) {
-                    $image_description = esc_attr($image_description);
-                }
-
-                if( intval($link_to_url) ) {
-                    $url_data = ',"url": "' . $image_description . '"';
+                // is the description a URL
+                if (preg_match("#$pattern#i", $image_description)) {
+                    if( intval($link_to_url) ) {
+                        $url_data = ',"url": "' . $image_description . '"';
+                    } else {
+                        $image_description = esc_attr($image_description);
+                        $url_data = '';
+                    }
                 } else {
+                    $image_description = esc_attr($image_description);
                     $url_data = '';
                 }
 
@@ -427,6 +430,8 @@ class PhotoMosaic {
 
     function galleryFromNextGen($galleryID, $link_to_url) {
         global $wpdb, $post;
+        $pattern = PhotoMosaic::$URL_PATTERN;
+
         $output_buffer ='';
 
         $picturelist = nggdb::get_gallery($galleryID);
@@ -434,22 +439,25 @@ class PhotoMosaic {
         $i = 0;
         $len = count($picturelist);
         foreach ($picturelist as $key => $picture) {
-            if( intval($link_to_url) ) {
-                $str = $picture->description;
-                $pattern = '#(www\.|https?:\/\/){1}[a-zA-Z0-9]{2,}\.[a-zA-Z0-9]{2,}(\S*)#i';
-                if ( preg_match_all($pattern, $str, $matches, PREG_PATTERN_ORDER) ) {
-                    $url_data = ',"url": "' . $matches[0][0] . '"';
+            $image_description = $picture->description;
+
+            // is the description a URL
+            if (preg_match("#$pattern#i", $image_description)) {
+                if( intval($link_to_url) ) {
+                    $url_data = ',"url": "' . $image_description . '"';
                 } else {
+                    $image_description = esc_attr($image_description);
                     $url_data = '';
                 }
             } else {
+                $image_description = esc_attr($image_description);
                 $url_data = '';
             }
 
             $output_buffer .='{
                 "src": "' . $picture->imageURL . '",
                 "thumb": "' . $picture->thumbURL . '",
-                "caption": "' . $picture->description . '",
+                "caption": "' . $image_description . '",
                 "width": "' . $picture->meta_data['width'] . '",
                 "height": "' . $picture->meta_data['height'] . '"
                 ' . $url_data . '

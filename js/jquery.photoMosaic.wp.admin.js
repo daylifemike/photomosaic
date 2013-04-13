@@ -40,6 +40,7 @@
         }).eq(0).click();
 
         // WHAT'S NEW TOUR
+        /*
         if (!window.PhotoMosaic.has_taken_tour) {
             var $container = $('#whatsnew-launch');
             var $launch = $container.find('#whatsnew-tour');
@@ -181,6 +182,7 @@
                 }, 0);
             }
         }
+        */
 
         // FORM
         var $lb = $('input[name="lightbox"]'),

@@ -66,17 +66,14 @@ class PhotoMosaic {
             'link_to_url' => false,
             'external_links' => false,
             'center' => true,
+            'prevent_crop' => false,
             'show_loading' => false,
             'loading_transition' => 'fade',
             'responsive_transition' => true,
             'lightbox' => true,
             'custom_lightbox' => false,
             'custom_lightbox_name' => 'prettyPhoto',
-            'custom_lightbox_params' => '{}',
-            // non-js params
-            'has_taken_tour' => array(
-                '2.2' => false
-            )
+            'custom_lightbox_params' => '{}'
         );
 
         $options = get_option('photomosaic_options');
@@ -86,9 +83,6 @@ class PhotoMosaic {
             update_option('photomosaic_options', $options);
         } else {
             $options = $options + $defaults; // "+" means dup keys aren't overwritten
-            // for testing the tour
-            // $options['has_taken_tour'] = $defaults['has_taken_tour'];
-            // update_option('photomosaic_options', $options);
         }
 
         return $options;
@@ -117,6 +111,11 @@ class PhotoMosaic {
             unset($options['auto_columns']);
         }
 
+        // 'has_taken_tour' has been removed - v2.3
+        if (array_key_exists('has_taken_tour', $options)) {
+            unset($options['has_taken_tour']);
+        }
+
         update_option('photomosaic_options', $options);
 
         return $options;
@@ -128,10 +127,16 @@ class PhotoMosaic {
 
             foreach ($options as $k => $v) {
                 if ( !array_key_exists($k, $_POST) ) {
-                    $_POST[$k] = $options[$k];
+                    if (intval($options[$k]) || empty($options[$k])) {
+                        $_POST[$k] = 0;
+                    } else {
+                        $_POST[$k] = $options[$k];
+                    }
                 }
                 if (is_string($_POST[$k])) {
                     $options[$k] = trim( stripslashes( $_POST[$k] ) );
+                } else {
+                    $options[$k] = $_POST[$k];
                 }
             }
             update_option('photomosaic_options', $options);
@@ -141,14 +146,9 @@ class PhotoMosaic {
     }
 
     function ajaxHandler () {
+        // not currently being used
         $options = PhotoMosaic::getOptions();
-        $has_taken_tour = $options['has_taken_tour'];
-        $params = array(
-            'has_taken_tour' => $has_taken_tour
-        );
-        $params['has_taken_tour'][PhotoMosaic::version()] = ($_POST['dismissed'] === 'true');
-        update_option('photomosaic_options', $params);
-        die(json_encode($params));
+        die(json_encode($options));
     }
 
     function shortcode( $atts ) {
@@ -167,6 +167,7 @@ class PhotoMosaic {
             'link_to_url'              => $options['link_to_url'],
             'external_links'           => $options['external_links'],
             'center'                   => $options['center'],
+            'prevent_crop'             => $options['prevent_crop'],
             'show_loading'             => $options['show_loading'],
             'loading_transition'       => $options['loading_transition'],
             'responsive_transition'    => $options['responsive_transition'],
@@ -218,6 +219,12 @@ class PhotoMosaic {
             $opts_center = "false";
         }
 
+        if(intval($prevent_crop)){
+            $opts_prevent_crop = "true";
+        } else {
+            $opts_prevent_crop = "false";
+        }
+
         if(intval($links)){
             $opts_links = "true";
         } else {
@@ -265,6 +272,7 @@ class PhotoMosaic {
                         width: '. $opts_width .',
                         height: '. $opts_height .',
                         center: '. $opts_center .',
+                        prevent_crop: '. $opts_prevent_crop .',
                         links: '. $opts_links .',
                         external_links: '. $opts_external_links .',
                         show_loading: '. $opts_show_loading .',
@@ -460,23 +468,12 @@ class PhotoMosaic {
     function renderAdminPage() {
         $options = PhotoMosaic::getOptions();
         $options = PhotoMosaic::adjustDeprecatedOptions($options);
-
         ?>
-            <script>
-                if (!window.PhotoMosaic) {
-                    window.PhotoMosaic = {};
-                }
-            </script>
-        <?php
-            if ( get_bloginfo( 'version' ) > '3.3' ) { // Pointers availble after 3.3
-                $has_taken_tour = $options['has_taken_tour'][PhotoMosaic::version()]
-                ?>
-                <script>
-                    window.PhotoMosaic.has_taken_tour = <?php echo (int)$has_taken_tour; ?>;
-                </script>
-                <?php
+        <script>
+            if (!window.PhotoMosaic) {
+                window.PhotoMosaic = {};
             }
-        ?>
+        </script>
         <style>
             h1 {
                 margin: 0.5em 200px 0 0;
@@ -533,14 +530,6 @@ class PhotoMosaic {
             </h2>
 
             <div class="tab" id="tab-form">
-                <div id="whatsnew-launch" class="updated below-h2" style="display:none;">
-                    <h3>Welcome to PhotoMosaic v.2.2</h3>
-                    <p>There have been a number of changes to PhotoMosaic that you should be aware of.</p>
-                    <p>
-                        <a href="#" id="whatsnew-tour" class="button button-primary">See what's changed</a>
-                        <a href="#" id="whatsnew-dismiss" class="button">Dismiss</a>
-                    </p>
-                </div>
                 <p>
                     These settings will be applied to all of your <code>[photomosaic]</code> galleries.
                     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
@@ -677,6 +666,16 @@ rows   |  columns |  masonry
                                 <label><input name="responsive_transition" type="checkbox" value="1" <?php if($options['responsive_transition']) echo "checked='checked'"; ?> /> Show Responsive Transition</label>
                             </p>
                             <span class="info">animates image positions during browser resize</span>
+                        </div>
+                        <div class="field">
+                            <p>
+                                <label><input name="prevent_crop" type="checkbox" value="1" <?php if($options['prevent_crop']) echo "checked='checked'"; ?> /> Prevent Image Cropping</label>
+                            </p>
+                            <span class="info">
+                                prevents images from being cropped
+                                    <br><br>
+                                causes the bottom of the mosaic to be uneven / jagged
+                            </span>
                         </div>
                     </div>
 

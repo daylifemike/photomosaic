@@ -123,6 +123,7 @@ g}}(JQPM));
             external_links: false,
             order : 'rows', // rows, columns, masonry, random
             center : true,
+            prevent_crop : false,
             show_loading : false,
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
             responsive_transition : true,
@@ -221,9 +222,12 @@ g}}(JQPM));
                 }
             }
             if (this.opts.gallery.length - 1 < this.current_album) {
-                this.log.error("'start_album' uses a 0-index (0 = the first album). \
-                    No album was found at the specified index (" + this.current_album + ")");
+                this.log.error("'start_album' uses a 0-index (0 = the first album). No album was found at the specified index (" + this.current_album + ")");
                 return;
+            }
+            if (this.opts.prevent_crop && this.opts.height !== 'auto') {
+                this.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + this.opts.height + ") is being ignored so as to prevent cropping.");
+                this.opts.height = "auto";
             }
 
             this.opts.gallery = this.getGalleryData();
@@ -404,8 +408,8 @@ g}}(JQPM));
 
             // normalize column heights
             var shortest_col = Math.min.apply( Math, col_heights );
-                var tallest_col = Math.max.apply( Math, col_heights );
-                var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
+                // var tallest_col = Math.max.apply( Math, col_heights );
+                // var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
                 json = this.adjustHeights(json, shortest_col);
@@ -521,24 +525,33 @@ g}}(JQPM));
             var adjusted_height = 0;
 
             json = this.markLastColumn(json);
-            json.height = target_height;
 
             for (var i = 0; i < json.columns.length; i++) {
                 column = json.columns[i];
                 json = this.markLastImageInColumn(json, i);
 
-                column = this.scaleColumn(column, target_height);
+                if (this.opts.prevent_crop) {
+                    column = this.scaleColumn(column, column.height);
+                } else {
+                    column = this.scaleColumn(column, target_height);
+                }
 
                 column_heights.push(column.height);
 
                 json.columns[i] = column;
             }
 
-            adjusted_height = Math.min.apply(Math, column_heights);
+            if (this.opts.prevent_crop) {
+                adjusted_height = Math.max.apply(Math, column_heights);
+            } else {
+                adjusted_height = Math.min.apply(Math, column_heights);
+            }
 
             json.height = adjusted_height;
 
-            json = this.flattenColumns(json, adjusted_height);
+            if (!this.opts.prevent_crop) {
+                json = this.flattenColumns(json, adjusted_height);
+            }
 
             json = this.adjustImagesToConstraint(json);
 

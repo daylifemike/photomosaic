@@ -297,7 +297,11 @@ class PhotoMosaic {
                         $output_buffer .='
                             modal_ready_callback : function($photomosaic){
                                 $("a[rel^=\'pmlightbox\']", $photomosaic).prettyPhoto({
-                                    overlay_gallery: false
+                                    overlay_gallery: false,
+                                    slideshow: false,
+                                    theme: "pp_default",
+                                    deeplinking: false,
+                                    social_tools: ""
                                 });
                             },
                         ';

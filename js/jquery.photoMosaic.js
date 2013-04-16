@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.2 starts around line ~#70
+ *  PhotoMosaic v2.3 starts around line ~#70
  */
 
 (function (window) {
@@ -65,10 +65,9 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.2
+    jQuery photoMosaic v2.3
     requires jQuery 1.7+, JSTween (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
-
 (function ($) {
     // for debugging
     if (window.PhotoMosaic) {
@@ -80,7 +79,7 @@ g}}(JQPM));
 
     var Plugin = function (el, options, i) {
         this._name = pluginName;
-        this.version = '2.2';
+        this.version = '2.3';
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -327,7 +326,7 @@ g}}(JQPM));
                     image.path = image.url;
                     image.caption = '';
                     image.external = self.opts.external_links;
-                    delete image.modal;
+                    // delete image.modal;
                 } else if (self.opts.links) {
                     image.link = true;
                     image.path = image.full;

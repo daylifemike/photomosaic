@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
-        return '2.2';
+        return '2.3';
     }
 
     function init() {
@@ -30,7 +30,7 @@ class PhotoMosaic {
         add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
-        wp_register_script( 'photomosaic_jquery', plugins_url('/js/jquery-1.8.2.min.js', __FILE__ ));
+        wp_register_script( 'photomosaic_jquery', plugins_url('/js/jquery-1.9.1.min.js', __FILE__ ));
         wp_enqueue_script('photomosaic_jquery');
 
         if (!is_admin()) {
@@ -71,8 +71,10 @@ class PhotoMosaic {
             'loading_transition' => 'fade',
             'responsive_transition' => true,
             'lightbox' => true,
+            'lightbox_rel' => 'pmlightbox',
+            'lightbox_group' => true,
             'custom_lightbox' => false,
-            'custom_lightbox_name' => 'prettyPhoto',
+            'custom_lightbox_name' => '',
             'custom_lightbox_params' => '{}'
         );
 
@@ -139,10 +141,13 @@ class PhotoMosaic {
                     $options[$k] = $_POST[$k];
                 }
             }
+
             update_option('photomosaic_options', $options);
+
+            $_POST['message'] = "Settings Updated";
         }
 
-        add_menu_page('PhotoMosaic', 'PhotoMosaic', 'edit_themes', basename(__FILE__), array('PhotoMosaic', 'renderAdminPage'));
+        add_menu_page('PhotoMosaic', 'PhotoMosaic', 'update_plugins', basename(__FILE__), array('PhotoMosaic', 'renderAdminPage'));
     }
 
     function ajaxHandler () {
@@ -172,6 +177,8 @@ class PhotoMosaic {
             'loading_transition'       => $options['loading_transition'],
             'responsive_transition'    => $options['responsive_transition'],
             'lightbox'                 => $options['lightbox'],
+            'lightbox_rel'             => $options['lightbox_rel'],
+            'lightbox_group'           => $options['lightbox_group'],
             'custom_lightbox'          => $options['custom_lightbox'],
             'custom_lightbox_name'     => $options['custom_lightbox_name'],
             'custom_lightbox_params'   => $options['custom_lightbox_params'],
@@ -249,18 +256,10 @@ class PhotoMosaic {
             $opts_responsive_transition = "false";
         }
 
-        if(intval($lightbox)){
-            $lightbox = "true";
+        if(intval($lightbox_group)){
+            $opts_lightbox_group = "true";
         } else {
-            $lightbox = "false";
-        }
-
-        if(intval($custom_lightbox)){
-            $custom_lightbox = "true";
-            // just in case
-            $lightbox = "false";
-        } else {
-            $custom_lightbox = "false";
+            $opts_lightbox_group = "false";
         }
 
         $output_buffer .='
@@ -278,6 +277,8 @@ class PhotoMosaic {
                         show_loading: '. $opts_show_loading .',
                         loading_transition: "'. $loading_transition .'",
                         responsive_transition: '. $opts_responsive_transition .',
+                        modal_name: "' . $options['lightbox_rel'] . '",
+                        modal_group: ' . $opts_lightbox_group . ',
                 ';
 
                 $output_buffer .='
@@ -289,14 +290,10 @@ class PhotoMosaic {
                 ';
 
                 if($options['lightbox'] || $options['custom_lightbox']) {
-                    $output_buffer .='
-                        modal_name: "pmlightbox",
-                        modal_group: true,';
-
                     if($options['lightbox']) {
                         $output_buffer .='
                             modal_ready_callback : function($photomosaic){
-                                $("a[rel^=\'pmlightbox\']", $photomosaic).prettyPhoto({
+                                $("a[rel^=\''.$options['lightbox_rel'].'\']", $photomosaic).prettyPhoto({
                                     overlay_gallery: false,
                                     slideshow: false,
                                     theme: "pp_default",
@@ -308,7 +305,7 @@ class PhotoMosaic {
                     } elseif ($options['custom_lightbox']) {
                         $output_buffer .='
                             modal_ready_callback : function($photomosaic){
-                                jQuery("a[rel^=\'pmlightbox\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
+                                jQuery("a[rel^=\''.$options['lightbox_rel'].'\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
                             },
                         ';
                     }
@@ -460,7 +457,7 @@ class PhotoMosaic {
 
             $output_buffer .='{
                 "src": "' . $picture->imageURL . '",
-                "thumb": "' . $picture->thumbURL . '",
+                "thumb": "' . $picture->imageURL . '",
                 "caption": "' . $image_description . '",
                 "width": "' . $picture->meta_data['width'] . '",
                 "height": "' . $picture->meta_data['height'] . '"
@@ -503,6 +500,21 @@ class PhotoMosaic {
 
             .photomosaic ul { list-style:disc; margin-left:2em; }
 
+            #photomosaic-error-list { display:none; }
+                #photomosaic-error-list ul { list-style:none; margin-left:0; }
+                #photomosaic-error-list ul li { list-style:disc; margin-left:2em; }
+                    #photomosaic-error-list ul li.header { list-style:none; margin-left:0; font-size:16px; color:#cc0000; }
+
+            #photomosaic-notes { display:none; margin-top:30px; }
+                #photomosaic-notes .header { font-size:16px; color:#9f6000; }
+
+            .message-info {
+                background:#d1e4f3; /*color:#00529b;*/ border: 1px solid #4d8fcb; padding:0 0.6em; margin:5px 15px 15px 0;
+                -webkit-border-radius:3px;
+                -moz-border-radius:3px;
+                border-radius:3px;
+            }
+
             form .set { overflow:hidden; }
             form .margin { margin-top:2em; }
             form .field { float:left; width:25%; }
@@ -510,8 +522,9 @@ class PhotoMosaic {
 
             .question { max-width:650px; margin-bottom:3em; }
             .question p { margin-left:2em; }
+            .question li p { margin-left:0; }
             .question ol li { margin-left:2em; }
-            .question ul { margin-left:3em; }
+            .question ul { margin-left:4em; }
             .question ol ul { margin-top:0.3em; margin-left:0; }
             .question h4 { margin:2em 0 0 2em; }
             .question blockquote { margin-left:4em; font-style:italic; color:#929292; }
@@ -524,6 +537,8 @@ class PhotoMosaic {
             .jumplinks a { text-decoration:none; }
 
             .updated h3 { padding:0; }
+
+            pre code { display:block; }
 
             .wp-pointer-4 .wp-pointer-arrow,
             .wp-pointer-5 .wp-pointer-arrow { left:145px; }
@@ -547,8 +562,18 @@ class PhotoMosaic {
                     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
                     Any options not specified on a shortcode will default the settings chosen here.
                 </p>
-                <ul id="photomosaic-error-list"></ul>
-                <form method="post" action="#" enctype="multipart/form-data" id="photomosaic-options">
+
+                <div id="photomosaic-error-list" class="error below-h2">
+                    <ul></ul>
+                </div>
+
+                <?php if (isset($_POST['message'])) { ?>
+                    <div class="updated below-h2">
+                        <p><?php echo($_POST['message']); ?></p>
+                    </div>
+                <?php } ?>
+
+                <form method="post" enctype="multipart/form-data" id="photomosaic-options">
                     <h3>Layout</h3>
                     <div class="set">
                         <div class="field">
@@ -704,13 +729,43 @@ rows   |  columns |  masonry
                             </span>
                         </div>
                         <div class="field">
+                            <p><label>Lightbox REL</label></p>
+                            <p><input type="text" name="lightbox_rel" value="<?php echo($options['lightbox_rel']); ?>" /></p>
+                            <span class="info">
+                                the string used in the image/link REL attribute (rel="pmlightbox")
+                                    </br></br>
+                                alphanumerics only (a-z, A-Z, 0-9)
+                                    </br></br>
+                                applies to <strong>Default</strong> and <strong>Custom</strong> lightboxes
+                            </span>
+                        </div>
+                        <div class="field">
+                            <p>
+                                <label><input name="lightbox_group" type="checkbox" value="1" <?php if($options['lightbox_group']) echo "checked='checked'"; ?> /> Group Images</label>
+                            </p>
+                            <span class="info">
+                                allows the lightbox to step through the images in the gallery without having to close between each image
+                                    </br></br>
+                                appends a bracketed string to the <strong>Lightbox REL</strong> (rel="pmlightbox[group1]")
+                                    </br></br>
+                                applies to <strong>Default</strong> and <strong>Custom</strong> lightboxes
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="set margin message-info">
+                        <p>Please read the <a class="combo-link" href="#tab-faq?customlightbox">FAQ ("How do I use a Custom Lightbox")</a> for help integrating PhotoMosaic with your existing lightbox plugin</p>
+                    </div>
+
+                    <div class="set margin">
+                        <div class="field">
                             <p>
                                 <label><input name="custom_lightbox" type="checkbox" value="1" <?php if($options['custom_lightbox']) echo "checked='checked'"; ?> /> Use Custom Lightbox</label>
                             </p>
                             <span class="info">allows you to specify your own lightbox and params</span>
                         </div>
                         <div class="field">
-                            <p><label>Custom Lightbox Name</label></p>
+                            <p><label>Custom Lightbox Function Name</label></p>
                             <p><input type="text" name="custom_lightbox_name" value="<?php echo($options['custom_lightbox_name']); ?>" /></p>
                             <span class="info">
                                 this is the name of the JS function called to activate your lightbox <br><i>(ie: prettyPhoto, fancybox, fancyZoom, facebox)</i>
@@ -742,7 +797,13 @@ rows   |  columns |  masonry
                         </div>
                     </div>
 
-                    <p style="margin-top:30px;">
+                    <div id="photomosaic-notes">
+                        <div class="updated below-h2">
+                            <p class="header">FYI</p>
+                        </div>
+                    </div>
+
+                    <p>
                         <input class="button-primary" type="submit" name="photomosaic_save" value="Save Changes" />
                     </p>
                 </form>
@@ -763,6 +824,7 @@ rows   |  columns |  masonry
                     <li><b>width</b> : any number <i>(in pixels)</i></li>
                     <li><b>height</b> : any number <i>(in pixels)</i></li>
                     <li><b>center</b> : 1 = yes, 0 = no</li>
+                    <li><b>prevent_crop</b> : 1 = yes, 0 = no</li>
                     <li><b>links</b> : 1 = yes, 0 = no</li>
                     <li><b>order</b> : rows, columns, masonry, random</li>
                     <li><b>link_to_url</b> : 1 = yes, 0 = no</li>
@@ -771,6 +833,8 @@ rows   |  columns |  masonry
                     <li><b>loading_transition</b> : none, fade, scale-up|down, slide-up|down|left|right, custom</li>
                     <li><b>responsive_transition</b> :  1 = yes, 0 = no</li>
                     <li><b>lightbox</b> : 1 = yes, 0 = no</li>
+                    <li><b>lightbox_rel</b> : any alphanumeric string</li>
+                    <li><b>lightbox_group</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox</b> : 1 = yes, 0 = no</li>
                     <li><b>custom_lightbox_name</b> : js function name <i>(eg: prettyPhoto)</i></li>
                     <li><b>custom_lightbox_params</b> : js object passed to the above function <i>(eg: {theme:'darkness'})</i></li>
@@ -785,11 +849,12 @@ rows   |  columns |  masonry
                     template files to automatically add a gallery to every page.
                 </p>
                 <p>The PhotoMosaic template tag accepts an array of the attributes listed on the "Shortcode" tab.  For Example:</p>
-<pre><code style="display:block">   $atts = array(
+<pre><code>    $atts = array(
         'id' => 1,
         'columns' => 3
     );
-    wp_photomosaic($atts);</code></pre>
+    wp_photomosaic($atts);
+</code></pre>
             </div>
 
             <div class="tab" id="tab-widget">
@@ -848,7 +913,8 @@ rows   |  columns |  masonry
                         Before WPv3.5, you could access a "gallery" in one of three ways:
                     </p>
                     <ol>
-                        <li>the images attached to a post :
+                        <li>
+                            <p>the images attached to a post :</p>
                             <ul>
                                 <li><code>[gallery]</code> = the current post</li>
                                 <li><code>[gallery id="1"]</code> = the post with ID=1</li>
@@ -989,10 +1055,113 @@ rows   |  columns |  masonry
                         <li>go to the post where you want to insert your gallery and add <code>[photomosaic nggid="*"]</code> (replacing the * with your gallery's ID)</li>
                     </ol>
                 </div>
-            </div>
+
+                <div class="question">
+                    <a name="customlightbox"></a>
+                    <h3 class="title">How do I use a custom lightbox?</h3>
+                    <p>Most lightbox plugins work in one of four ways.  The methods, explained below, are ordered starting with the easiest.  If you don't already know how your lightbox works please start with the first method, and try them in order.</p>
+                    <ol>
+                        <li>
+                            <h3>Aggressive</h3>
+                            <p>Some lightbox plugins are very aggressive about finding links/images.  These plugins make integration with PhotoMosaic easy because require no additional work.</p>
+                            <p>In the PhotoMosaic settings:</p>
+                            <ul>
+                                <li>uncheck <strong>Use Default Lightbox</strong></li>
+                                <li>uncheck <strong>Use Custom Lightbox</strong></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Selector</h3>
+                            <p>Some lightbox plugins allow you to specify a CSS selector the plugin will use to find your images.  Look through your plugin's settings to see if their is a field for specifying selectors.  Be sure to pay attention to whether your plugin accepts selectors that point to images or links.</p>
+                            <p>In your lightbox plugin's settings:</p>
+                            <ul>
+                                <li>Image Selector = <code>.photoMosaic img</code></li>
+                                <li>Link Selector = <code>.photoMosaic a</code></li>
+                            </ul>
+                            <p>In the PhotoMosaic settings:</p>
+                            <ul>
+                                <li>uncheck <strong>Use Default Lightbox</strong></li>
+                                <li>uncheck <strong>Use Custom Lightbox</strong></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>REL</h3>
+                            <p>Some lightbox plugins will automatically find images/links that have a REL attribute set to something specific.  You should be able to find this information in your lightbox plugin's documentation - it will always be a single, alphanumeric word (<code>lightbox</code> is the most common REL).</p>
+                            <p>In the PhotoMosaic settings:</p>
+                            <ul>
+                                <li>uncheck <strong>Use Default Lightbox</strong></li>
+                                <li>uncheck <strong>Use Custom Lightbox</strong></li>
+                                <li>set "Lightbox REL" to your plugin's alphanumeric word (eg: <code>lightbox</code>)</li>
+                            </ul>
+                            <p>If you see, in your lightbox's documentation, examples of RELs with brackets (eg: <code>lightbox[group1]</code>) the brackets can be ignored - your <strong>Lightbox REL</strong> is <code>lightbox</code>.  The presence of the brackets tells you that your lightbox supports grouped images (check the <strong>Group Images</strong> PhotoMosaic setting).</p>
+                        </li>
+
+                        <li>
+                            <h3>Manual</h3>
+                            <p>If none of the previous methods worked, PhotoMosaic can manually try to integrate with your lightbox plugin provided your lightbox is build with jQuery.</p>
+                            <p>If your plugin is well documented (or has developer documentation) the information needed for this method will likely be found there.  It is likely, however, that you will need to examine your page's source code to find everything.</p>
+                            <p>We will be looking for two pieces of information:</p>
+                            <ul>
+                                <li>the method name your lightbox used to register itself with jQuery (<strong>Custom Lightbox Function Name</strong>)</li>
+                                <li>the JS object that contains all of your lightbox's settings (<strong>Custom Lightbox Params</strong>)</li>
+                            </ul>
+                            <p>At the most basic level, all jQuery calls look the same:</p>
+<pre><code>    $("selector").method();
+        OR
+    jQuery("selector").method();
+</code></pre>
+                            <p>Sometimes you'll see a JS object being passed to the method:</p>
+<pre><code>    $("selector").method({
+        option1: setting1,
+        option2: setting2
+    });
+</code></pre>
+                            <p>Looking at that last example, <strong>Custom Lightbox Function Name</strong> is <code>method</code> and <strong>Custom Lightbox Params</strong> is the JS object being passed into the method (including the <code>{}</code>).</p>
+                            <p>If you view the source on a page with a PhotoMosaic with the default settings using the default lightbox you'll see:</p>
+<pre><code>    $("a[rel^='pmlightbox']").prettyPhoto({
+        overlay_gallery: false,
+        slideshow: false,
+        theme: "pp_default",
+        deeplinking: false,
+        social_tools: ""
+    });
+</code></pre>
+                            <p>In this case:</p>
+                            <ul>
+                                <li><strong>Custom Lightbox Function Name</strong> = <code>prettyPhoto</code></li>
+                                <li><strong>Custom Lightbox Params</strong> = <code>{
+                                        overlay_gallery: false,
+                                        slideshow: false,
+                                        theme: "pp_default",
+                                        deeplinking: false,
+                                        social_tools: ""
+                                    }</code>
+                                </li>
+                            </ul>
+                            <p>The reason you should look at your page's source for the <strong>Custom Lightbox Params</strong> is that the JS object that appears in your page's source code will reflect the settings you've set in your lightbox plugin's settings.  Doing this insures that lightboxes opened from PhotoMosaic match lightboxes opened elsewhere on your site.  If you change your lightbox's settings you should also update PhotoMosaic's <strong>Custom Lightbox Params</strong>.</p>
+                        </li>
+                    </ol>
+                </div><!-- end .question -->
+            </div><!-- end FAQ tab -->
 
             <div class="tab" id="tab-whatsnew">
                 <h2>What's New in v<?php echo PhotoMosaic::version(); ?></h2>
+                <ul>
+                    <li>New "Prevent Crop" Setting : prevents mosaic images from being cropped and leaves the bottom edge of the mosaic jagged</li>
+                    <li>New "Lightbox REL" Setting : specify link REL attributes, for easier Custom Lightbox integration</li>
+                    <li>New "Lightbox Groups" Setting : some lightboxes throw errors when link RELs contain brackets, turns off the group feature (the cause of the brackets)</li>
+                    <li>Updates to latest jQuery v1.9.1</li>
+                    <li>Updates PrettyPhoto to v3.1.5 : works with jQuery 1.9.*</li>
+                    <li>Bug Fix : NextGen "Link to URL" urls no longer appear as captions</li>
+                    <li>New FAQ : How do I use a custom lightbox?</li>
+                </ul>
+                <h3>v2.2.5</h3>
+                <ul>
+                    <li>Correct NextGen Gallery images size usage</li>
+                </ul>
+                <h3>v2.2</h3>
                 <ul>
                     <li>New Layout : now uses a much more flexible Absolute Positioned layout (rather than the old fixed-markup layout).</li>
                     <li>Actively Responsive : used to only be Passively Responsive (required a reload to see changes)</li>

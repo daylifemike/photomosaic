@@ -39,6 +39,27 @@
             return false;
         }).eq(0).click();
 
+        // COMBO - #tab-faq?customlightbox
+        var $combos = $('.combo-link');
+
+        $combos.click(function() {
+            var hash = $(this).attr('href');
+            var hashless = hash.split('#')[1];
+            var queryless = hash.split('?')[0];
+            var tab = hashless.split('?')[0];
+            var anchor = hashless.split('?')[1];
+
+            // taken from above
+            $tabs.removeClass('nav-tab-active').filter('[value="'+hash+'"]').addClass('nav-tab-active');
+            $tabContainers.hide().filter(queryless).show();
+
+            // taken from above
+            offset = $('a[name="' + anchor + '"]').offset().top - 40;
+            $('html,body').stop().animate({ scrollTop: offset }, 300);
+
+            return false;
+        });
+
         // WHAT'S NEW TOUR
         /*
         if (!window.PhotoMosaic.has_taken_tour) {
@@ -185,84 +206,122 @@
         */
 
         // FORM
-        var $lb = $('input[name="lightbox"]'),
-            $custom_lb = $('input[name="custom_lightbox"]'),
-            $custom_lb_name = $('input[name="custom_lightbox_name"]'),
-            $custom_lb_params = $('textarea[name="custom_lightbox_params"]'),
-            $auto_play = $('textarea[name="auto_play"]'),
-            $auto_play_interval = $('textarea[name="auto_play_interval"]'),
-            $links = $('input[name="links"]'),
-            $link_to_url = $('input[name="link_to_url"]'),
-            $external_links = $('input[name="external_links"]');
-            
-        $lb.click(function(){
-            if($lb.is(':checked')){
-                $custom_lb.removeAttr('checked');
+        var $form = $('#photomosaic-options'),
+            $warnings = $form.find('#photomosaic-notes .updated');
+            $lb = $form.find('input[name="lightbox"]'),
+            $custom_lb = $form.find('input[name="custom_lightbox"]'),
+            $custom_lb_name = $form.find('input[name="custom_lightbox_name"]'),
+            $custom_lb_params = $form.find('textarea[name="custom_lightbox_params"]'),
+            $auto_play = $form.find('textarea[name="auto_play"]'),
+            $auto_play_interval = $form.find('textarea[name="auto_play_interval"]'),
+            $links = $form.find('input[name="links"]'),
+            $link_to_url = $form.find('input[name="link_to_url"]'),
+            $external_links = $form.find('input[name="external_links"]');
+
+        $form.find(':input').change(function(e) {
+            var item = null;
+            var target = $(e.target);
+
+            // == ERROR CHECKS ==
+            if ($lb[0] === target[0]) {
+                if ($lb.is(':checked')) {
+                    $custom_lb.removeAttr('checked');
+                }
+                if ($lb.is(':checked') && $external_links.is(':checked')) {
+                    $external_links.removeAttr('checked');
+                }
+                if ($lb.is(':checked') && $links.is(':not(":checked")')) {
+                    $links.attr('checked', true);
+                }
             }
-            if($lb.is(':checked') && $link_to_url.is(':checked')){
-                $link_to_url.removeAttr('checked');
+
+            if ($custom_lb[0] === target[0]) {
+                if ($custom_lb.is(':checked')) {
+                    $lb.removeAttr('checked');
+                }
+                if ($custom_lb.is(':checked') && $external_links.is(':checked')) {
+                    $external_links.removeAttr('checked');
+                }
+                if ($custom_lb.is(':checked') && $links.is(':not(":checked")')) {
+                    $links.attr('checked', true);
+                }
             }
-            if($lb.is(':checked') && $external_links.is(':checked')){
-                $external_links.removeAttr('checked');
+
+            if ($link_to_url[0] === target[0]) {
+                if ($link_to_url.is(':checked') && $links.is(':not(":checked")')) {
+                    $links.attr('checked', true);
+                }
             }
-            if($lb.is(':checked') && $links.is(':not(":checked")')){
-                $links.attr('checked', true);
+
+            if ($external_links[0] === target[0]) {
+                if ($external_links.is(':checked') && $lb.is(':checked')) {
+                    $lb.removeAttr('checked');
+                }
+                if ($external_links.is(':checked') && $custom_lb.is(':checked')) {
+                    $custom_lb.removeAttr('checked');
+                }
+                if ($external_links.is(':checked') && $links.is(':not(":checked")')) {
+                    $links.attr('checked', true);
+                }
+                if ($external_links.is(':checked') && $link_to_url.is(':not(":checked")')) {
+                    $link_to_url.attr('checked', true);
+                }
+            }
+
+            if ($links[0] === target[0]) {
+                if ($links.is(':not(":checked")')) {
+                    $link_to_url.removeAttr('checked');
+                    $external_links.removeAttr('checked');
+                }
+            }
+
+            // == WARNINGS ==
+            var warnings = [
+                {
+                    id: 'lightbox-links',
+                    test: function() { return ($lb.is(':checked') && $link_to_url.is(':checked')); },
+                    text: 'Enabling "<strong>Use Default Lightbox</strong>" and "<strong>Link to URL</strong>" causes all \
+                            links to open in the lightbox.  This includes images, videos, and links to other pages.'
+                },
+                {
+                    id: 'customlightbox-links',
+                    test: function() { return ($custom_lb.is(':checked') && $link_to_url.is(':checked')); },
+                    text: 'Enabling "<strong>Use Custom Lightbox</strong>" and "<strong>Link to URL</strong>" causes all \
+                            links to open in the lightbox.  This includes images, videos, and links to other pages. \
+                            Please be sure that your lightbox supports these features.'
+                }
+            ];
+
+            for (var i = 0; i < warnings.length; i++) {
+                if (warnings[i].test()) {
+                    item = $warnings.find('#' + warnings[i].id);
+                    if (item.length === 0) {
+                        $warnings.append('<p id="' + warnings[i].id + '">' + warnings[i].text + '</p>');
+                    }
+                } else {
+                    item = $warnings.find('#' + warnings[i].id);
+                    if (item.length > 0) {
+                        item.remove();
+                    }
+                }
+            };
+
+            // == WARNING DISPLAY ==
+            if ($warnings.children().length > 1) {
+                $warnings.parent().css('display', 'block');
+            } else {
+                $warnings.parent().css('display', 'none');
             }
         });
-        $custom_lb.click(function(){
-            if($custom_lb.is(':checked')){
-                $lb.removeAttr('checked');
-            }
-            if($custom_lb.is(':checked') && $link_to_url.is(':checked')){
-                $link_to_url.removeAttr('checked');
-            }
-            if($custom_lb.is(':checked') && $external_links.is(':checked')){
-                $external_links.removeAttr('checked');
-            }
-            if($custom_lb.is(':checked') && $links.is(':not(":checked")')){
-                $links.attr('checked', true);
-            }
-        });
-        $link_to_url.click(function(){
-            if($lb.is(':checked')){
-                $lb.removeAttr('checked');
-            }
-            if($custom_lb.is(':checked')){
-                $custom_lb.removeAttr('checked');
-            }
-            if($link_to_url.is(':checked') && $links.is(':not(":checked")')){
-                $links.attr('checked', true);
-            }
-        });
-        $external_links.click(function(){
-            if($lb.is(':checked')){
-                $lb.removeAttr('checked');
-            }
-            if($custom_lb.is(':checked')){
-                $custom_lb.removeAttr('checked');
-            }
-            if($external_links.is(':checked') && $links.is(':not(":checked")')){
-                $links.attr('checked', true);
-            }
-            if($external_links.is(':checked') && $link_to_url.is(':not(":checked")')){
-                $link_to_url.attr('checked', true);
-            }
-        });
-        $links.click(function(){
-            if($links.is(':not(":checked")')){
-                $link_to_url.removeAttr('checked');
-                $external_links.removeAttr('checked');
-            }
-        });
-        
-        $('#photomosaic-options').submit(function(){
-            
+
+        $form.submit(function(){
             // TODO: make this less half-assed
             var returnState = true,
-                $errorList = $('#photomosaic-error-list').empty().attr('style', '');
+                $errorContainer = $('#photomosaic-error-list'),
+                $errorList = $errorContainer.find('ul').empty().attr('style', '');
                 
             if( $lb.is(':checked') && $custom_lb.is(':checked') ) {
-                $errorList.append('<li style="list-style:disc; margin-left:20px;">"Use Default Lightbox" and "Use Custom Lightbox" can\'t both be selected.</li>');
+                $errorList.append('<li>"Use Default Lightbox" and "Use Custom Lightbox" can\'t both be selected.</li>');
                 returnState = false;
             }
 
@@ -271,32 +330,28 @@
             }
             
             if( $custom_lb.is(':checked') && $custom_lb_name.val().trim() == '' ) {            
-                $errorList.append('<li style="list-style:disc; margin-left:20px;">"Custom Lightbox Name" can\'t be empty.</li>');
+                $errorList.append('<li>"Custom Lightbox Name" can\'t be empty.</li>');
                 returnState = false;
             }
             
             if( !$links.is(':checked') ) {
                 if ($lb.is(':checked') || $custom_lb.is(':checked')) {
-                    $errorList.append('<li style="list-style:disc; margin-left:20px;">"Image Links" must be selected to use a lightbox.</li>');
+                    $errorList.append('<li>"Image Links" must be selected to use a lightbox.</li>');
                     returnState = false;
                 }
                 if ($link_to_url.is(':checked')) {
-                    $errorList.append('<li style="list-style:disc; margin-left:20px;">"Link to URL" requires "Image Links"</li>');
+                    $errorList.append('<li>"Link to URL" requires "Image Links"</li>');
                     returnState = false;
                 }
                 if ($external_links.is(':checked')) {
-                    $errorList.append('<li style="list-style:disc; margin-left:20px;">"Open Links in New Window" requires "Image Links"</li>');
+                    $errorList.append('<li>"Open Links in New Window" requires "Image Links"</li>');
                     returnState = false;
                 }
             }
             
             if( !returnState ) {
-                $errorList.prepend('<li style="font-size:16px; color:#cc0000;">Please fix the following errors</li>');
-                $errorList.css({
-                    'border':'1px solid #de7d7d',
-                    'padding':'10px',
-                    'background-color':'#f8dfdf'
-                });
+                $errorContainer.css('display', 'block');
+                $errorList.prepend('<li class="header">Please fix the following errors</li>');
                 scrollTo(0,0);
                 return false;
             } else {

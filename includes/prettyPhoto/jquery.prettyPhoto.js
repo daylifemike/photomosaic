@@ -1,3 +1,10 @@
+/*
+    Version: 3.1.5b
+    Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
+     - new jQuery namespace (JQPM)
+     - _getFileType (#662) extended to autodetect image URLs (avoid the need for "iframe=true")
+     - content type switch (#330) extended to support iframe URLs w/o "iframe=true"
+*/
 /* ------------------------------------------------------------------------
     Class: prettyPhoto
     Use: Lightbox clone for jQuery
@@ -325,7 +332,10 @@
                         pp_dimensions = _fitToViewport(movie_width,movie_height); // Fit item to viewport
                 
                         frame_url = pp_images[set_position];
-                        frame_url = frame_url.substr(0,frame_url.indexOf('iframe')-1);
+
+                        if ( frame_url.indexOf('?') !== 0 && frame_url.indexOf('iframe') !== -1) {
+                            frame_url = frame_url.substr(0,frame_url.indexOf('iframe')-1);
+                        }
 
                         toInject = settings.iframe_markup.replace(/{width}/g,pp_dimensions['width']).replace(/{height}/g,pp_dimensions['height']).replace(/{path}/g,frame_url);
                     break;
@@ -618,12 +628,12 @@
         function _getDimensions(width,height){
             width = parseFloat(width);
             height = parseFloat(height);
-            
+
             // Get the details height, to do so, I need to clone it since it's invisible
             $pp_details = $pp_pic_holder.find('.pp_details');
             $pp_details.width(width);
             detailsHeight = parseFloat($pp_details.css('marginTop')) + parseFloat($pp_details.css('marginBottom'));
-            
+
             $pp_details = $pp_details.clone().addClass(settings.theme).width(width).appendTo($('body')).css({
                 'position':'absolute',
                 'top':-10000
@@ -631,7 +641,7 @@
             detailsHeight += $pp_details.height();
             detailsHeight = (detailsHeight <= 34) ? 36 : detailsHeight; // Min-height for the details
             $pp_details.remove();
-            
+
             // Get the titles height, to do so, I need to clone it since it's invisible
             $pp_title = $pp_pic_holder.find('.ppt');
             $pp_title.width(width);
@@ -642,7 +652,7 @@
             });
             titleHeight += $pp_title.height();
             $pp_title.remove();
-            
+
             // Get the container size, to resize the holder to the right dimensions
             pp_contentHeight = height + detailsHeight;
             pp_contentWidth = width;
@@ -651,23 +661,28 @@
         }
     
         function _getFileType(itemSrc){
+            var noQueryString = itemSrc.split("?")[0];
+
             if (itemSrc.match(/youtube\.com\/watch/i) || itemSrc.match(/youtu\.be/i)) {
                 return 'youtube';
-            }else if (itemSrc.match(/vimeo\.com/i)) {
+            } else if (itemSrc.match(/vimeo\.com/i)) {
                 return 'vimeo';
-            }else if(itemSrc.match(/\b.mov\b/i)){ 
+            } else if (itemSrc.match(/\b.mov\b/i)) {
                 return 'quicktime';
-            }else if(itemSrc.match(/\b.swf\b/i)){
+            } else if (itemSrc.match(/\b.swf\b/i)) {
                 return 'flash';
-            }else if(itemSrc.match(/\biframe=true\b/i)){
-                return 'iframe';
-            }else if(itemSrc.match(/\bajax=true\b/i)){
+            } else if (itemSrc.match(/\bajax=true\b/i)) {
                 return 'ajax';
-            }else if(itemSrc.match(/\bcustom=true\b/i)){
+            } else if (itemSrc.match(/\bcustom=true\b/i)) {
                 return 'custom';
-            }else if(itemSrc.substr(0,1) == '#'){
+            } else if (itemSrc.substr(0,1) == '#') {
                 return 'inline';
-            }else{
+            } else if (
+                itemSrc.match(/\biframe=true\b/i)
+                || !noQueryString.match(/\.(gif|jpg|jpeg|tiff|png)$/i)
+            ) {
+                return 'iframe';
+            } else {
                 return 'image';
             };
         };
@@ -679,7 +694,7 @@
 
                 projectedTop = (windowHeight/2) + scroll_pos['scrollTop'] - (contentHeight/2);
                 if(projectedTop < 0) projectedTop = 0;
-                
+
                 if(contentHeight > windowHeight)
                     return;
 

@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.2
+Version: 2.3
 
 == Description ==
 
@@ -24,6 +24,21 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.3 =
+* Enhancement: adds prevent_crop setting
+* Enhancement: adds lightbox_rel setting
+* Enhancement: adds lightbox_group setting
+* Enhancement: updates jQuery to v1.9.1
+* Enhancement: updates prettyPhoto to v3.1.5
+* Deleted: new feature tour
+* Bug Fix: NextGen link_to_url URLs no longer appear as captions
+* Change: better form messages
+* Change: form validation allows link_to_url and lightbox to coexist
+* FAQ: adds Custom Lightbox question
+
+= 2.2.5 =
+* Bug Fix: corrects NextGen image size usage
+
 = 2.2 =
 * Refactor: major pattern overhaul
 * Enhancement: new layout uses absolute positioning instead of fixed-markup

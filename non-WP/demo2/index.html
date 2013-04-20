@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>PhotoMosaic</title>
+<link href="css/default.css" rel="stylesheet" type="text/css" />
+<link href="includes/prettyPhoto/prettyPhoto.css" rel="stylesheet" type="text/css" />
+<link href="css/photoMosaic.css" rel="stylesheet" type="text/css" />
+
+<script src="data/photoMosaic.data.js" type="text/javascript"></script>
+
+<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+<script src="http://code.jquery.com/ui/1.9.1/jquery-ui.min.js" type="text/javascript"></script>
+<script src="includes/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript"></script>
+<script src="js/jstween-1.1.js" type="text/javascript"></script>
+<script src="js/jquery.photoMosaic.js" type="text/javascript"></script>
+<script src="js/dat.gui.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    var page_width = 0;
+
+    $(document).ready(function() {
+        page_width = $('#container').width();
+
+        $('#target').photoMosaic({
+            gallery: $.extend(true, {}, PMalbum),
+            padding : 0,
+            columns : 0,
+            width : 0,
+            height : 0,
+            order : 'rows',
+            prevent_crop : false,
+            loading_transition : 'fade',
+            responsive_transition : true,
+            modal_ready_callback : function ($pm, mosaic) {
+                $("a[rel^='pmlightbox']", $pm).prettyPhoto({
+                    overlay_gallery: false,
+                    slideshow: false,
+                    theme: "pp_default",
+                    deeplinking: false,
+                    social_tools: ""
+                });
+            },
+            info : function () {
+                $.prettyPhoto.open( '#popup', 'How does this demo work?', 'Thank you for your interest in PhotoMosaic.' );
+            }
+        });
+
+        guiMosaic();
+    });
+
+    var guiMosaic = function () {
+        var mosaic = PhotoMosaic.mosaics[0].instance;
+        var gui = new dat.GUI();
+        var $pm = mosaic.obj.find('.photoMosaic');
+
+        gui.add(mosaic._options, 'info');
+
+        gui.add(mosaic._options, 'width', 0, page_width)
+            .step(1)
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'height', 0, 800)
+            .step(1)
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'columns', 0, 20)
+            .step(1)
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'padding', 0, 50)
+            .step(1)
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'order', [
+                'rows', 'columns', 'masonry', 'random'
+            ])
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'prevent_crop')
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+
+        gui.add(mosaic._options, 'loading_transition', [
+                'fade', 'scale-up', 'scale-down', 'slide-up', 'slide-right', 'slide-down', 'slide-left', 'custom'
+            ])
+            .onChange(function(val) {
+                mosaic.opts.loading_transition = val;
+                $pm.addClass('loading');
+                
+                var images = $pm.find('a').addClass('loading');
+                var random = images.slice(0);
+                var transition = mosaic.getTransition();
+
+                random.sort(function (a, b) {
+                    return (0.5 - Math.random());
+                });
+
+                $pm.removeClass(window.PhotoMosaic.transition_mem)
+                    .addClass(transition);
+
+                window.PhotoMosaic.transition_mem = transition;
+
+                setTimeout(function () {
+                    for (var i = 0; i < random.length; i++) {
+                        $(random[i]).delay(100 * i).queue(function(next){
+                            $(this).removeClass('loading');
+                            next();
+                            console.log([
+                                i,
+                                random.length
+                            ]);
+                            if ($pm.find('.loading').length === 0) {
+                                $pm.removeClass('loading');
+                            }
+                        });
+                    };
+                }, 1500);
+            });
+
+        gui.add(mosaic._options, 'responsive_transition')
+            .onChange(function(val) {
+                mosaic.refresh();
+            });
+    };
+
+</script>
+</head>
+<body>
+    <div id="container">
+        <h1>PhotoMosaic : a jQuery &amp; Wordpress plugin</h1>
+        <div id="target"></div>
+    </div>
+    <div id="popup">
+        <p>Things to know about the stuff shown here:</p>
+        <ul>
+            <li>
+                <strong>column</strong>, <strong>width</strong>, or <strong>height</strong> can be set to "auto" by dragging the slider to 0
+            </li>
+            <li>
+                setting the <strong>width</strong> to 0 ("auto") makes PhotoMosaic automatically responsive (go ahead, resize the browser)
+            </li>
+            <!-- li>
+                turning on <strong>prevent_crop</strong> makes the bottom of the mosaic jagged and ignores <strong>height</strong> (cropping allows PhotoMosaic to control the heights of the images, columns, and mosaic)
+            </li -->
+            <li>
+                toggle <strong>resposive_transition</strong> and play with the <strong>width</strong> (or resize your browser)
+            </li>
+            <li>
+                the "custom" <strong>loading_transition</strong> is an example of what you can do with some custom CSS
+            </li>
+        </ul>
+        <p>The controls can be resized - this will give you more fine-tuned control with the sliders.</p>
+        <p>PhotoMosaic also has a number of options that aren't shown here.</p>
+        <p>The take care of:</p>
+        <ul>
+            <li>pointing PhotoMosaic at the gallery data</li>
+            <li>what happens when an image is clicked</li>
+            <li>integrating PhotoMosaic with another lightbox</li>
+        </ul>
+    </div>
+</body>
+</html>

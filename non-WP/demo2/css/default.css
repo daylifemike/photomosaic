@@ -383,7 +383,7 @@ table {margin: .5em auto 1.5em auto; width: 98%;}
     
     
 .clear { clear:both; }
-#container { width:100%; margin:20px auto; }
+#container { width:100%; margin:8px auto 0; }
 #target { width:100%; }
 h1 { margin-left:1em; margin-right:1em; margin-bottom:20px; border-bottom:1px solid #666666; }
 #popup { display:none; }
@@ -394,3 +394,4 @@ body .pp_inline p { margin-bottom:0.5em; }
 body .pp_inline li { margin-bottom:0.5em; }
 body .pp_inline strong { font-style:italic; }
 body div.pp_default .pp_description { font-size:1em; font-weight:normal; margin-left:20px; }
+body .photoMosaic { margin-bottom:0; }

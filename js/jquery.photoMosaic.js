@@ -142,37 +142,35 @@ g}}(JQPM));
 
         template: ' ' +
             '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{transition}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
-                '{{#columns}}' +
-                    '{{#images}}' +
-                        '{{#link}}' + 
-                            '<a class="loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
-                                ' {{#modal}}rel="{{modal}}"{{/modal}}' +
-                                ' {{#caption}}title="{{caption}}"{{/caption}}' +
-                                'style="' +
-                                    ' width:{{#width}}{{constraint}}{{/width}}px;' +
-                                    ' height:{{#height}}{{constraint}}{{/height}}px;' +
-                                    ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
-                                '"' +
-                            '>' +
-                        '{{/link}}' +
-                        '{{^link}}' +
-                            '<span class="loading"' +
-                                'style="' +
-                                    ' width:{{#width}}{{constraint}}{{/width}}px;' +
-                                    ' height:{{#height}}{{constraint}}{{/height}}px;' +
-                                    ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
-                                '"' +
-                            '>' +
-                        '{{/link}}' +
-                            '<img id="{{id}}" src="{{src}}" style="' +
-                                'width:{{#width}}{{adjusted}}{{/width}}px; ' +
-                                'height:{{#height}}{{adjusted}}{{/height}}px; ' +
-                                '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
-                                'title="{{caption}}"/>' +
-                        '{{#link}}</a>{{/link}}' +
-                        '{{^link}}</span>{{/link}}' +
-                    '{{/images}}' +
-                '{{/columns}}' +
+                '{{#images}}' +
+                    '{{#link}}' +
+                        '<a class="loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
+                            ' {{#modal}}rel="{{modal}}"{{/modal}}' +
+                            ' {{#caption}}title="{{caption}}"{{/caption}}' +
+                            'style="' +
+                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
+                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
+                            '"' +
+                        '>' +
+                    '{{/link}}' +
+                    '{{^link}}' +
+                        '<span class="loading"' +
+                            'style="' +
+                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
+                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
+                            '"' +
+                        '>' +
+                    '{{/link}}' +
+                        '<img id="{{id}}" src="{{src}}" style="' +
+                            'width:{{#width}}{{adjusted}}{{/width}}px; ' +
+                            'height:{{#height}}{{adjusted}}{{/height}}px; ' +
+                            '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
+                            'title="{{caption}}"/>' +
+                    '{{#link}}</a>{{/link}}' +
+                    '{{^link}}</span>{{/link}}' +
+                '{{/images}}' +
             '</div>',
 
         loading_template: ' ' +
@@ -349,6 +347,10 @@ g}}(JQPM));
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
+            // lightboxes index by node order and we add nodes by columns
+            // leading to a mismatch between read order and lightbox-gallery-step-through order
+            json.images = this.unpackColumns(json.columns);
+
             return PhotoMosaic.Mustache.to_html(this.template, json);
         },
 
@@ -517,6 +519,49 @@ g}}(JQPM));
             }
 
             return columns;
+        },
+
+        unpackColumns: function (columns) {
+            var image;
+            var images = [];
+
+            for (var i = 0; i < this.images.length; i++) {
+                image = this.deepSearch(columns, 'id', this.images[i].id);
+                images.push(image);
+            };
+
+            return images;
+        },
+
+        deepSearch : function (obj, key, value) {
+            // recursively traverses an nested arrays, and objects looking for a key/value pair
+            var response = null;
+            var i = 0;
+            var prop;
+
+            if (obj instanceof Array) {
+                for (i = 0; i < obj.length; i++) {
+                    response = this.deepSearch(obj[i], key, value);
+                    if (response) {
+                        return response;
+                    }
+                }
+            } else {
+                for (prop in obj) {
+                    if (obj.hasOwnProperty(prop)) {
+                        if ( (prop == key) && (obj[prop] == value) ) {
+                            return obj;
+                        } else if (obj[prop] instanceof Object || obj[prop] instanceof Array) {
+                            response = this.deepSearch(obj[prop], key, value);
+                            if (response) {
+                                return response;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response;
         },
 
         adjustHeights: function (json, target_height) {

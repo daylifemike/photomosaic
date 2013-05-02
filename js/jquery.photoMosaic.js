@@ -917,9 +917,18 @@ g}}(JQPM));
             var $images = this.obj.find('img');
 
             for (var i = 0; i < $images.length; i++) {
+                var $image = $images.eq(i)
                 var image = {};
 
-                image.src = ($images.eq(i).parent('a').length > 0 && this.opts.links) ? $images.eq(i).parent('a').attr('href') : $images.eq(i).attr('src');
+                if ($image.parent('a').length > 0 && this.opts.links) {
+                    image.src = $image.attr('src');
+                    image.url = $image.parent('a').attr('href');
+                } else if ($image.parent('a').length > 0) {
+                    image.src = $image.parent('a').attr('src');
+                } else {
+                    image.src = $image.attr('src');
+                }
+
                 image.caption = $images.eq(i).attr('title');
 
                 gallery.push(image);

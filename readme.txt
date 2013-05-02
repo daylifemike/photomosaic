@@ -4,7 +4,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. 
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.3
+Version: 2.3.1
 
 == Description ==
 
@@ -24,6 +24,12 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.3.1 =
+* Bug Fix: caption are no longer removed when opening non-image content in the lightbox
+* Bug Fix: lightbox-gallery order now matches input-gallery order regardless of layout-order
+* Bug Fix: not all mosaics on a page were being actively responsive
+* Bug Fix: shortcode wasn't honoring inline "lightbox" and "custom_lightbox" settings
+
 = 2.3 =
 * Enhancement: adds prevent_crop setting
 * Enhancement: adds lightbox_rel setting

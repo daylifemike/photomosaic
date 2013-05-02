@@ -159,33 +159,39 @@ class PhotoMosaic {
     function shortcode( $atts ) {
         global $post;
         $post_id = intval($post->ID);
+        $base = array(
+            'id'        => $post_id,
+            'include'   => '',
+            'exclude'   => '',
+            'ids'       => ''
+        );
         $options = PhotoMosaic::getOptions();
+        $options = wp_parse_args($base, $options);
+        $settings = shortcode_atts($options, $atts);
 
-        extract(shortcode_atts(array(
-            'id'                       => $post_id,
-            'padding'                  => $options['padding'],
-            'columns'                  => $options['columns'],
-            'width'                    => $options['width'],
-            'height'                   => $options['height'],
-            'links'                    => $options['links'],
-            'order'                    => $options['order'],
-            'link_to_url'              => $options['link_to_url'],
-            'external_links'           => $options['external_links'],
-            'center'                   => $options['center'],
-            'prevent_crop'             => $options['prevent_crop'],
-            'show_loading'             => $options['show_loading'],
-            'loading_transition'       => $options['loading_transition'],
-            'responsive_transition'    => $options['responsive_transition'],
-            'lightbox'                 => $options['lightbox'],
-            'lightbox_rel'             => $options['lightbox_rel'],
-            'lightbox_group'           => $options['lightbox_group'],
-            'custom_lightbox'          => $options['custom_lightbox'],
-            'custom_lightbox_name'     => $options['custom_lightbox_name'],
-            'custom_lightbox_params'   => $options['custom_lightbox_params'],
-            'include'                  => '',
-            'exclude'                  => '',
-            'ids'                      => ''
-        ), $atts));
+        $auto_settings = array(
+            'height', 'width', 'columns'
+        );
+        $bool_settings = array(
+            'center', 'prevent_crop', 'links', 'external_links', 'show_loading',
+            'responsive_transition', 'lightbox', 'custom_lightbox', 'lightbox_group'
+        );
+
+        foreach ( $auto_settings as $key ) {
+            if(intval($settings[$key]) == 0){
+                $settings[$key] = "'auto'";
+            } else {
+                $settings[$key] = intval($settings[$key]);
+            }
+        }
+
+        foreach ( $bool_settings as $key ) {
+            if(intval($settings[$key])){
+                $settings[$key] = "true";
+            } else {
+                $settings[$key] = "false";
+            }
+        }
 
         $unique = floor(((time() + rand(21,40)) * rand(1,5)) / rand(1,5));
 
@@ -194,130 +200,73 @@ class PhotoMosaic {
                 var PMalbum'.$unique.' = [';
 
         if ( !empty($atts['nggid']) ) {
-            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $link_to_url);
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $settings['link_to_url']);
         } else {
-            $output_buffer .= PhotoMosaic::galleryFromWP($id, $link_to_url, $include, $exclude, $ids);
+            $output_buffer .= PhotoMosaic::galleryFromWP($settings['id'], $settings['link_to_url'], $settings['include'], $settings['exclude'], $settings['ids']);
         }
 
         $output_buffer .='];
-            </script><script type="text/javascript" data-photomosaic-call="true">';
-
-        if(intval($height) == 0){
-            $opts_height = "'auto'";
-        } else {
-            $opts_height = intval($height);
-        }
-
-        if(intval($width) == 0){
-            $opts_width = "'auto'";
-        } else {
-            $opts_width = intval($width);
-        }
-
-        if(intval($columns) == 0){
-            $opts_columns = "'auto'";
-        } else {
-            $opts_columns = intval($columns);
-        }
-
-        if(intval($center)){
-            $opts_center = "true";
-        } else {
-            $opts_center = "false";
-        }
-
-        if(intval($prevent_crop)){
-            $opts_prevent_crop = "true";
-        } else {
-            $opts_prevent_crop = "false";
-        }
-
-        if(intval($links)){
-            $opts_links = "true";
-        } else {
-            $opts_links = "false";
-        }
-
-        if(intval($external_links)){
-            $opts_external_links = "true";
-        } else {
-            $opts_external_links = "false";
-        }
-
-        if(intval($show_loading)){
-            $opts_show_loading = "true";
-        } else {
-            $opts_show_loading = "false";
-        }
-
-        if(intval($responsive_transition)){
-            $opts_responsive_transition = "true";
-        } else {
-            $opts_responsive_transition = "false";
-        }
-
-        if(intval($lightbox_group)){
-            $opts_lightbox_group = "true";
-        } else {
-            $opts_lightbox_group = "false";
-        }
+            </script>
+            <script type="text/javascript" data-photomosaic-call="true">';
 
         $output_buffer .='
                 JQPM(document).ready(function($) {
                     $("#photoMosaicTarget'.$unique.'").photoMosaic({
                         gallery: PMalbum'.$unique.',
-                        padding: '. intval($padding) .',
-                        columns: '. $opts_columns .',
-                        width: '. $opts_width .',
-                        height: '. $opts_height .',
-                        center: '. $opts_center .',
-                        prevent_crop: '. $opts_prevent_crop .',
-                        links: '. $opts_links .',
-                        external_links: '. $opts_external_links .',
-                        show_loading: '. $opts_show_loading .',
-                        loading_transition: "'. $loading_transition .'",
-                        responsive_transition: '. $opts_responsive_transition .',
-                        modal_name: "' . $options['lightbox_rel'] . '",
-                        modal_group: ' . $opts_lightbox_group . ',
-                ';
+                        padding: '. intval($settings['padding']) .',
+                        columns: '. $settings['columns'] .',
+                        width: '. $settings['width'] .',
+                        height: '. $settings['height'] .',
+                        center: '. $settings['center'] .',
+                        prevent_crop: '. $settings['prevent_crop'] .',
+                        links: '. $settings['links'] .',
+                        external_links: '. $settings['external_links'] .',
+                        show_loading: '. $settings['show_loading'] .',
+                        loading_transition: "'. $settings['loading_transition'] .'",
+                        responsive_transition: '. $settings['responsive_transition'] .',
+                        modal_name: "' . $settings['lightbox_rel'] . '",
+                        modal_group: ' . $settings['lightbox_group'] . ',
+            ';
 
+        $output_buffer .='
+                        sizes: {
+                            thumbnail: '. get_option("thumbnail_size_w") .',
+                            medium: '. get_option("medium_size_w") .',
+                            large: '. get_option("large_size_w") .'
+                        },
+        ';
+
+        if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
+            if( $settings['lightbox'] == 'true' ) {
                 $output_buffer .='
-                    sizes: {
-                        thumbnail: '. get_option("thumbnail_size_w") .',
-                        medium: '. get_option("medium_size_w") .',
-                        large: '. get_option("large_size_w") .'
-                    },
+                        modal_ready_callback : function($photomosaic){
+                            $("a[rel^=\''.$settings['lightbox_rel'].'\']", $photomosaic).prettyPhoto({
+                                overlay_gallery: false,
+                                slideshow: false,
+                                theme: "pp_default",
+                                deeplinking: false,
+                                social_tools: ""
+                            });
+                        },
                 ';
-
-                if($options['lightbox'] || $options['custom_lightbox']) {
-                    if($options['lightbox']) {
-                        $output_buffer .='
-                            modal_ready_callback : function($photomosaic){
-                                $("a[rel^=\''.$options['lightbox_rel'].'\']", $photomosaic).prettyPhoto({
-                                    overlay_gallery: false,
-                                    slideshow: false,
-                                    theme: "pp_default",
-                                    deeplinking: false,
-                                    social_tools: ""
-                                });
-                            },
-                        ';
-                    } elseif ($options['custom_lightbox']) {
-                        $output_buffer .='
-                            modal_ready_callback : function($photomosaic){
-                                jQuery("a[rel^=\''.$options['lightbox_rel'].'\']", $photomosaic).'.$options['custom_lightbox_name'].'('.$options['custom_lightbox_params'].');
-                            },
-                        ';
-                    }
-                }
-
+            } elseif ( $settings['custom_lightbox'] == 'true' ) {
                 $output_buffer .='
-                        order: "'. $order .'"
+                        modal_ready_callback : function($photomosaic){
+                            jQuery("a[rel^=\''.$settings['lightbox_rel'].'\']", $photomosaic).'.$settings['custom_lightbox_name'].'('.$settings['custom_lightbox_params'].');
+                        },
+                ';
+            }
+        }
+
+        $output_buffer .='
+                        order: "'. $settings['order'] .'"
                     });
                 });
             </script>
             <div id="photoMosaicTarget'.$unique.'"></div>';
-        return preg_replace('/\s+/', ' ', $output_buffer);
+
+        // return preg_replace('/\s+/', ' ', $output_buffer);
+        return $output_buffer;
     }
 
     function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {

@@ -116,10 +116,6 @@
                         $(random[i]).delay(100 * i).queue(function(next){
                             $(this).removeClass('loading');
                             next();
-                            console.log([
-                                i,
-                                random.length
-                            ]);
                             if ($pm.find('.loading').length === 0) {
                                 $pm.removeClass('loading');
                             }

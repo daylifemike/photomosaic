@@ -953,7 +953,7 @@ g}}(JQPM));
         bindEvents: function () {
             var self = this;
 
-            $(window).unbind('resize.photoMosaic').bind('resize.photoMosaic', function () {
+            $(window).unbind('resize.photoMosaic' + this._id).bind('resize.photoMosaic' + this._id, function () {
                 self.refresh();
             });
         },

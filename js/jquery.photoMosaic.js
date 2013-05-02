@@ -322,7 +322,6 @@ g}}(JQPM));
                 if (self.opts.links && image.url) {
                     image.link = true;
                     image.path = image.url;
-                    image.caption = '';
                     image.external = self.opts.external_links;
                     // delete image.modal;
                 } else if (self.opts.links) {

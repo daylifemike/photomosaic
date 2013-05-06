@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.3.1 starts around line ~#70
+ *  PhotoMosaic v2.3.2 starts around line ~#70
  */
 
 (function (window) {
@@ -65,7 +65,7 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.3.1
+    jQuery photoMosaic v2.3.2
     requires jQuery 1.7+, JSTween (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 (function ($) {
@@ -79,7 +79,7 @@ g}}(JQPM));
 
     var Plugin = function (el, options, i) {
         this._name = pluginName;
-        this.version = '2.3.1';
+        this.version = '2.3.2';
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -445,14 +445,16 @@ g}}(JQPM));
 
             var max_width = this.opts.width;
             var num_images = this.opts.gallery.length;
+
             // this.opts.sizes only supported in PM4WP
             var sizes = {
-                medium : this.opts.sizes.mediumz || 300,
-                thumb : this.opts.sizes.thumbnailz || 150
+                thumbnail : (this.opts.sizes) ? this.opts.sizes.thumbnail : 150,
+                medium : (this.opts.sizes) ? this.opts.sizes.medium : 300,
+                large : (this.opts.sizes) ? this.opts.sizes.large : 1024
             };
             var maths = {
-                plus : (sizes.medium + (sizes.thumb / 1.5)),
-                minus : (sizes.medium - (sizes.thumb / 1.2))
+                plus : (sizes.medium + (sizes.thumbnail / 1.5)),
+                minus : (sizes.medium - (sizes.thumbnail / 1.2))
             };
 
             if (num_images < this.opts.columns) {

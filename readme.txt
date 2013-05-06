@@ -24,6 +24,9 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 
 == Changelog ==
+= 2.3.2 =
+* Bug Fix: prevents WP from injecting <p> tags in output JS
+
 = 2.3.1 =
 * Bug Fix: caption are no longer removed when opening non-image content in the lightbox
 * Bug Fix: lightbox-gallery order now matches input-gallery order regardless of layout-order

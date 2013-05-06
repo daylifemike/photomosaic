@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422
 Description: A image gallery plugin for WordPress. See the options page for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak
-Version: 2.3.1
+Version: 2.3.2
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
-        return '2.3.1';
+        return '2.3.2';
     }
 
     function init() {
@@ -265,8 +265,7 @@ class PhotoMosaic {
             </script>
             <div id="photoMosaicTarget'.$unique.'"></div>';
 
-        // return preg_replace('/\s+/', ' ', $output_buffer);
-        return $output_buffer;
+        return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
     function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {

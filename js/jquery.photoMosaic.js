@@ -167,7 +167,8 @@ g}}(JQPM));
                             'width:{{#width}}{{adjusted}}{{/width}}px; ' +
                             'height:{{#height}}{{adjusted}}{{/height}}px; ' +
                             '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
-                            'title="{{caption}}"/>' +
+                            'title="{{caption}}"' +
+                            'alt="{{alt}}"/>' +
                     '{{#link}}</a>{{/link}}' +
                     '{{^link}}</span>{{/link}}' +
                 '{{/images}}' +

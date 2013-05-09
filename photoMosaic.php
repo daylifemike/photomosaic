@@ -335,7 +335,7 @@ class PhotoMosaic {
                 $image_large = wp_get_attachment_image_src($_post->ID , 'large');
                 $image_medium = wp_get_attachment_image_src($_post->ID , 'medium');
                 $image_title = esc_attr($_post->post_title);
-                $image_alttext = get_post_meta($_post->ID, '_wp_attachment_image_alt', true);
+                $image_alttext = esc_attr(get_post_meta($_post->ID, '_wp_attachment_image_alt', true));
                 $image_caption = esc_attr($_post->post_excerpt);
                 $image_description = $_post->post_content; // this is where we hide a link_url
 
@@ -361,6 +361,7 @@ class PhotoMosaic {
                         "full" : "' . $image_full[0] . '"
                     },
                     "caption": "' . $image_caption . '",
+                    "alt": "' . $image_alttext . '",
                     "width": "' . $image_full[1] . '",
                     "height": "' . $image_full[2] . '"
                     ' . $url_data . '

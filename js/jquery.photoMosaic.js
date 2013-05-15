@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.3.2 starts around line ~#70
+ *  PhotoMosaic v2.3.3 starts around line ~#70
  */
 
 (function (window) {
@@ -65,7 +65,7 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.3.2
+    jQuery photoMosaic v2.3.3
     requires jQuery 1.7+, JSTween (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
 (function ($) {
@@ -79,7 +79,7 @@ g}}(JQPM));
 
     var Plugin = function (el, options, i) {
         this._name = pluginName;
-        this.version = '2.3.2';
+        this.version = '2.3.3';
         this.el = el;
         this.obj = $(el);
         this._options = options;

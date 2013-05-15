@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.1.3 starts around line ~#70
+ *  PhotoMosaic v2.3.3 starts around line ~#70
  */
 
 (function (window) {
@@ -12,7 +12,13 @@
     mustache.js — Logic-less templates in JavaScript
     See http://mustache.github.com/ for more info.
 */
-(function(window){var Mustache=function(){var Renderer=function(){};Renderer.prototype={otag:"{{",ctag:"}}",pragmas:{},buffer:[],pragmas_implemented:{"IMPLICIT-ITERATOR":true},context:{},render:function(template,context,partials,in_recursion){if(!in_recursion){this.context=context;this.buffer=[];}
+(function(window){
+
+if (!window.PhotoMosaic) {
+    window.PhotoMosaic = {};
+}
+
+window.PhotoMosaic.Mustache = function(){var Renderer=function(){};Renderer.prototype={otag:"{{",ctag:"}}",pragmas:{},buffer:[],pragmas_implemented:{"IMPLICIT-ITERATOR":true},context:{},render:function(template,context,partials,in_recursion){if(!in_recursion){this.context=context;this.buffer=[];}
 if(!this.includes("",template)){if(in_recursion){return template;}else{this.send(template);return;}}
 template=this.render_pragmas(template);var html=this.render_section(template,context,partials);if(in_recursion){return this.render_tags(html,context,partials,in_recursion);}
 this.render_tags(html,context,partials,in_recursion);},send:function(line){if(line!=""){this.buffer.push(line);}},render_pragmas:function(template){if(!this.includes("%",template)){return template;}
@@ -35,11 +41,6 @@ return"";},includes:function(needle,haystack){return haystack.indexOf(this.otag+
 var ctx={};ctx[iterator]=_context;return ctx;}},is_object:function(a){return a&&typeof a=="object";},is_array:function(a){return Object.prototype.toString.call(a)==='[object Array]';},trim:function(s){return s.replace(/^\s*|\s*$/g,"");},map:function(array,fn){if(typeof array.map=="function"){return array.map(fn);}else{var r=[];var l=array.length;for(var i=0;i<l;i++){r.push(fn(array[i]));}
 return r;}}};return({name:"mustache.js",version:"0.3.1-dev",to_html:function(template,view,partials,send_fun){var renderer=new Renderer();if(send_fun){renderer.send=send_fun;}
 renderer.render(template,view,partials);if(!send_fun){return renderer.buffer.join("\n");}}});}();
-
-if (!window.PhotoMosaic) {
-    window.PhotoMosaic = {};
-}
-window.PhotoMosaic.Mustache = Mustache;
 
 }(window));
 
@@ -64,10 +65,9 @@ g}}(jQuery));
 
 
 /*
-    jQuery photoMosaic v2.1.3
-    requires jQuery 1.7+ (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
+    jQuery photoMosaic v2.3.3
+    requires jQuery 1.7+, JSTween (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
 */
-
 (function ($) {
     // for debugging
     if (window.PhotoMosaic) {
@@ -75,9 +75,20 @@ g}}(jQuery));
         window.PhotoMosaic.mosaics = [];
     }
 
-    var photoMosaic = function () { };
+    var pluginName = 'photoMosaic';
 
-    $.extend(photoMosaic.prototype, {
+    var Plugin = function (el, options, i) {
+        this._name = pluginName;
+        this.version = '2.3.3';
+        this.el = el;
+        this.obj = $(el);
+        this._options = options;
+        this._id = (Date.parse(new Date()) + Math.round(Math.random() * 10000));
+
+        this.init();
+    };
+
+    $.extend(Plugin.prototype, {
 
         // IE sucks so hard
         log: {
@@ -100,35 +111,81 @@ g}}(jQuery));
             }
         },
 
-        defaults: {
+        _defaults: {
             input : 'json', // json, html, xml
             gallery : 'PMalbum', // json object, xml file path
             padding : 2,
-            columns : 3,
+            columns : 'auto', // auto (str) or (int)
             width : 'auto', // auto (str) or (int)
             height : 'auto', // auto (str) or (int)
             links : true,
             external_links: false,
-            random : false,
-            force_order : false,
-            auto_columns : false,
+            order : 'rows', // rows, columns, masonry, random
             center : true,
+            prevent_crop : false,
             show_loading : false,
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
+            responsive_transition : true,
+            responsive_transition_settings : {
+                time: 0,
+                duration: 0.3,
+                effect: 'easeOut'
+            },
             modal_name : null,
             modal_group : true,
             modal_ready_callback : null,
             log_gallery_data : false
+            // random : false (deprecated: v2.2)
+            // force_order : false (deprecated: v2.2)
+            // auto_columns : false (deprecated: v2.2)
         },
 
-        init: function (el, options, i) {
+        template: ' ' +
+            '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{transition}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
+                '{{#images}}' +
+                    '{{#link}}' +
+                        '<a class="loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
+                            ' {{#modal}}rel="{{modal}}"{{/modal}}' +
+                            ' {{#caption}}title="{{caption}}"{{/caption}}' +
+                            'style="' +
+                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
+                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
+                            '"' +
+                        '>' +
+                    '{{/link}}' +
+                    '{{^link}}' +
+                        '<span class="loading"' +
+                            'style="' +
+                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
+                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
+                            '"' +
+                        '>' +
+                    '{{/link}}' +
+                        '<img id="{{id}}" src="{{src}}" style="' +
+                            'width:{{#width}}{{adjusted}}{{/width}}px; ' +
+                            'height:{{#height}}{{adjusted}}{{/height}}px; ' +
+                            '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
+                            'title="{{caption}}"' +
+                            'alt="{{alt}}"/>' +
+                    '{{#link}}</a>{{/link}}' +
+                    '{{^link}}</span>{{/link}}' +
+                '{{/images}}' +
+            '</div>',
+
+        loading_template: ' ' +
+                '<div id="photoMosaic_{{id}}" class="photoMosaic">' +
+                    '<div class="photoMosaicLoading">loading gallery...</div>' +
+                '</div>',
+
+        init: function () {
             var self = this;
 
-            this.opts = $.extend({}, this.defaults, options);
-            this.obj = $(el);
-            this.id = (Date.parse(new Date()) + Math.round(Math.random() * 10000));
+            this.opts = $.extend({}, this._defaults, this._options);
+            this.opts = this.adjustDeprecatedOptions(this.opts);
 
-            this.preload = 'PM_preloadify' + this.id;
+            this.preload = 'PM_preloadify' + this._id;
 
             this.images = [];
             this.columns = [];
@@ -137,39 +194,13 @@ g}}(jQuery));
                 this.opts.width = this.obj.width();
             }
 
-            this.template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic loading {{transition}}" style="width:{{width}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
-                    '{{#columns}}' +
-                        '<ol style="float:left; margin:0 {{^last}}{{padding}}px 0 0{{/last}} !important;">' +
-                            '{{#images}}' +
-                                '<li class="loading" style="width:{{#width}}{{constraint}}{{/width}}px; height:{{#height}}{{constraint}}{{/height}}px; margin:0 {{^last}}0 {{padding}}px 0{{/last}} !important;">' +
-                                    '{{#link}}<a href="{{path}}" {{#external}}target="_blank"{{/external}} {{#modal}}rel="{{modal}}"{{/modal}} {{#caption}}title="{{caption}}"{{/caption}}>{{/link}}' +
-                                    '{{^link}}<span>{{/link}}' +
-                                        '<img src="{{src}}" style="' +
-                                                'width:{{#width}}{{adjusted}}{{/width}}px; ' +
-                                                'height:{{#height}}{{adjusted}}{{/height}}px; ' +
-                                                '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
-                                            'title="{{caption}}"/>' +
-                                    '{{#link}}</a>{{/link}}' +
-                                    '{{^link}}</span>{{/link}}' +
-                                '</li>' +
-                            '{{/images}}' +
-                        '</ol>' +
-                    '{{/columns}}' +
-                '</div>';
-
-            this.loading_template = ' ' +
-                '<div id="photoMosaic_' + this.id + '" class="photoMosaic">' +
-                    '<div class="photoMosaicLoading">loading gallery...</div>' +
-                '</div>';
-
             // Error Checks
             if (this.opts.input === 'xml' && this.opts.gallery === '') {
                 this.log.error("No XML file path specified.");
                 return;
             }
             if (this.opts.input === 'xml' && this.opts.gallery === 'PMalbum') {
-                this.log.error('No XML file path specified.');
+                this.log.error("No XML file path specified.");
                 return;
             }
             if (this.opts.input === 'json' && this.opts.gallery === '') {
@@ -184,14 +215,17 @@ g}}(jQuery));
                 if (PMalbum !== 'undefined') {
                     this.opts.gallery = PMalbum;
                 } else {
-                    this.log.error("The JSON object 'PMalbu' can not be found.");
+                    this.log.error("The JSON object 'PMalbum' can not be found.");
                     return;
                 }
             }
             if (this.opts.gallery.length - 1 < this.current_album) {
-                this.log.error("'start_album' uses a 0-index (0 = the first album). \
-                    No album was found at the specified index (" + this.current_album + ")");
+                this.log.error("'start_album' uses a 0-index (0 = the first album). No album was found at the specified index (" + this.current_album + ")");
                 return;
+            }
+            if (this.opts.prevent_crop && this.opts.height !== 'auto') {
+                this.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + this.opts.height + ") is being ignored so as to prevent cropping.");
+                this.opts.height = "auto";
             }
 
             this.opts.gallery = this.getGalleryData();
@@ -199,15 +233,22 @@ g}}(jQuery));
             // loading message
             // must follow getGalleryData() for HTML input to work
             if (this.opts.show_loading) {
-                this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {}));
+                this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {
+                    id: this._id
+                }));
             }
 
             this.opts.columns = this.autoCols();
 
-            this.col_mod = (this.opts.width - (this.opts.padding * (this.opts.columns - 1))) % this.opts.columns;
-            this.col_width = ((this.opts.width - this.col_mod) - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns;
+            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
 
-            this.opts.gallery = this.pickImageSize(this.opts.gallery);
+            this._size = this.pickImageSize(this.opts.gallery);
+
+            if (this._size) {
+                for (var i = 0; i < this.opts.gallery.length; i++) {
+                    this.opts.gallery[i].thumb = this.opts.gallery[i].sizes[this._size];
+                };
+            }
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
@@ -230,7 +271,7 @@ g}}(jQuery));
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
-                        $($proper[$proper.length - 1]).parents('li').removeClass('loading');
+                        $($proper[$proper.length - 1]).parents('a').removeClass('loading');
                     }, 0);
                 },
                 always: function () {
@@ -239,6 +280,8 @@ g}}(jQuery));
                     }, 1000);
                 }
             });
+
+            this.bindEvents();
 
             this.modalCallback();
 
@@ -256,6 +299,8 @@ g}}(jQuery));
                 var image_url = (image.thumb && image.thumb !== '') ? image.thumb : image.src;
                 var modal_text;
 
+                image.id = self.makeID();
+
                 // image sizes
                 image.full = image.src;
                 image.src = image_url;
@@ -267,7 +312,7 @@ g}}(jQuery));
                 // modal hooks
                 if (self.opts.modal_name) {
                     if (self.opts.modal_group) {
-                        modal_text = self.opts.modal_name + '[' + self.id + ']';
+                        modal_text = self.opts.modal_name + '[' + self._id + ']';
                     } else {
                         modal_text = self.opts.modal_name;
                     }
@@ -279,7 +324,7 @@ g}}(jQuery));
                     image.link = true;
                     image.path = image.url;
                     image.external = self.opts.external_links;
-                    delete image.modal;
+                    // delete image.modal;
                 } else if (self.opts.links) {
                     image.link = true;
                     image.path = image.full;
@@ -291,85 +336,70 @@ g}}(jQuery));
                 self.images.push(image);
             });
 
-            // ERROR CHECK: remove any images that failed to load
+            // remove any images that failed to load
             this.images = this.errorCheck(this.images);
 
-            // alt sort images by height (tall, short, tall, short)
-            if (!this.opts.force_order) {
+            var json = this.makeMosaicView();
+
+            // ERROR CHECK: don't load if the layout is broken
+            if (this.layoutHasErrors(json)) {
+                this.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
+                return PhotoMosaic.Mustache.to_html('', {});
+            }
+
+            // lightboxes index by node order and we add nodes by columns
+            // leading to a mismatch between read order and lightbox-gallery-step-through order
+            json.images = this.unpackColumns(json.columns);
+
+            return PhotoMosaic.Mustache.to_html(this.template, json);
+        },
+
+        makeMosaicView: function (isRefreshing) {
+            /*
+                Images are already in order.
+
+                Deal into columns
+                 - order == random --> randomize => rows
+                 - order == rows --> rows
+                 - order == columns --> rows => columns
+                 - order == masonry --> masonry
+            */
+            if (this.opts.order === 'random' && !isRefreshing) {
                 this.images.sort(function (a, b) {
-                    if (self.opts.random) {
-                        return (0.5 - Math.random());
-                    } else {
-                        return (a.height.original - b.height.original);
-                    }
+                    return (0.5 - Math.random());
                 });
-                this.images.reverse();
             }
 
-            var order = [];
-            var bool = true;
+            this.columns = this.sortIntoRows(this.images);
 
-            if (!this.opts.force_order) {
-                while (this.images.length > 0) {
-                    if (bool) {
-                        order.push(this.images.shift());
-                    } else {
-                        order.push(this.images.pop());
-                    }
-                    bool = !bool;
-                }
-                this.images = order;
+            if (this.opts.order === 'columns') {
+                this.columns = this.sortIntoColumns(this.columns, this.images);
             }
 
-            // deal into columns
-            var current_col = 0;
-
-            for (var i = 0; i < this.images.length; i++) {
-                if (current_col === this.opts.columns) {
-                    current_col = 0;
-                }
-
-                if (!this.columns[current_col]) {
-                    this.columns[current_col] = [];
-                }
-                this.columns[current_col].push(this.images[i]);
-
-                current_col++;
+            if (this.opts.order === 'masonry') {
+                this.columns = this.sortIntoMasonry(this.images);
             }
 
-            // unfortunate special-case "force order"
-            if (this.opts.force_order) {
-                var forced_cols = [];
-                for (var i = 0; i < this.columns.length; i++) {
-                    for (var j = 0; j < this.columns[i].length; j++) {
-                        if (!forced_cols[i]) {
-                            forced_cols[i] = [];
-                        }
-                        forced_cols[i].push(this.images[0]);
-                        this.images.shift();
-                    }
-                }
-                this.columns = forced_cols;
-            }
-
-            // construct template object &
-            // get column heights (img height adjusted for col width)
+            // construct template object
             var json = {
+                    id: this._id,
                     transition: this.getTransition(),
                     width: (this.col_width * this.columns.length) + (this.opts.padding * (this.columns.length - 1)),
                     center: this.opts.center,
                     columns:[]
                 };
+
+            // get column heights (img height adjusted for col width)
             var col_heights = [];
 
             for (var i = 0; i < this.columns.length; i++) {
                 var col_height = 0;
 
                 for (var j = 0; j < this.columns[i].length; j++) {
-                    col_height = col_height + this.columns[i][j].height.adjusted;
+                    col_height += this.columns[i][j].height.adjusted;
                 }
 
-                col_height = col_height + (this.columns[i].length - 1) * this.opts.padding;
+                col_height += (this.columns[i].length - 1) * this.opts.padding;
                 col_heights.push(col_height);
 
                 json.columns[i] = {};
@@ -379,167 +409,297 @@ g}}(jQuery));
             }
 
             // normalize column heights
-            var shortest_col = this.getSmallest(col_heights);
-            var tallest_col = this.getBiggest(col_heights);
-            var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
+            var shortest_col = Math.min.apply( Math, col_heights );
+                // var tallest_col = Math.max.apply( Math, col_heights );
+                // var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
-                json = this.adjustHeights(json, average_col_height);
+                json = this.adjustHeights(json, shortest_col);
             } else {
                 json = this.adjustHeights(json, this.opts.height);
             }
 
-            // ERROR CHECK: don't load if the layout is broken
-            if (this.layoutHasErrors(json)) {
-                this.log.error("Your gallery's height is too small for your current settings \
-                    and won't render correctly.");
-                return PhotoMosaic.Mustache.to_html('', {});
+            // create position information for each image
+            for (var i = 0; i < json.columns.length; i++) {
+                var col_height = 0;
+
+                for (var j = 0; j < json.columns[i].images.length; j++) {
+                    json.columns[i].images[j].position = {
+                        top : col_height,
+                        left : (i * this.col_width) + (i * this.opts.padding)
+                    };
+
+                    col_height = col_height + json.columns[i].images[j].height.constraint + this.opts.padding;
+                };
+            };
+
+            return json;
+        },
+
+        autoCols: function (){
+            if (!this._auto_cols && this.opts.columns !== 'auto') {
+                this._auto_cols = false;
+                return this.opts.columns;
             }
 
-            return PhotoMosaic.Mustache.to_html(this.template, json);
+            this._auto_cols = true;
+
+            var max_width = this.opts.width;
+            var num_images = this.opts.gallery.length;
+
+            // this.opts.sizes only supported in PM4WP
+            var sizes = {
+                thumbnail : (this.opts.sizes) ? this.opts.sizes.thumbnail : 150,
+                medium : (this.opts.sizes) ? this.opts.sizes.medium : 300,
+                large : (this.opts.sizes) ? this.opts.sizes.large : 1024
+            };
+            var maths = {
+                plus : (sizes.medium + (sizes.thumbnail / 1.5)),
+                minus : (sizes.medium - (sizes.thumbnail / 1.2))
+            };
+
+            if (num_images < this.opts.columns) {
+                cols = num_images;
+            } else {
+                cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
+            }
+
+            return cols;
+        },
+
+        sortIntoRows: function (imgs) {
+            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
+            var col = 0;
+            var columns = [];
+
+            for (var i = 0; i < images.length; i++) {
+                col = i % this.opts.columns;
+
+                if (!columns[col]) {
+                    columns[col] = [];
+                }
+
+                columns[col].push(images[i]);
+            }
+
+            return columns;
+        },
+
+        sortIntoColumns: function (columns, imgs) {
+            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
+            var forced_cols = [];
+
+            for (var i = 0; i < columns.length; i++) {
+                for (var j = 0; j < columns[i].length; j++) {
+                    if (!forced_cols[i]) {
+                        forced_cols[i] = [];
+                    }
+                    forced_cols[i].push(images[0]);
+                    images.shift();
+                }
+            }
+
+            return forced_cols;
+        },
+
+        sortIntoMasonry: function (imgs) {
+            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
+            var col_heights = [];
+            var col = 0;
+            var columns = [];
+
+            // construct column-height memory obj
+            for (var i = 0; i < this.opts.columns; i++) {
+                col_heights[i] = 0;
+                columns.push([]);
+            }
+
+            for (var i = 0; i < images.length; i++) {
+                col = $.inArray( Math.min.apply( Math, col_heights ), col_heights );
+                columns[col].push(images[i]);
+                col_heights[col] = col_heights[col] + images[i].height.adjusted;
+            }
+
+            return columns;
+        },
+
+        unpackColumns: function (columns) {
+            var image;
+            var images = [];
+
+            for (var i = 0; i < this.images.length; i++) {
+                image = this.deepSearch(columns, 'id', this.images[i].id);
+                images.push(image);
+            };
+
+            return images;
+        },
+
+        deepSearch : function (obj, key, value) {
+            // recursively traverses an nested arrays, and objects looking for a key/value pair
+            var response = null;
+            var i = 0;
+            var prop;
+
+            if (obj instanceof Array) {
+                for (i = 0; i < obj.length; i++) {
+                    response = this.deepSearch(obj[i], key, value);
+                    if (response) {
+                        return response;
+                    }
+                }
+            } else {
+                for (prop in obj) {
+                    if (obj.hasOwnProperty(prop)) {
+                        if ( (prop == key) && (obj[prop] == value) ) {
+                            return obj;
+                        } else if (obj[prop] instanceof Object || obj[prop] instanceof Array) {
+                            response = this.deepSearch(obj[prop], key, value);
+                            if (response) {
+                                return response;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response;
         },
 
         adjustHeights: function (json, target_height) {
+            var column_heights = [];
+            var column = null;
+            var adjusted_height = 0;
+
             json = this.markLastColumn(json);
 
-            for (i = 0; i < json.columns.length; i++) {
+            for (var i = 0; i < json.columns.length; i++) {
+                column = json.columns[i];
                 json = this.markLastImageInColumn(json, i);
 
-                if (json.columns[i].height > target_height) {
-                    json.columns[i] = this.scaleColumnDown(json.columns[i], target_height);
+                if (this.opts.prevent_crop) {
+                    column = this.scaleColumn(column, column.height);
                 } else {
-                    json.columns[i] = this.scaleColumnUp(json.columns[i], target_height);
+                    column = this.scaleColumn(column, target_height);
+                }
+
+                column_heights.push(column.height);
+
+                json.columns[i] = column;
+            }
+
+            if (this.opts.prevent_crop) {
+                adjusted_height = Math.max.apply(Math, column_heights);
+            } else {
+                adjusted_height = Math.min.apply(Math, column_heights);
+            }
+
+            json.height = adjusted_height;
+
+            if (!this.opts.prevent_crop) {
+                json = this.flattenColumns(json, adjusted_height);
+            }
+
+            json = this.adjustImagesToConstraint(json);
+
+            return json;
+        },
+
+        scaleColumn: function (col, height) {
+            var count = col.images.length;
+            var total_padding = (this.opts.padding * (count - 1));
+            var column_start = col.height - total_padding;
+            var column_end = height - total_padding;
+            var image = null;
+            var images_height = 0;
+            var image_start = 0;
+            var image_end = 0;
+            var mod = 0;
+
+            // image's already have width|height.adjusted set
+            // they need width|height.constraint
+            for (var i = 0; i < count; i++) {
+                image = col.images[i];
+
+                image_start = image.height.adjusted;
+                image_end = Math.floor( column_end * ( Math.floor( (image_start / column_start) * 1000 ) / 1000 ) );
+                images_height += image_end;
+
+                image = this.setImageContraints(image, this.col_width, image_end);
+            }
+
+            col.height = images_height + total_padding;
+
+            return col;
+        },
+
+        flattenColumns: function (json, height) {
+            var column = null;
+            var image = null;
+            var diff = 0;
+            var total_padding = null;
+            var adjusted_height;
+
+            for (var i = 0; i < json.columns.length; i++) {
+                column = json.columns[i];
+                image = column.images[column.images.length - 1];
+                diff = Math.abs(column.height - height);
+                total_padding = (this.opts.padding * (column.images.length - 1));
+
+                if (diff > 0) {
+                    if (column.height > height) {
+                        adjusted_height = (image.height.constraint - diff);
+                    } else {
+                        adjusted_height = (image.height.constraint + diff);
+                    }
+
+                    image = this.setImageContraints(image, null, adjusted_height);
                 }
             }
 
             return json;
         },
 
-        autoCols: function (){
-            var max_width = this.opts.width;
-            var num_images = this.opts.gallery.length;
-            var cols = 0;
-            var ratio = {w:4, h:3};
-            var i = 0;
+        setImageContraints: function (image, width, height) {
+            image.width.constraint = width || image.width.constraint;
+            image.height.constraint = height || image.height.constraint;
+            return image;
+        },
 
-            if (this.opts.auto_columns) {
-                if (num_images < this.opts.columns) {
-                    cols = num_images;
-                } else {
-                    while(cols === 0) {
-                        if (num_images <= ((i + ratio.w) * (i + ratio.h))) {
-                            cols = i + ratio.w;
-                        } else {
-                            ++i;
-                        }
+        adjustImagesToConstraint: function (json) {
+            var column;
+            var image;
+            var test_height;
+
+            for (var i = 0; i < json.columns.length; i++) {
+                column = json.columns[i];
+
+                for (var j = 0; j < column.images.length; j++) {
+                    image = column.images[j];
+
+                    // adjusted is still scaled to the column's width
+                    if (image.height.adjusted > image.height.constraint) {
+                        image.adjustment = {
+                            type : 'top',
+                            value : Math.floor((image.height.adjusted - image.height.constraint) / 2)
+                        };
+                    } else {
+                        image.width.adjusted = Math.floor((image.width.adjusted * image.height.constraint) / image.height.adjusted);
+                        image.height.adjusted = image.height.constraint;
+
+                        image.adjustment = {
+                            type : 'left',
+                            value : Math.floor((image.width.adjusted - image.width.constraint) / 2)
+                        };
                     }
-                }
-                return cols;
-            } else {
-                return this.opts.columns;
-            }
-        },
 
-        scaleColumnDown: function (col, height) {
-            var count = col.images.length;
-            var total_padding = (this.opts.padding * (count - 1));
-            var smallest = this.findSmallestImage(col.images);
-            var column = {
-                current : col.height - total_padding,
-                target : height - total_padding,
-                images : 0
-            };
-            var image = {
-                current : 0,
-                target : 0
-            };
-            var mod = 0;
-
-            for (var i = 0; i < count; i++) {
-                image.current = col.images[i].height.adjusted;
-                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
-                column.images += image.target;
-                col.images[i].height.constraint = image.target;
-                // just as wide as it was
-                // but the height crops (is shorter) than it was
-                col.images[i].width.constraint = col.images[i].width.adjusted;
-                col.images[i].adjustment = {
-                    type : 'top',
-                    value : Math.floor((col.images[i].height.adjusted - col.images[i].height.constraint) / 2)
+                    column.images[j] = image;
                 };
-            }
 
-            mod = column.target - column.images;
-            col.images[smallest.index].height.constraint += mod;
-            col.images[smallest.index].adjustment.value = Math.floor((col.images[smallest.index].height.adjusted - col.images[smallest.index].height.constraint) / 2);
-
-            return col;
-        },
-
-        scaleColumnUp: function (col, height) {
-            var count = col.images.length;
-            var total_padding = (this.opts.padding * (count - 1));
-            var largest = this.findLargestImage(col.images);
-            var column = {
-                current : col.height - total_padding,
-                target : height - total_padding,
-                images : 0
+                json.columns[i] = column;
             };
-            var image = {
-                current : 0,
-                target : 0
-            };
-            var mod = 0;
 
-            for (var i = 0; i < count; i++) {
-                image.current = col.images[i].height.adjusted;
-                image.target = Math.floor( column.target * ( Math.floor( (image.current / column.current) * 1000 ) / 1000 ) );
-                column.images += image.target;
-                col.images[i].height.constraint = image.target;
-                // scale up to match the new height, cropping width
-                col.images[i].width.constraint = col.images[i].width.adjusted;
-                col.images[i].width.adjusted = Math.floor((col.images[i].width.adjusted * col.images[i].height.constraint) / col.images[i].height.adjusted);
-                col.images[i].height.adjusted = col.images[i].height.constraint;
-                col.images[i].adjustment = {
-                    type : 'left',
-                    value : Math.floor((col.images[i].width.adjusted - col.images[i].width.constraint) / 2)
-                };
-            }
-
-            mod = column.target - column.images;
-            // we have to rescale one image to fill the gap
-            col.images[largest.index].height.constraint += mod;
-            col.images[largest.index].width.adjusted = Math.floor((col.images[largest.index].width.adjusted * col.images[largest.index].height.constraint) / col.images[largest.index].height.adjusted);
-            col.images[largest.index].height.adjusted = col.images[largest.index].height.constraint;
-            col.images[largest.index].adjustment.value = Math.floor((col.images[largest.index].width.adjusted - col.images[largest.index].width.constraint) / 2);
-
-            return col;
-        },
-
-        getSmallest: function (list) {
-            var smallest = 0;
-
-            for (var i = 0; i < list.length; i++) {
-                if (smallest === 0) {
-                    smallest = list[i];
-                } else if (list[i] < smallest) {
-                    smallest = list[i];    
-                }
-            }
-
-            return smallest;
-        },
-
-        getBiggest: function (list) {
-            var biggest = 0;
-
-            for (var i = 0; i < list.length; i++) {
-                if (list[i] > biggest) {
-                    biggest = list[i];
-                }
-            }
-
-            return biggest;
+            return json;
         },
 
         findSmallestImage: function (images) {
@@ -700,12 +860,12 @@ g}}(jQuery));
             return gallery;
         },
 
-        pickImageSize: function(gallery) {
+        pickImageSize: function (gallery) {
             var size = null;
 
             // currently only supported in PM4WP
             if (!this.opts.sizes || !gallery[0].sizes) {
-                return gallery;
+                return null;
             }
 
             for (key in this.opts.sizes) {
@@ -718,11 +878,41 @@ g}}(jQuery));
                 size = 'full';
             }
 
-            for (var i = 0; i < gallery.length; i++) {
-                gallery[i].thumb = gallery[i].sizes[size];
-            };
+            return size;
+        },
 
-            return gallery;
+        swapImage: function (image, size) {
+            var self = this;
+            var $img = this.obj.find('#' + image.id);
+            var $a = $img.parent();
+            var $new_img = $('<img/>')
+                                .attr('src', image.sizes[size])
+                                .attr('class', size)
+                                .attr('style', $img.attr('style'))
+                                .opacity(0);
+
+            if (
+                $a.find('.' + size).length === 0 &&
+                $a.find('img[src="' + image.sizes[size] + '"]').length === 0
+            ) {
+                $a.append($new_img);
+
+                $new_img.imagesLoaded({
+                    fail: function ($images, $proper, $broken) {
+                        $images.remove();
+                    },
+                    done: function ($images) {
+                        var sibs = $images.siblings();
+                        var id = sibs.eq(0).attr('id');
+                        $images.attr('id', id)
+                        $images.opacity(100);
+                        sibs.remove();
+                        setTimeout(function () {
+                            $images.removeClass();
+                        }, 0);
+                    }
+                });
+            }
         },
 
         constructGalleryFromHTML: function () {
@@ -730,9 +920,18 @@ g}}(jQuery));
             var $images = this.obj.find('img');
 
             for (var i = 0; i < $images.length; i++) {
+                var $image = $images.eq(i)
                 var image = {};
 
-                image.src = ($images.eq(i).parent('a').length > 0 && this.opts.links) ? $images.eq(i).parent('a').attr('href') : $images.eq(i).attr('src');
+                if ($image.parent('a').length > 0 && this.opts.links) {
+                    image.src = $image.attr('src');
+                    image.url = $image.parent('a').attr('href');
+                } else if ($image.parent('a').length > 0) {
+                    image.src = $image.parent('a').attr('src');
+                } else {
+                    image.src = $image.attr('src');
+                }
+
                 image.caption = $images.eq(i).attr('title');
 
                 gallery.push(image);
@@ -807,11 +1006,135 @@ g}}(jQuery));
             return 'transition-' + transition;
         },
 
+        bindEvents: function () {
+            var self = this;
+
+            $(window).unbind('resize.photoMosaic' + this._id).bind('resize.photoMosaic' + this._id, function () {
+                self.refresh();
+            });
+        },
+
+        refresh: function () {
+            if (this._options.width !== 'auto') {
+                return;
+            }
+
+            var self = this;
+            var image = null;
+            var $img = null;
+            var $a = null;
+            var json = null;
+            var size = this.pickImageSize(this.images);
+
+
+            this.obj.addClass('resizing');
+
+            // get the container width
+            this.opts.width = this.obj.width();
+
+            // get new column count & math
+            this.opts.columns = this.autoCols();
+            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
+
+            for (var i = 0; i < this.images.length; i++) {
+                image = this.images[i];
+
+                image.width.adjusted = this.col_width;
+                image.height.adjusted = Math.floor((image.height.original * image.width.adjusted) / image.width.original);
+
+                if (size) {
+                    // we get a new image if we need a bigger image
+                    if (this.opts.sizes[size] > this.opts.sizes[this._size]) {
+                        this.swapImage(image, size);
+                    }
+                }
+
+                this.images[i] = image;
+            };
+
+            if (size) {
+                this._size = size;
+            }
+
+            var json = this.makeMosaicView(true);
+
+            this.obj.children().css({
+                width: json.width,
+                height: json.height
+            });
+
+            for (var i = 0; i < json.columns.length; i++) {
+                for (var j = 0; j < json.columns[i].images.length; j++) {
+                    image = json.columns[i].images[j];
+                    $img = this.obj.find('#' + image.id).parent().find('img');
+                    $a = $img.parent();
+
+                    $img.css({
+                        width : image.width.adjusted + 'px',
+                        height : image.height.adjusted + 'px',
+                        top : '0px',
+                        left : '0px'
+                    });
+
+                    $img.css(image.adjustment.type, (image.adjustment.value * -1) + 'px');
+
+                    $a.css({
+                        width : image.width.constraint + 'px',
+                        height : image.height.constraint + 'px',
+                    });
+
+                    if (!this.shouldAnimate()) {
+                        $a.css({
+                            top : image.position.top + 'px',
+                            left : image.position.left + 'px'
+                        });
+                    } else {
+                        $a.tween({
+                            top: $.extend({}, this.opts.responsive_transition_settings, {
+                                stop: image.position.top
+                            }),
+                            left: $.extend({}, this.opts.responsive_transition_settings, {
+                                stop: image.position.left
+                            })
+                        });
+                    }
+                }
+            }
+
+            if (this.shouldAnimate()) {
+                $.play();
+            }
+
+            setTimeout(function () {
+                self.obj.removeClass('resizing');
+            }, 0);
+        },
+
         modalCallback: function () {
             var $node = this.obj.children().get(0);
             if ($.isFunction(this.opts.modal_ready_callback)) {
                 this.opts.modal_ready_callback.apply(this, [$node]);
             }
+        },
+
+        adjustDeprecatedOptions: function (opts) {
+            // random : true | false
+            if (opts.random) {
+                opts.order = 'random';
+            }
+            // force_order : true | false
+            if (opts.force_order) {
+                opts.order = 'columns';
+            }
+
+            return opts;
+        },
+
+        makeID: function () {
+            var S4 = function () {
+                return ( ( (1 + Math.random()) * 0x10000 ) | 0 ).toString(16).substring(1);
+            };
+            return 'pm_' + ( S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4() );
         },
 
         logGalleryData: function () {
@@ -827,15 +1150,25 @@ g}}(jQuery));
             }
             this.log.info("Generate Gallery Data...");
             this.log.print( JSON.stringify(response) );
-        }
+        },
+
+        shouldAnimate: function () {
+            return (
+                this._auto_cols &&
+                this.opts.responsive_transition
+            );
+        },
+
+        __: function () { return this.version }
 
     });
 
-    $.fn.photoMosaic = function (options) {
-        this.each(function (i) {
-            if (!this.photoMosaic) {
-                this.photoMosaic = new photoMosaic();
-                this.photoMosaic.init(this, options, i);
+
+    $.fn[pluginName] = function (options) {
+        options = options || {};
+        return this.each(function () {
+            if (!$.data(this, pluginName)) {
+                $.data(this, pluginName, new Plugin(this, options));
 
                 // for debugging
                 window.PhotoMosaic.mosaics.push({
@@ -844,7 +1177,6 @@ g}}(jQuery));
                 });
             }
         });
-        return this;
     };
 
 }(jQuery));

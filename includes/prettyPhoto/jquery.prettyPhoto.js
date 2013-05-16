@@ -4,6 +4,7 @@
      - new jQuery namespace (JQPM)
      - _getFileType (#662) extended to autodetect image URLs (avoid the need for "iframe=true")
      - content type switch (#330) extended to support iframe URLs w/o "iframe=true"
+     -! minified and included in jquery.photoMosaic.js
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto

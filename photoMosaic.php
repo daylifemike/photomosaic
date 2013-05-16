@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
-        return '2.3.2';
+        return '2.3.3';
     }
 
     function init() {
@@ -30,27 +30,28 @@ class PhotoMosaic {
         add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
-        wp_register_script( 'photomosaic_jquery', plugins_url('/js/jquery-1.9.1.min.js', __FILE__ ));
-        wp_enqueue_script('photomosaic_jquery');
+        wp_register_script( 'photomosaic', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ));
+        wp_enqueue_script('photomosaic');
+
+        wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photoMosaic.css', __FILE__ ));
 
         if (!is_admin()) {
             if($options['lightbox']) {
                 wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/prettyPhoto/prettyPhoto.css', __FILE__ ));
-                wp_enqueue_script( 'photomosaic_prettyphoto_js', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('photomosaic_jquery'));
+
+                // for testing - comment out in jquery.photoMosaic.js
+                // wp_enqueue_script( 'photomosaic_prettyphoto_js', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('photomosaic'));
             }
 
-            wp_enqueue_script( 'photomosaic_jstween', plugins_url('/js/jstween-1.1.js', __FILE__ ), array('photomosaic_jquery'));
-            wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photoMosaic.css', __FILE__ ));
-            wp_enqueue_script( 'photomosaic_base_js', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ), array('photomosaic_jquery'));
+            // for testing - comment out in jquery.photoMosaic.js
+            // wp_enqueue_script( 'photomosaic_jstween_js', plugins_url('/includes/jstween-1.1.js', __FILE__ ), array('photomosaic'));
 
             add_shortcode( 'photoMosaic', array('PhotoMosaic', 'shortcode') );
             add_shortcode( 'photomosaic', array('PhotoMosaic', 'shortcode') );
 
         } else if (isset($_GET['page'])) { 
             if ($_GET['page'] == "photoMosaic.php") {
-                wp_enqueue_script( 'wp-pointer' );
-                wp_enqueue_style( 'wp-pointer' );
-                wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic_jquery'));
+                wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic'));
             }
         }
     }
@@ -245,6 +246,7 @@ class PhotoMosaic {
                                 slideshow: false,
                                 theme: "pp_default",
                                 deeplinking: false,
+                                show_title: false,
                                 social_tools: ""
                             });
                         },

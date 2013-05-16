@@ -19,18 +19,27 @@
     $(document).ready(function(){
 
         $('#target').photoMosaic({
-            input: 'json',
-            gallery: 'PMalbum',
-            modal_name : 'prettyPhoto',
-            modal_ready_callback: function($pm) {
-                $('a[rel^="prettyPhoto"]', $pm).prettyPhoto({
-                    overlay_gallery: false,
-                    slideshow: false,
-                    theme: "pp_default",
-                    deeplinking: false,
-                    social_tools: ""
-                });
-            }       
+            // input examples
+                input: 'json',
+                gallery: 'PMalbum', // var PMalbum is defined in data/photoMosaic.data.js
+
+                // input: 'xml',
+                // gallery: 'data/photoMosaic.data.xml',
+
+                // input: 'html',
+
+            // lightbox settings
+                modal_name : 'prettyPhoto',
+                modal_ready_callback: function($pm) {
+                    $('a[rel^="prettyPhoto"]', $pm).prettyPhoto({
+                        overlay_gallery: false,
+                        slideshow: false,
+                        theme: "pp_default",
+                        deeplinking: false,
+                        social_tools: "",
+                        show_title: false
+                    });
+                }
         });
         
     });
@@ -48,23 +57,27 @@
         <!--  This is the way you would construct your gallery for {input:'html'}
             <ul>
                 <li>
-                    <a href="images/moleskineh.jpg">
-                        <img src="images/moleskineh_thumb.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
+                    <a href="images/imgs/moleskineh.jpg">
+                        <img
+                            src="images/imgs/moleskineh_thumb.jpg"
+                            title="'moleskineh' - By Amir K (childofwar @ flickr)"
+                            alt="~~ alt text ~~"
+                        />
                     </a>
                 </li>
-                <li><a href="#2"><img src="images/888.jpg" title="'888' - By doug.siefken (siefken @ flickr)"/></a></li>
-                <li><a href="#3"><img src="images/l_t.jpg" title="'l_t' - Ros K (ros-k @ flickr)"/></a></li>
-                <li><a href="#4"><img src="images/lumpini-park-lights.jpg" title="'Lumpini Park Lights' - By Mike Behnken (mikebehnken @ flickr)"/></a></li>
-                <li><a href="#5"><img src="images/crazy-hills-of-san-fran.jpg" title="'Crazy Hills of San Francisco' - By Håkan Dahlström (dahlstroms @ flickr)"/></a></li>
-                <li><a href="#6"><img src="images/christmas-25.jpg" title="'Christmas #25' - By Kevin Dooley (pagedooley @ flickr)"/></a></li>
-                <li><a href="#7"><img src="images/mammoths.jpg" title="'mammoths' - By paul (dex) [dexxus @  flickr]"/></a></li>
-                <li><a href="#8"><img src="images/empire-state-pigeon.jpg" title="'Empire State Pigeon' - By ZeroOne (villes @ flickr)"/></a></li>
-                <li><a href="#9"><img src="images/paris-s-eveille.jpg" title="'Paris s'éveille' - By gadl (gadl @ flickr)"/></a></li>
-                <li><a href="#10"><img src="images/koyaanisqatsi-patchwork.jpg" title="'koyaanisqatsi patchwork' - By alvazer (alvazer @ flickr)"/></a></li>
-                <li><a href="#11"><img src="images/living-off-the-land.jpg" title="'Living Off the Land' - By MikeBehnken (mikebehnken @ flickr)"/></a></li>
-                <li><a href="#12"><img src="images/water-tower-perspective.jpg" title="'water tower perspective' - By Paulo Brandão (paulobrandao @ flickr)"/></a></li>
+                <li><a href="#2"><img src="images/imgs/888.jpg" title="'888' - By doug.siefken (siefken @ flickr)"/></a></li>
+                <li><a href="#3"><img src="images/imgs/l_t.jpg" title="'l_t' - Ros K (ros-k @ flickr)"/></a></li>
+                <li><a href="#4"><img src="images/imgs/lumpini-park-lights.jpg" title="'Lumpini Park Lights' - By Mike Behnken (mikebehnken @ flickr)"/></a></li>
+                <li><a href="#5"><img src="images/imgs/crazy-hills-of-san-fran.jpg" title="'Crazy Hills of San Francisco' - By Håkan Dahlström (dahlstroms @ flickr)"/></a></li>
+                <li><a href="#6"><img src="images/imgs/christmas-25.jpg" title="'Christmas #25' - By Kevin Dooley (pagedooley @ flickr)"/></a></li>
+                <li><a href="#7"><img src="images/imgs/mammoths.jpg" title="'mammoths' - By paul (dex) [dexxus @  flickr]"/></a></li>
+                <li><a href="#8"><img src="images/imgs/empire-state-pigeon.jpg" title="'Empire State Pigeon' - By ZeroOne (villes @ flickr)"/></a></li>
+                <li><a href="#9"><img src="images/imgs/paris-s-eveille.jpg" title="'Paris s'éveille' - By gadl (gadl @ flickr)"/></a></li>
+                <li><a href="#10"><img src="images/imgs/koyaanisqatsi-patchwork.jpg" title="'koyaanisqatsi patchwork' - By alvazer (alvazer @ flickr)"/></a></li>
+                <li><a href="#11"><img src="images/imgs/living-off-the-land.jpg" title="'Living Off the Land' - By MikeBehnken (mikebehnken @ flickr)"/></a></li>
+                <li><a href="#12"><img src="images/imgs/water-tower-perspective.jpg" title="'water tower perspective' - By Paulo Brandão (paulobrandao @ flickr)"/></a></li>
             </ul>
-         -->
+        -->
         
         </div>
     </div>

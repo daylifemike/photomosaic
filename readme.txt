@@ -26,6 +26,7 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 == Changelog ==
 = 2.3.3 =
 * Enhancement: WP image "Alt Text" conveys to IMG 'alt' attribute
+* Enhancement: JS has been concatenated in order to load fewer files
 
 = 2.3.2 =
 * Bug Fix: prevents WP from injecting <p> tags in output JS

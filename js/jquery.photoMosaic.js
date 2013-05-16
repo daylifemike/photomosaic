@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.3.3 starts around line ~#70
+ *  PhotoMosaic v2.3.3 starts around line ~#110
  */
 
 (function (window) {
@@ -102,7 +102,8 @@ g}}(JQPM));
 
 /*
     jQuery photoMosaic v2.3.3
-    requires jQuery 1.7+, JSTween (included separately), Mustache, Modernizr, & ImagesLoaded (included above)
+    requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
+    optional: prettyPhoto (included above)
 */
 (function ($) {
     // for debugging
@@ -220,6 +221,7 @@ g}}(JQPM));
 
             this.opts = $.extend({}, this._defaults, this._options);
             this.opts = this.adjustDeprecatedOptions(this.opts);
+            this._options = $.extend({}, this.opts, this._options);
 
             this.preload = 'PM_preloadify' + this._id;
 
@@ -264,10 +266,17 @@ g}}(JQPM));
                 this.opts.height = "auto";
             }
 
-            this.opts.gallery = this.getGalleryData();
+            $.when(
+                this.getGalleryData()
+            ).then(function (data) {
+                self.opts.gallery = data;
+                self.configure();
+            });
+        },
 
-            // loading message
-            // must follow getGalleryData() for HTML input to work
+        configure: function () {
+            var self = this;
+
             if (this.opts.show_loading) {
                 this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {
                     id: this._id
@@ -872,28 +881,36 @@ g}}(JQPM));
 
         getGalleryData: function () {
             var self = this;
-            var gallery;
 
             // construct the gallery
-            if (this.opts.input === 'html') {
-                gallery = this.constructGalleryFromHTML();
+            if (this.opts.input === 'json') {
+                return this.opts.gallery;
+
+            } else if (this.opts.input === 'html') {
+                return this.constructGalleryFromHTML();
 
             } else if (this.opts.input === 'xml' ) {
-                $.get(this.opts.gallery, function (data) {
-                    if ($(data).find('photos').length > 0) {
-                        gallery = $(data).find('photos');
-                        gallery = self.constructGalleryFromXML(gallery);
-                    } else {
-                        this.log.error("The XML either couldn't be found or was malformed.");
-                        return;
-                    }
-                });
-
-            } else if (this.opts.input === 'json') {
-                gallery = this.opts.gallery;
+                return $.when(
+                        $.get(this.opts.gallery)
+                    ).then(
+                        // success
+                        function (data) {
+                            var gallery;
+                            if ($(data).find('photos').length > 0) {
+                                gallery = $(data).find('photos');
+                                return self.constructGalleryFromXML(gallery);
+                            } else {
+                                self.log.error("The XML doesn't contain any <photo> nodes.");
+                                return;
+                            }
+                        },
+                        // fail
+                        function () {
+                            self.log.error("The XML either couldn't be found or was malformed.");
+                            return;
+                        }
+                    );
             }
-
-            return gallery;
         },
 
         pickImageSize: function (gallery) {
@@ -969,6 +986,7 @@ g}}(JQPM));
                 }
 
                 image.caption = $images.eq(i).attr('title');
+                image.alt = $images.eq(i).attr('alt');
 
                 gallery.push(image);
             }
@@ -984,6 +1002,7 @@ g}}(JQPM));
                 var data = $(this);
 
                 photo.caption = data.children('title').text();
+                photo.alt = data.children('alt').text();
                 photo.src = data.children('src').text();
                 photo.thumb = data.children('thumb').text();
                 photo.url = data.children('url').text();

@@ -3,7 +3,8 @@ var PMalbum = [
         src: "images/imgs/moleskineh.jpg",
         caption: "'moleskineh' - By Amir K (childofwar @ flickr)",
         width: "500",
-        height: "321"
+        height: "321",
+        alt: '+++ alt text +++'
     },
     {
         src: "images/imgs/888.jpg",

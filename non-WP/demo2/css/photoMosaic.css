@@ -1,14 +1,14 @@
 @charset "utf-8";
-/* photoMosaic 2.3 */
+/* photoMosaic 2.3.3 */
 
 /* reset */
 .photoMosaic,
 .photoMosaic img, .photoMosaic div, .photoMosaic span,
 .photoMosaic a:link, .photoMosaic a:visited, .photoMosaic a:active, .photoMosaic a:hover {
-    background:none; outline:none; border:0; height:auto; width:auto; max-height:none !important; max-width:none !important; 
+    background:none; outline:none; border:0; height:auto; width:auto; max-height:none !important; max-width:none !important;
     min-height:none !important; min-width:none !important; font-style:normal; font-variant:normal; font-weight:normal;
     list-style:none; margin:0; padding:0; position:static; float:none; visibility:visible;
-    overflow:visible; color:#000000; letter-spacing:normal; line-height:120%; text-align:left; text-decoration:none; 
+    overflow:visible; color:#000000; letter-spacing:normal; line-height:120%; text-align:left; text-decoration:none;
     text-indent:0; text-transform:none; vertical-align:baseline; white-space:normal; word-spacing:normal;
 }
 
@@ -67,12 +67,14 @@
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-none a.loading img { }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-custom a.loading img { 
+    /* good for example
         opacity:0;
         -webkit-transform: rotate( -5deg ) scale( 0.95 );
         -moz-transform: rotate( -5deg ) scale( 0.95 );
         -o-transform: rotate( -5deg ) scale( 0.95 );
         -ms-transform: rotate( -5deg ) scale( 0.95 );
         transform: rotate( -5deg ) scale( 0.95 );
+    */
 }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-fade a.loading img {

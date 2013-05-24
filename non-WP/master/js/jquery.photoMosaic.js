@@ -201,7 +201,7 @@ g}}(jQuery));
 
             this.opts = $.extend({}, this._defaults, this._options);
             this.opts = this.adjustDeprecatedOptions(this.opts);
-            this._options = $.extend({}, this.opts, this._options);
+            this._options = $.extend(true, {}, this.opts); // jQuery deep copy
 
             this.preload = 'PM_preloadify' + this._id;
 
@@ -213,33 +213,30 @@ g}}(jQuery));
             }
 
             // Error Checks
-            if (this.opts.input === 'xml' && this.opts.gallery === '') {
-                this.log.error("No XML file path specified.");
-                return;
-            }
-            if (this.opts.input === 'xml' && this.opts.gallery === 'PMalbum') {
-                this.log.error("No XML file path specified.");
-                return;
-            }
-            if (this.opts.input === 'json' && this.opts.gallery === '') {
-                this.log.error("No JSON object defined.");
-                return;
-            }
-            if (this.opts.input === 'json' && this.opts.gallery.length === 0) {
-                this.log.error("Specified gallery data is empty.");
-                return;
-            }
-            if (this.opts.input === 'json' && this.opts.gallery === 'PMalbum') {
-                if (PMalbum !== 'undefined') {
-                    this.opts.gallery = PMalbum;
-                } else {
-                    this.log.error("The JSON object 'PMalbum' can not be found.");
+            if (this.opts.input === 'xml') {
+                if (typeof this.opts.gallery !== 'string' || this.opts.gallery === '') {
+                    this.log.error("No XML file path specified.");
                     return;
                 }
             }
-            if (this.opts.gallery.length - 1 < this.current_album) {
-                this.log.error("'start_album' uses a 0-index (0 = the first album). No album was found at the specified index (" + this.current_album + ")");
-                return;
+            if (this.opts.input === 'json') {
+                if (typeof this.opts.gallery === 'string') {
+                    if (this.opts.gallery === '') {
+                        this.log.error("No JSON object defined.");
+                        return;
+                    }
+                    if (typeof window[this.opts.gallery] !== 'undefined') {
+                        this.opts.gallery = window[this.opts.gallery];
+                    } else {
+                        this.log.error("No JSON object found when referencing '" + this.opts.gallery + "'.")
+                        this.log.info("Make sure your variable is avaible to the global scope (window['" + this.opts.gallery + "']) or simply pass the object literal (gallery:" + this.opts.gallery + ") instead of a string (gallery:\"" + this.opts.gallery + "\").");
+                        return;
+                    }
+                }
+                if (this.opts.gallery === 0) {
+                    this.log.error("Specified gallery data is empty.");
+                    return;
+                }
             }
             if (this.opts.prevent_crop && this.opts.height !== 'auto') {
                 this.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + this.opts.height + ") is being ignored so as to prevent cropping.");
@@ -435,11 +432,11 @@ g}}(jQuery));
 
             // normalize column heights
             var shortest_col = Math.min.apply( Math, col_heights );
-                // var tallest_col = Math.max.apply( Math, col_heights );
-                // var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
+                var tallest_col = Math.max.apply( Math, col_heights );
+                var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
 
             if (this.opts.height === 'auto') {
-                json = this.adjustHeights(json, shortest_col);
+                json = this.adjustHeights(json, average_col_height);
             } else {
                 json = this.adjustHeights(json, this.opts.height);
             }
@@ -479,7 +476,7 @@ g}}(jQuery));
                 large : (this.opts.sizes) ? this.opts.sizes.large : 1024
             };
             var maths = {
-                plus : (sizes.medium + (sizes.thumbnail / 1.5)),
+                plus : (sizes.medium + (sizes.thumbnail / 1.2)),
                 minus : (sizes.medium - (sizes.thumbnail / 1.2))
             };
 
@@ -1098,41 +1095,39 @@ g}}(jQuery));
                 height: json.height
             });
 
-            for (var i = 0; i < json.columns.length; i++) {
-                for (var j = 0; j < json.columns[i].images.length; j++) {
-                    image = json.columns[i].images[j];
-                    $img = this.obj.find('#' + image.id).parent().find('img');
-                    $a = $img.parent();
+            for (var i = 0; i < json.images.length; i++) {
+                image = json.images[i];
+                $img = this.obj.find('#' + image.id).parent().find('img');
+                $a = $img.parent();
 
-                    $img.css({
-                        width : image.width.adjusted + 'px',
-                        height : image.height.adjusted + 'px',
-                        top : '0px',
-                        left : '0px'
-                    });
+                $img.css({
+                    width : image.width.adjusted + 'px',
+                    height : image.height.adjusted + 'px',
+                    top : '0px',
+                    left : '0px'
+                });
 
-                    $img.css(image.adjustment.type, (image.adjustment.value * -1) + 'px');
+                $img.css(image.adjustment.type, (image.adjustment.value * -1) + 'px');
 
+                $a.css({
+                    width : image.width.constraint + 'px',
+                    height : image.height.constraint + 'px',
+                });
+
+                if (!this.shouldAnimate()) {
                     $a.css({
-                        width : image.width.constraint + 'px',
-                        height : image.height.constraint + 'px',
+                        top : image.position.top + 'px',
+                        left : image.position.left + 'px'
                     });
-
-                    if (!this.shouldAnimate()) {
-                        $a.css({
-                            top : image.position.top + 'px',
-                            left : image.position.left + 'px'
-                        });
-                    } else {
-                        $a.tween({
-                            top: $.extend({}, this.opts.responsive_transition_settings, {
-                                stop: image.position.top
-                            }),
-                            left: $.extend({}, this.opts.responsive_transition_settings, {
-                                stop: image.position.left
-                            })
-                        });
-                    }
+                } else {
+                    $a.tween({
+                        top: $.extend({}, this.opts.responsive_transition_settings, {
+                            stop: image.position.top
+                        }),
+                        left: $.extend({}, this.opts.responsive_transition_settings, {
+                            stop: image.position.left
+                        })
+                    });
                 }
             }
 

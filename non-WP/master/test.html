@@ -2,23 +2,43 @@
 <html lang="en">
 <head>
 <title>jQuery photoMosaic</title>
-<link rel="stylesheet" type="text/css" href="css/photoMosaic.screen.css" />
-<script src="data/photoMosaic.data.js" type="text/javascript"></script>
+
+<!-- include jQuery -->
 <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+
+<!-- include Lightbox (optional) -->
+<link href="includes/prettyPhoto/prettyPhoto.css" rel="stylesheet" type="text/css" />
+<script src="includes/prettyPhoto/jquery.prettyPhoto.js" type="text/javascript"></script>
+
+<!-- include PhotoMosaic -->
+<script src="data/photoMosaic.data.js" type="text/javascript"></script>
+<link href="css/photoMosaic.css" rel="stylesheet" type="text/css" />
 <script src="js/jquery.photoMosaic.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
         $('#target').photoMosaic({
-            input:'html',
-            show_loading: true,
+            input:'json',
+            gallery: PMalbum,
+            modal_name: 'prettyPhoto',
             modal_ready_callback: function(pm) {
-                $(pm).find('li').each(function () {
-                    var $a = $(this).find('a');
+                // creates the caption overlays
+                $(pm).find('a').each(function () {
+                    var $a = $(this);
                     var $img = $a.find('img');
                     var $span = $('<span></span>');
                     $span.text( $img.attr('title') );
                     $a.append($span);
+                });
+
+                // binds the lightbox
+                $('a[rel^="prettyPhoto"]', pm).prettyPhoto({
+                    overlay_gallery: false,
+                    slideshow: false,
+                    theme: "pp_default",
+                    deeplinking: false,
+                    social_tools: "",
+                    show_title: false
                 });
             }
         });
@@ -26,108 +46,38 @@
 </script>
 <style type="text/css">
     body{background:#dfdfdf; color:#000000; font-size:12px;}
-    #container{width:400px; margin:15px auto 0px auto;}
+    #container{width:75%; margin:15px auto 0px auto;}
 
-.photoMosaic ol li {
-    position: relative;
-}
-.photoMosaic ol li img {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-.photoMosaic span {
-    position:absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    padding: 0.5em;
-    height: 100%;
-    font-size: 13px;
-    background: rgba(0, 0, 0, 0);
-    color: rgba(255, 255, 255, 0);
-    transition: all 0.3s linear 0s;
-    transform-origin: center center;
-}
+    .photoMosaic span {
+        position:absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        display: block;
+        padding: 0.5em;
+        height: 100%;
+        font-size: 13px;
+        background: rgba(0, 0, 0, 0);
+        color: rgba(255, 255, 255, 0);
+        transition: all 0.3s linear 0s;
+        transform-origin: center center;
+    }
 
-.photoMosaic a:hover span {
-    background: rgba(0, 0, 0, 0.6);
-    color: rgba(255, 255, 255, 0.9);
-}
+    .photoMosaic a:hover span {
+        background: rgba(0, 0, 0, 0.6);
+        color: rgba(255, 255, 255, 0.9);
+    }
 
+    .photoMosaic a:hover img {
+        opacity: 1;
+    }
 </style>
 
 </head>
 <body>
     <div id="container">
-        <div id="target">
-        
-        
-            <ul>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-                <li>
-                    <a href="images/imgs/moleskineh.jpg">
-                        <img src="images/imgs/moleskineh.jpg" title="'moleskineh' - By Amir K (childofwar @ flickr)"/>
-                    </a>
-                </li>
-            </ul>
-        
-        
-        </div>
+        <div id="target"></div>
     </div>
 </body>
 </html>

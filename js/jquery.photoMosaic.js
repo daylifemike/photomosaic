@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.3.3 starts around line ~#110
+ *  PhotoMosaic v2.3.4 starts around line ~#110
  */
 
 (function (window) {
@@ -101,7 +101,7 @@ g}}(JQPM));
 
 
 /*
-    jQuery photoMosaic v2.3.3
+    jQuery photoMosaic v2.3.4
     requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
     optional: prettyPhoto (included above)
 */
@@ -116,7 +116,7 @@ g}}(JQPM));
 
     var Plugin = function (el, options, i) {
         this._name = pluginName;
-        this.version = '2.3.3';
+        this.version = '2.3.4';
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -389,10 +389,6 @@ g}}(JQPM));
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
-            // lightboxes index by node order and we add nodes by columns
-            // leading to a mismatch between read order and lightbox-gallery-step-through order
-            json.images = this.unpackColumns(json.columns);
-
             return PhotoMosaic.Mustache.to_html(this.template, json);
         },
 
@@ -474,6 +470,10 @@ g}}(JQPM));
                     col_height = col_height + json.columns[i].images[j].height.constraint + this.opts.padding;
                 };
             };
+
+            // lightboxes index by node order and we add nodes by columns
+            // leading to a mismatch between read order and lightbox-gallery-step-through order
+            json.images = this.unpackColumns(json.columns);
 
             return json;
         },

@@ -1,4 +1,6 @@
 /* PhotoMosaic - Changelog */
+= 2.3.4 =
+* Bug Fix: corrects regression introduced in 2.3.3
 
 = 2.3.3 =
 * Enhancement: WP image "Alt Text" conveys to IMG 'alt' attribute

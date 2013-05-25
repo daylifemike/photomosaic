@@ -342,15 +342,9 @@ class PhotoMosaic {
                 $image_description = $_post->post_content; // this is where we hide a link_url
 
                 // is the description a URL
-                if (preg_match("#$pattern#i", $image_description)) {
-                    if( intval($link_to_url) ) {
-                        $url_data = ',"url": "' . $image_description . '"';
-                    } else {
-                        $image_description = esc_attr($image_description);
-                        $url_data = '';
-                    }
+                if ( intval($link_to_url) && preg_match("#$pattern#i", $image_description) ) {
+                    $url_data = ',"url": "' . $image_description . '"';
                 } else {
-                    $image_description = esc_attr($image_description);
                     $url_data = '';
                 }
 
@@ -392,24 +386,30 @@ class PhotoMosaic {
         $len = count($picturelist);
         foreach ($picturelist as $key => $picture) {
             $image_description = $picture->description;
+            $image_alttext = $picture->alttext;
 
             // is the description a URL
-            if (preg_match("#$pattern#i", $image_description)) {
-                if( intval($link_to_url) ) {
-                    $url_data = ',"url": "' . $image_description . '"';
-                } else {
-                    $image_description = esc_attr($image_description);
-                    $url_data = '';
-                }
-            } else {
+            if ( intval($link_to_url) && preg_match("#$pattern#i", $image_description) ) {
+                $url_data = ',"url": "' . $image_description . '"';
+                $image_description = esc_attr($image_alttext);
+                $image_alttext = $image_description;
+
+            } else if ( intval($link_to_url) && preg_match("#$pattern#i", $image_alttext) ) {
+                $url_data = ',"url": "' . $image_alttext . '"';
                 $image_description = esc_attr($image_description);
+                $image_alttext = $image_description;
+
+            } else {
                 $url_data = '';
+                $image_description = esc_attr($image_description);
+                $image_alttext = esc_attr($image_alttext);
             }
 
             $output_buffer .='{
                 "src": "' . $picture->imageURL . '",
                 "thumb": "' . $picture->imageURL . '",
                 "caption": "' . $image_description . '",
+                "alt": "' . $image_alttext . '",
                 "width": "' . $picture->meta_data['width'] . '",
                 "height": "' . $picture->meta_data['height'] . '"
                 ' . $url_data . '
@@ -423,7 +423,6 @@ class PhotoMosaic {
         }
         return $output_buffer;
     }
-
 
     function renderAdminPage() {
         $options = PhotoMosaic::getOptions();
@@ -571,16 +570,21 @@ class PhotoMosaic {
                             <p>
                                 <label><input name="links" type="checkbox" value="1" <?php if($options['links']) echo "checked='checked'"; ?> /> Image Links</label>
                             </p>
-                            <span class="info">wraps images in links that point to the unresized version</span>
+                            <span class="info">wraps images in links that point to the unresized version of the image</span>
                         </div>
                         <div class="field">
                             <p>
                                 <label><input name="link_to_url" type="checkbox" value="1" <?php if($options['link_to_url']) echo "checked='checked'"; ?> /> Link to URL</label>
                             </p>
                             <span class="info">
-                                causes image links to point to a URL instead of the unresized image
+                                causes PhotoMosaic to look for a URL to use instead of linking to the unresized image
                                     <br/><br/>
-                                define the link URL in the image description
+                                if no URLs are found, PhotoMosaic links to the unresized image
+                                    <br/><br/>
+                                WP: define the caption in the "Caption" field and the link URL in the "Description" field
+                                    <br/><br/>
+                                NextGen: it doesn't matter which field ("Alt &amp; Title Text" or "Description") gets used for which.
+                                PhotoMosaic checks both fields for the URL and, if it finds one, uses the other field for the caption
                                     <br/><br/>
                                 requires that <b>image links</b> be checked
                             </span>
@@ -590,9 +594,9 @@ class PhotoMosaic {
                                 <label><input name="external_links" type="checkbox" value="1" <?php if($options['external_links']) echo "checked='checked'"; ?> /> Open Links in New Window</label>
                             </p>
                             <span class="info">
-                                causes image links that point to a URL to open in a new window/tab
+                                causes links to open in a new window/tab
                                     <br/><br/>
-                                requires that <b>image links</b> and <b>link to url</b> be checked
+                                requires that <b>image links</b> be checked
                             </span>
                         </div>
                         <div class="field">

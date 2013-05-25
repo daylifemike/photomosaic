@@ -263,9 +263,6 @@
                 if ($external_links.is(':checked') && $links.is(':not(":checked")')) {
                     $links.attr('checked', true);
                 }
-                if ($external_links.is(':checked') && $link_to_url.is(':not(":checked")')) {
-                    $link_to_url.attr('checked', true);
-                }
             }
 
             if ($links[0] === target[0]) {

@@ -25,7 +25,8 @@ Simply use the shortcode [photoMosaic] or [photomosaic] in the post or page cont
 
 == Changelog ==
 = 2.3.4 =
-* Bug Fix: corrects regression introduced in v2.3.3
+* Enhancement: NextGen: "Link to URL" no longer cares which field contains a URL and which a caption
+* Bug Fix: corrects regression introduced in v2.3.3 - responsive stopped working
 
 = 2.3.3 =
 * Enhancement: WP image "Alt Text" conveys to IMG 'alt' attribute

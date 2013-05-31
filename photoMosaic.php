@@ -27,6 +27,9 @@ class PhotoMosaic {
         $options = get_option('photomosaic_options');
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
+        // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
+        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true"]
+
         add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
@@ -201,7 +204,9 @@ class PhotoMosaic {
                 var PMalbum'.$unique.' = [';
 
         if ( !empty($atts['nggid']) ) {
-            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $settings['link_to_url']);
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $settings['link_to_url'], 'gallery');
+        } else if ( !empty($atts['ngaid']) ) {
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['ngaid'], $settings['link_to_url'], 'album');
         } else {
             $output_buffer .= PhotoMosaic::galleryFromWP($settings['id'], $settings['link_to_url'], $settings['include'], $settings['exclude'], $settings['ids']);
         }
@@ -374,13 +379,21 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-    function galleryFromNextGen($galleryID, $link_to_url) {
+    function galleryFromNextGen($id, $link_to_url, $type) {
         global $wpdb, $post;
         $pattern = PhotoMosaic::$URL_PATTERN;
-
+        $picturelist = array();
         $output_buffer ='';
 
-        $picturelist = nggdb::get_gallery($galleryID);
+        if ( $type === 'gallery' ) {
+            $picturelist = array_merge( $picturelist, nggdb::get_gallery($id) );
+        } else {
+            $album = nggdb::find_album( $id );
+            $galleryIDs = $album->gallery_ids;
+            foreach ($galleryIDs as $key => $galleryID) {
+                $picturelist = array_merge( $picturelist, nggdb::get_gallery($galleryID) );
+            }
+        }
 
         $i = 0;
         $len = count($picturelist);
@@ -422,6 +435,35 @@ class PhotoMosaic {
             $i++;
         }
         return $output_buffer;
+    }
+
+    function the_posts( $posts ) {
+        // ok...
+        // currently we load the JS and CSS on every non-admin page regardless if there is a mosaic
+        // checks here could be used to only enqueue PM when needed
+        // that's probably a good thing
+        foreach( $posts as $post ) {
+            if ( preg_match_all( '/\[gallery.*\]/', $post->post_content, $matches ) ) {
+                foreach ( $matches[0] as $match ) {
+                    // print_r($match);
+                    // print_r('<br>');
+                    if ( strpos( $match, 'photomosaic="true"' ) !== false || strpos( $match, "photomosaic='true'" ) !== false) {
+                        // print_r('YUP!!! <br>');
+                    }
+                }
+            }
+        }
+        return $posts;
+    }
+
+    function post_gallery( $empty = '', $atts = array() ) {
+        global $post;
+        if ( !isset( $atts['photomosaic'] ) ) {
+            return;
+        } else {
+            $output = PhotoMosaic::shortcode($atts);
+            return $output;
+        }
     }
 
     function renderAdminPage() {

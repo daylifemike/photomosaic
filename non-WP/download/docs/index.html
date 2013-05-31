@@ -438,19 +438,13 @@ rows   |  columns |  masonry
 -- Example Lightbox Call --
 $('a[rel^="myLightbox"]').myLightbox();</pre>
             <p>
-                If 'modal_group' is <b>true</b> a suffix will be added to the 'modal_name' ("[group_id]") to aid in creating 'groups' or 'galleries'
-                used for traversal within the lightbox.  Much like invoking the lightbox, the convention is the lightbox name followed by brackets
-                containing the gallery identifier.
+                If 'modal_group' is <b>true</b> a suffix will be added to the 'modal_name' ("[group_id]") to aid in creating 'groups' or 'galleries' used for traversal within the lightbox.  Much like invoking the lightbox, the convention is the lightbox name followed by brackets containing the gallery identifier.
             </p>
                 <pre class="prettyprint">modal_group : true</pre>
 <pre class="prettyprint">-- Example Link --
 &lt;a href="..." rel="myLightbox[photo_mosaic_12345]">...&lt;/a></pre>
             <p>
-                The 'modal_ready_callback' accepts a function that fires once PhotoMosaic has been added to your page and is in a DOMReady state.
-                The function is passed a jQuery object containing the PhotoMosaic instance.  This gives you a root element to use a parent and 
-                allows you to provide a context to any jQuery calls you may make.  The point being to prevent accidently binding multiple lightbox 
-                calls to a single element. While you may think of a clever use for this callback, the intent is to allow you to call your lightbox 
-                here, insuring that your lightbox doesn't finish binding it's events before PhotoMosaic has arrived on the page.
+                The 'modal_ready_callback' accepts a function that fires once PhotoMosaic has been added to your page and is in a DOMReady state.  The function is passed a jQuery object containing the PhotoMosaic instance.  This gives you a root element to use a parent and allows you to provide a context to any jQuery calls you may make.  The point being to prevent accidently binding multiple lightbox calls to a single element. While you may think of a clever use for this callback, the intent is to allow you to call your lightbox here, insuring that your lightbox doesn't finish binding it's events before PhotoMosaic has arrived on the page.
             </p>
             <p>Think of it as a custom Document.Ready event.</p>
 <pre class="prettyprint">modal_ready_function : function($photomosaic){

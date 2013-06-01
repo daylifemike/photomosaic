@@ -28,7 +28,7 @@ class PhotoMosaic {
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
         // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
-        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true"]
+        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" template="photomosaic"]
 
         add_action( 'admin_menu', array('PhotoMosaic', 'adminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
@@ -56,6 +56,8 @@ class PhotoMosaic {
             if ($_GET['page'] == "photoMosaic.php") {
                 wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic'));
             }
+        } else if ( isset( $_GET['post'] ) ) {
+                wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/jquery.photoMosaic.editor.js', __FILE__ ), array('photomosaic'));
         }
     }
 
@@ -341,6 +343,7 @@ class PhotoMosaic {
                 $image_full = wp_get_attachment_image_src($_post->ID , 'full');
                 $image_large = wp_get_attachment_image_src($_post->ID , 'large');
                 $image_medium = wp_get_attachment_image_src($_post->ID , 'medium');
+                $image_thumbnail = wp_get_attachment_image_src($_post->ID , 'thumbnail');
                 $image_title = esc_attr($_post->post_title);
                 $image_alttext = esc_attr(get_post_meta($_post->ID, '_wp_attachment_image_alt', true));
                 $image_caption = esc_attr($_post->post_excerpt);
@@ -357,6 +360,7 @@ class PhotoMosaic {
                     "src": "' . $image_full[0] . '",
                     "thumb": "' . $image_medium[0] . '",
                     "sizes": {
+                        "thumbnail" : "' . $image_thumbnail[0] . '",
                         "medium" : "' . $image_medium[0] . '",
                         "large" : "' . $image_large[0] . '",
                         "full" : "' . $image_full[0] . '"
@@ -458,7 +462,20 @@ class PhotoMosaic {
 
     function post_gallery( $empty = '', $atts = array() ) {
         global $post;
-        if ( !isset( $atts['photomosaic'] ) ) {
+
+        $isPhotoMosaic = false;
+
+        if ( isset($atts['photomosaic']) ) {
+            if ( $atts['photomosaic'] === 'true' ) {
+                $isPhotoMosaic = true;
+            }
+        } else if ( isset($atts['template']) ) {
+            if ( $atts['template'] === 'photomosaic' ) {
+                $isPhotoMosaic = true;
+            }
+        }
+
+        if ( !$isPhotoMosaic ) {
             return;
         } else {
             $output = PhotoMosaic::shortcode($atts);

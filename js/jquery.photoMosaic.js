@@ -491,9 +491,9 @@ g}}(JQPM));
 
             // this.opts.sizes only supported in PM4WP
             var sizes = {
-                thumbnail : (this.opts.sizes) ? this.opts.sizes.thumbnail : 150,
-                medium : (this.opts.sizes) ? this.opts.sizes.medium : 300,
-                large : (this.opts.sizes) ? this.opts.sizes.large : 1024
+                thumbnail : (this.opts.sizes && this.opts.sizes.thumbnail) ? this.opts.sizes.thumbnail : 150,
+                medium : (this.opts.sizes && this.opts.sizes.medium) ? this.opts.sizes.medium : 300,
+                large : (this.opts.sizes && this.opts.sizes.large) ? this.opts.sizes.large : 1024
             };
             var maths = {
                 plus : (sizes.medium + (sizes.thumbnail / 1.2)),

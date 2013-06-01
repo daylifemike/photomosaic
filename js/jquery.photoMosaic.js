@@ -115,8 +115,6 @@ g}}(JQPM));
     var pluginName = 'photoMosaic';
 
     var Plugin = function (el, options, i) {
-        this._name = pluginName;
-        this.version = '2.3.4';
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -125,7 +123,7 @@ g}}(JQPM));
         this.init();
     };
 
-    $.extend(Plugin.prototype, {
+    Plugin.prototype = {
 
         // IE sucks so hard
         log: {
@@ -320,6 +318,28 @@ g}}(JQPM));
                     setTimeout(function () {
                         self.obj.children('.photoMosaic').removeClass('loading');
                     }, 1000);
+                },
+                fail: function($images, $proper, $broken) {
+                    var id = '';
+                    var img = null;
+                    var i = 0;
+                    var j = 0;
+
+                    for (i = 0; i < $broken.length; i++) {
+                        $node = $($broken[i]);
+                        id = $node.attr('id');
+                        img = self.deepSearch(self.images, 'id', id);
+
+                        for (j = 0; j < self.images.length; j++) {
+                            if (self.images[j] === img) {
+                                self.images.splice(j,1);
+                            }
+                        };
+
+                        $node.parent().remove();
+                    };
+
+                    self.refresh();
                 }
             });
 
@@ -1067,10 +1087,6 @@ g}}(JQPM));
         },
 
         refresh: function () {
-            if (this._options.width !== 'auto') {
-                return;
-            }
-
             var self = this;
             var image = null;
             var $img = null;
@@ -1082,7 +1098,7 @@ g}}(JQPM));
             this.obj.addClass('resizing');
 
             // get the container width
-            this.opts.width = this.obj.width();
+            this.opts.width = (this._options.width !== 'auto') ? this.opts.width : this.obj.width();
 
             // get new column count & math
             this.opts.columns = this.autoCols();
@@ -1209,9 +1225,11 @@ g}}(JQPM));
             );
         },
 
-        __: function () { return this.version }
+        _name : pluginName,
 
-    });
+        version : '2.3.4'
+
+    };
 
 
     $.fn[pluginName] = function (options) {

@@ -113,8 +113,11 @@ g}}(JQPM));
     }
 
     var pluginName = 'photoMosaic';
+    var self;
 
     var Plugin = function (el, options, i) {
+        self = this;
+
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -231,34 +234,8 @@ g}}(JQPM));
             }
 
             // Error Checks
-            if (this.opts.input === 'xml') {
-                if (typeof this.opts.gallery !== 'string' || this.opts.gallery === '') {
-                    this.log.error("No XML file path specified.");
-                    return;
-                }
-            }
-            if (this.opts.input === 'json') {
-                if (typeof this.opts.gallery === 'string') {
-                    if (this.opts.gallery === '') {
-                        this.log.error("No JSON object defined.");
-                        return;
-                    }
-                    if (typeof window[this.opts.gallery] !== 'undefined') {
-                        this.opts.gallery = window[this.opts.gallery];
-                    } else {
-                        this.log.error("No JSON object found when referencing '" + this.opts.gallery + "'.")
-                        this.log.info("Make sure your variable is avaible to the global scope (window['" + this.opts.gallery + "']) or simply pass the object literal (gallery:" + this.opts.gallery + ") instead of a string (gallery:\"" + this.opts.gallery + "\").");
-                        return;
-                    }
-                }
-                if (this.opts.gallery.length === 0) {
-                    this.log.error("Specified gallery data is empty.");
-                    return;
-                }
-            }
-            if (this.opts.prevent_crop && this.opts.height !== 'auto') {
-                this.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + this.opts.height + ") is being ignored so as to prevent cropping.");
-                this.opts.height = "auto";
+            if (this.errorChecks.initial()) {
+                return;
             }
 
             $.when(
@@ -398,14 +375,16 @@ g}}(JQPM));
                 self.images.push(image);
             });
 
-            // remove any images that failed to load
-            this.images = this.errorCheck(this.images);
+            // ERROR CHECK: remove any images that didn't 404 but failed to load
+            this.images = this.errorChecks.imageDimensions(this.images);
+            if (this.images.length === 0) {
+                return PhotoMosaic.Mustache.to_html('', {});
+            }
 
             var json = this.makeMosaicView();
 
             // ERROR CHECK: don't load if the layout is broken
-            if (this.layoutHasErrors(json)) {
-                this.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
+            if (this.errorChecks.layout(json)) {
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
@@ -810,39 +789,6 @@ g}}(JQPM));
             return json;
         },
 
-        errorCheck: function (images) {
-            var to_delete = [];
-
-            $.each(images, function (i) {
-                if (isNaN(this.height.adjusted)){
-                    to_delete.push(i);
-                }
-            });
-
-            for (var i = to_delete.length - 1; i >= 0; i--) {
-                this.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
-                var rest = images.slice( to_delete[i] + 1 );
-                images.length = to_delete[i];
-                images.push.apply(images, rest);
-            }
-
-            return images;
-        },
-
-        layoutHasErrors: function (json) {
-            var hasErrors = false;
-
-            for (var i = 0; i < json.columns.length; i++) {
-                for (var j = 0; j < json.columns[i].images.length; j++) {
-                    if (json.columns[i].images[j].height.constraint <= 0) {
-                        hasErrors = true;
-                    }
-                };
-            };
-
-            return hasErrors;
-        },
-
         preloadify: function () {
             var $images = $('<div>').attr({
                     'id': this.preload,
@@ -991,7 +937,12 @@ g}}(JQPM));
 
             for (var i = 0; i < $images.length; i++) {
                 var $image = $images.eq(i)
-                var image = {};
+                var image = {
+                    caption : $image.attr('title'),
+                    alt : $image.attr('alt'),
+                    width : parseInt( $image.attr('width') ),
+                    height : parseInt( $image.attr('height') )
+                };
 
                 if ($image.parent('a').length > 0 && this.opts.links) {
                     image.src = $image.attr('src');
@@ -1001,9 +952,6 @@ g}}(JQPM));
                 } else {
                     image.src = $image.attr('src');
                 }
-
-                image.caption = $images.eq(i).attr('title');
-                image.alt = $images.eq(i).attr('alt');
 
                 gallery.push(image);
             }
@@ -1223,6 +1171,83 @@ g}}(JQPM));
                 this._auto_cols &&
                 this.opts.responsive_transition
             );
+        },
+
+        errorChecks: {
+            // "self" refers to the global "self", something I hate doing.
+            // making this a closure doesn't really solve the problem because this gets called willy-nilly
+            // var self = this; // :(
+            initial: function () {
+                if (self.opts.input === 'xml') {
+                    if (typeof self.opts.gallery !== 'string' || self.opts.gallery === '') {
+                        self.log.error("No XML file path specified.");
+                        return true;
+                    }
+                }
+
+                if (self.opts.input === 'json') {
+                    if (typeof self.opts.gallery === 'string') {
+                        if (self.opts.gallery === '') {
+                            self.log.error("No JSON object defined.");
+                            return true;
+                        }
+
+                        if (typeof window[self.opts.gallery] !== 'undefined') {
+                            self.opts.gallery = window[self.opts.gallery];
+                        } else {
+                            self.log.error("No JSON object found when referencing '" + self.opts.gallery + "'.")
+                            self.log.info("Make sure your variable is avaible to the global scope (window['" + self.opts.gallery + "']) or simply pass the object literal (gallery:" + self.opts.gallery + ") instead of a string (gallery:\"" + self.opts.gallery + "\").");
+                            return true;
+                        }
+                    }
+
+                    if (self.opts.gallery.length === 0) {
+                        self.log.error("Specified gallery data is empty.");
+                        return true;
+                    }
+                }
+
+                if (self.opts.prevent_crop && self.opts.height !== 'auto') {
+                    self.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + self.opts.height + ") is being ignored so as to prevent cropping.");
+                    self.opts.height = "auto";
+                }
+                return false;
+            },
+
+            imageDimensions: function (images) {
+                var to_delete = [];
+
+                $.each(images, function (i) {
+                    if (isNaN(this.height.adjusted)) {
+                        to_delete.push(i);
+                    }
+                });
+
+                for (var i = to_delete.length - 1; i >= 0; i--) {
+                    self.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
+                    var rest = images.slice( to_delete[i] + 1 );
+                    images.length = to_delete[i];
+                    images.push.apply(images, rest);
+                }
+
+                return images;
+            },
+
+            layout: function (json) {
+                var i = 0;
+                var j = 0;
+
+                for (i = 0; i < json.columns.length; i++) {
+                    for (j = 0; j < json.columns[i].images.length; j++) {
+                        if (json.columns[i].images[j].height.constraint <= 0) {
+                            self.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
+                            return true;
+                        }
+                    };
+                };
+
+                return false;
+            }
         },
 
         _name : pluginName,

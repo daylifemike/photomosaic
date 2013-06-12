@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.3.4 starts around line ~#110
+ *  PhotoMosaic v2.4 starts around line ~#110
  */
 
 (function (window) {
@@ -20,7 +20,7 @@
     }
     window.PhotoMosaic.JSTween = function(e,t){
         var n=/[\-]{0,1}[0-9\.]{1,}|#[0-9\.abcdef]{3,6}/gi,r=/[pxemtcin%]{1,2}|deg/gi,s=/[0-9\.\-]{1,}/gi,o=/[0-9a-f]{3,6}/gi,u=/^#/,a=/^[0-9\.\-]{1,}([pxemtcin%]{1,2}|deg)$/,f=/[a-z]{1,}/,l=/^rgb\(/,c=/^scroll/,h=/-([a-z])/ig,p=/^-ms/ig,d={opacity:["opacity","-moz-opacity","filter"],shadow:["box-shadow","-moz-box-shadow","-o-box-shadow","-ms-box-shadow","-webkit-box-shadow"],transform:["-moz-transform","transform","-o-transform","-ms-transform","-webkit-transform"],transformOrigin:["-moz-transform-origin","transform-origin","-o-transform-origin","-ms-transform-origin","-webkit-transform-origin"],borderRadius:["-moz-border-radius","border-radius","-webkit-border-radius"],borderRadiusTopLeft:["-moz-border-radius-topleft","border-top-left-radius","-webkit-border-top-left-radius"],borderRadiusTopRight:["-moz-border-radius-topright","border-top-right-radius","-webkit-border-top-right-radius"],borderRadiusBottomLeft:["-moz-border-radius-bottomleft","border-bottom-left-radius","-webkit-border-bottom-left-radius"],borderRadiusBottomRight:["-moz-border-radius-bottomright","border-bottom-right-radius","-webkit-border-bottom-right-radius"],backgroundSize:["background-size","-moz-background-size","-o-background-size","-webkit-background-size"]},v={},m=[],g=0,y=0,b=false,w=false,E=false,S=0,x={},T=/iPad/i.test(navigator.userAgent)||/iPhone OS/i.test(navigator.userAgent);var N=function(){A(T?30:45);O();try{C()}catch(e){return}};var C=function(){var n=e.fn;e.JSTween=t;n.tween=function(e){var t,n=this.length;for(t=0;t<n;t++){z(this[t],e)}return this};e.framerate=function(e){A(e)};e.play=function(e){V(e)};e.clear=function(e,t){$(e,t)};n.play=function(e){V(e);return this};n.clear=function(e){var t,n=this.length;for(t=0;t<n;t++){$(this[t],e)}return this};n.property=function(e){var t=[],n,r=this.length;for(n=0;n<r;n++){t.push(M(this[n],e))}return t.length===1?t[0]:t};n.opacity=function(e){var t,n=this.length;for(t=0;t<n;t++){Z(this[t],e)}return this};n.alpha=n.opacity;n.transparency=n.opacity;n.rotate=function(e){var t,n=this.length;for(t=0;t<n;t++){tt(this[t],e)}return this};n.action=function(t,n,i,o){var u,f,l,c=this.length,h={};if(typeof t==="object"){for(f in t){if(t.hasOwnProperty(f)&&typeof t[f]==="string"){if(a.test(t[f])){h[f]={value:parseFloat(t[f].match(s)[0],10),units:t[f].match(r)[0]}}else{h[f]={value:t[f],units:undefined}}}}for(l=0;l<c;l++){u=e.JSTween.register(this[l]);for(f in h){if(h.hasOwnProperty(f)){e.JSTween.action(u,f,h[f].value,h[f].units,undefined,true)}}}}else{for(l=0;l<c;l++){Q(ut(this[l]),t,n,i,o,true)}}return this};n.state=function(e){if(this.length>0){if(this[0].__animate!==undefined){if(e!==undefined&&this[0].__animate.state[e]!==undefined){return this[0].__animate.state[e]}else if(e===undefined){return this[0].__animate.state}}}};n.transform=function(e){var t,n=this.length;for(t=0;t<n;t++){nt(this[t],e)}return this};n.transformOrigin=function(e){var t,n=this.length;for(t=0;t<n;t++){it(this[t],e)}return this};n.backgroundSize=function(e){var t,n=this.length;for(t=0;t<n;t++){rt(this[t],e)}return this};n.shadow=function(e){var t,n=this.length;for(t=0;t<n;t++){et(this[t],e)}return this};n.borderRadius=function(e,t){var n,r=this.length;for(n=0;n<r;n++){st(this[n],e,t)}return this};n.borderRadiusTopRight=function(e,t){var n,r=this.length;for(n=0;n<r;n++){ot(this[n],"top","right",e,t)}return this};n.borderRadiusTopLeft=function(e,t){var n,r=this.length;for(n=0;n<r;n++){ot(this[n],"top","left",e,t)}return this};n.borderRadiusBottomRight=function(e,t){var n,r=this.length;for(n=0;n<r;n++){ot(this[n],"bottom","right",e,t)}return this};n.borderRadiusBottomLeft=function(e,t){var n,r=this.length;for(n=0;n<r;n++){ot(this[n],"bottom","left",e,t)}return this};n.borderRadiusCorner=function(e,t,n,r){var i,s=this.length;for(i=0;i<this.length;i++){ot(this[i],e,t,n,r)}return this}};var k=function(e,t){return t.toUpperCase()};var L=function(e){return e.replace(p,"ms").replace(h,k)};var A=function(e){if(!e){return x.frameRate}x.frameRate=e||45;x.frameDelay=Math.round(1e3/x.frameRate);x.frameLength=1/x.frameRate;return x.frameRate};var O=function(){var e=document.getElementsByTagName("html"),t,n;if(e[0]!==undefined){t=e[0].style;for(n in d){if(d.hasOwnProperty(n)){for(i=0;i<d[n].length;i++){if(t[d[n][i]]!==undefined){d[n]=d[n][i];break}else if(t[L(d[n][i])]!==undefined){d[n]=L(d[n][i]);break}}}}}};var M=function(e,t){if(e.__animate!==undefined){if(t===undefined){return e.__animate.state}else if(e.__animate.state[t]){return e.__animate.state[t]}else{return false}}else{return false}};var _=function(t,n,r){if(t.tagName===undefined&&(t.scroll!==undefined||t.scrollTo!==undefined)){return e(t).scrollLeft()+"px "+e(t).scrollTop()+"px"}else{return t.scrollLeft+"px "+t.scrollTop+"px"}};var D=function(e,t,n){var i=M(e,t),o,u,a,f;if(i!==false&&!c.test(t)){return{value:i.value,units:e.__animate.state[t].units}}else{switch(t){case"transform":case"transformOrigin":case"shadow":case"boxShadow":case"backgroundSize":u=n;break;case"opacity":case"transparency":case"alpha":u=100;break;case"scrollLeft":case"scrollTop":case"scroll":case"scrollTo":u=_(e,t,n);break;default:if(window.getComputedStyle!==undefined){o=window.getComputedStyle(e,null)[t]}else if(e.currentStyle!==undefined){o=e.currentStyle[t]}if(o==="auto"||o===undefined||o===""){u=0;a="px"}else if(l.test(o)){u=B(o)}else{u=parseFloat(o.match(s),10);a=o.match(r)}break}return{value:u,units:a}}};var P=function(e,t){var n={},r,i;for(r in t){if(t.hasOwnProperty(r)&&r!=="onStart"&&r!=="onStop"&&r!=="onFrame"){n[r]={};if(t[r].start===undefined){i=D(e,r,t[r].stop);n[r].start=i.value}else{n[r].start=H(t[r].start)}n[r].stop=H(t[r].stop,1);n[r].duration=H(t[r].duration||n[r].dur,1);n[r].time=H(t[r].time,0);n[r].merge=H(t[r].merge,false);n[r].effect=H(t[r].effect,"linear");n[r].framerate=H(t[r].framerate,x.frameRate);n[r].units=H(t[r].units,i?i.units:"px");n[r].end=H(t[r].end,n[r].time+n[r].duration);if(c.test(r)){if(typeof n[r].start==="number"){n[r].start=n[r].start+"px "+n[r].start+"px"}if(typeof n[r].stop==="number"){n[r].stop=n[r].stop+"px "+n[r].stop+"px"}}n[r].callback={onStart:t[r].onStart,onFrame:t[r].onFrame,onStop:t[r].onStop}}}return n};var H=function(e,t){if(typeof e==="function"){return e()}else if(e!==undefined){return e}else{return t}};var B=function(e){var t=e.match(s),n,r,i;n=parseInt(t[0],10).toString(16);if(n.length===1){n="0"+n}r=parseInt(t[1],10).toString(16);if(r.length===1){r="0"+r}i=parseInt(t[2],10).toString(16);if(i.length===1){i="0"+i}return"#"+n+r+i};var j=function(e){if(e.length===3){return[parseInt(e.substr(0,1),16)*16,parseInt(e.substr(1,1),16)*16,parseInt(e.substr(2,1),16)*16]}else{return[parseInt(e.substr(0,2),16),parseInt(e.substr(2,2),16),parseInt(e.substr(4,2),16)]}};var F=function(e){var t=e.match(n),r=e.split(n),i=[],a,f=t.length;for(a=0;a<f;a++){if(u.test(t[a])){t[a]=j(t[a].match(o)[0])}else{t[a]=parseFloat(t[a].match(s)[0],10)}}return{value:t,delimiter:r}};var I=function(e,t,n,r,i,s){var o="",u="",a,f,l=e.value.length,c=0;for(a=0;a<l;a++){if(typeof e.value[a]==="object"&&e.value[a].length!==undefined){o+=e.delimiter[a]+"#";c=e.value[a].length;for(f=0;f<c;f++){u=Math.round(at[r.effect](i-r.time,e.value[a][f],t.value[a][f]-e.value[a][f],s-r.time),10).toString(16);if(u.length===1){u="0"+u}o+=u}}else{o+=e.delimiter[a]+at[r.effect](i-r.time,e.value[a],t.value[a]-e.value[a],s-r.time)}}return o+e.delimiter[e.delimiter.length-1]};var q=function(e,t,n){var r,i=F(n.start),s=F(n.stop),o,u,a,f,l=x.frameLength,c=n.end;r=f=Math.round(x.frameRate/n.framerate-1);for(o=n.time;o<c;o+=l){u=g+Math.round(o*x.frameRate);if(r===0){a=I(i,s,t,n,o,n.end);W(u,e,t,a,n.units,false,false);r=f}else{W(u,e,t);r--}}u=g+Math.round(n.end*x.frameRate);W(u,e,t,n.stop,n.units,false,true)};var R=function(e,t,n){var r,i,s,o,u,a=x.frameLength,f=n.end;r=u=Math.round(x.frameRate/n.framerate-1);for(i=n.time;i<f;i+=a){s=g+Math.round(i*x.frameRate);if(r===0){o=at[n.effect](i-n.time,n.start,n.stop-n.start,n.end-n.time);W(s,e,t,o,n.units,false,false);r=u}else{W(s,e,t);r--}}s=g+Math.round(n.end*x.frameRate);W(s,e,t,n.stop,n.units,false,true)};var U=function(e){var t={start:0,stop:0},n;for(n in e){if(e.hasOwnProperty(n)){if(e[n].end>t.stop){t.stop=e[n].end}}}t.start=t.stop;for(n in e){if(e.hasOwnProperty(n)){if(e[n].time<t.start){t.start=e[n].time}}}return t};var z=function(e,t){var n=ut(e),r=0,i=0,s,o,u=0,a=P(e,t),f,l=U(a);for(f in a){if(a.hasOwnProperty(f)){if(typeof a[f].start==="string"){q(n,f,a[f])}else{R(n,f,a[f])}if(typeof a[f].callback.onStart==="function"){X(g+Math.round(a[f].time*x.frameRate),n,f,a[f].callback.onStart)}if(typeof a[f].callback.onFrame==="function"){for(i=a[f].time;i<a[f].end;i+=x.frameLength){r=g+Math.round(i*x.frameRate);X(r,n,f,a[f].callback.onFrame)}}if(typeof a[f].callback.onStop==="function"){X(g+Math.round(a[f].end*x.frameRate),n,f,a[f].callback.onStop)}r=g+Math.round(a[f].end*x.frameRate);if(r>y){y=r}}}if(typeof t.onStart==="function"){X(g+Math.round(l.start*x.frameRate),n,"callback",t.onStart)}if(typeof t.onFrame==="function"){for(frame=g+Math.round(l.start*x.frameRate);frame<=g+Math.round(l.stop*x.frameRate);frame++){X(frame,n,"callback",t.onFrame)}}if(typeof t.onStop==="function"){X(g+Math.round(l.stop*x.frameRate),n,"callback",t.onStop)}};var W=function(e,t,n,r,i,s,o){if(t!==undefined){if(v[e]===undefined){v[e]={};v[e][t]={};v[e][t][n]={value:r,units:i,callback:[],skip:o}}else if(v[e][t]===undefined){v[e][t]={};v[e][t][n]={value:r,units:i,callback:[],skip:o}}else if(v[e][t][n]===undefined){v[e][t][n]={value:r,units:i,callback:[],skip:o}}else{if(r!==false){v[e][t][n].value=r}if(i!==false){v[e][t][n].units=i}v[e][t][n].skip=o}if(typeof s==="function"){v[e][t][n].callback.push(s)}}else if(v[e]===undefined){v[e]={}}};var X=function(e,t,n,r){W(e,t,n,false,false,r,true)};var V=function(e){if(b===false){E=false;b=true;S=J();w=e;K()}};var $=function(e,t){var n;if(e!==undefined&&t!==undefined&&e.__animate!==undefined){for(n in v){if(v.hasOwnProperty(n)&&v[n][e.__animate.id]!==undefined&&v[n][e.__animate.id][t]!==undefined){delete v[n][e.__animate.id][t]}}}else if(e!==undefined&&e.__animate!==undefined){for(n in v){if(v.hasOwnProperty(n)&&v[n][e.__animate.id]!==undefined){delete v[n][e.__animate.id]}}}else{for(n in v){if(v.hasOwnProperty(n)){delete v[n]}}}};var J=function(){var e=new Date;return e.getTime()};var K=function(){var e,t,n,r;if(g<=y){r=x.frameDelay-(J()-S-g*x.frameDelay);if(r<0){r=0}else if(r>x.frameDelay){r=x.frameDelay}setTimeout(function(){K(r?true:false)},r);for(t in v[g]){if(v[g].hasOwnProperty(t)){e=v[g][t];for(n in e){if(e.hasOwnProperty(n)){Q(t,n,e[n].value,e[n].units,e[n].callback,e[n].skip===true?true:r?true:false)}}}}delete v[g];g++;E=J()}else{E=b=false;g=0;if(typeof w==="function"){w();w=false}}};var Q=function(e,t,n,r,s,o){var u=m[e].__animate.state[t];if(o===true&&n!==false&&(u===undefined||u.value!=n||u.units!=r)){switch(t){case"zIndex":m[e].style.zIndex=n;break;case"alpha":case"transparency":case"opacity":Z(m[e],n);break;case"scroll":case"scrollTop":case"scrollLeft":case"scrollTo":G(m[e],t,n);break;case"shadow":case"boxShadow":et(m[e],n);break;case"rotate":tt(m[e],n);break;case"transformOrigin":it(m[e],n);break;case"transform":nt(m[e],n);break;case"backgroundSize":rt(m[e],n);break;case"borderRadius":st(m[e],n,r);break;case"borderRadiusTopRight":ot(m[e],"top","right",n,r);break;case"borderRadiusTopLeft":ot(m[e],"top","left",n,r);break;case"borderRadiusBottomRight":ot(m[e],"bottom","right",n,r);break;case"borderRadiusBottomLeft":ot(m[e],"bottom","left",n,r);break;default:if(typeof n==="string"){m[e].style[t]=n}else{m[e].style[t]=n+r}break}}m[e].__animate.state[t]={value:n,units:r};if(s!==undefined&&s.length>0){for(i=0;i<s.length;i++){if(typeof s[i]==="function"){s[i](m[e],{type:t,value:n,units:r,id:e})}}}};var G=function(e,t,n){var r;if(e.tagName===undefined&&(typeof e.scroll==="function"||typeof e.scrollTo==="function")&&typeof n==="string"){r=n.match(s);if(r){if(self.pageYOffset){window.scroll(parseInt(r[0],10),parseInt(r[1],10))}else if(document.documentElement&&document.documentElement.scrollTop){window.scrollTo(parseInt(r[0],10),parseInt(r[1],10))}else if(document.body){window.scrollTo(parseInt(r[0],10),parseInt(r[1],10))}}}else{if(typeof n==="string"){r=n.match(s)}else{r=[n,n]}if(t==="scrollTop"){e.scrollTop=parseInt(r[1],10)}else if(t==="scrollLeft"){e.scrollLeft=parseInt(r[0],10)}else{e.scrollLeft=parseInt(r[0],10);e.scrollTop=parseInt(r[1],10)}}};var Y=function(e,t,n,r){e.style[t]=n+(r?r:"")};var Z=function(e,t){if(d.opacity==="filter"){Y(e,"filter","alpha(opacity="+t+")")}else{Y(e,d.opacity,t/100)}};var et=function(e,t){Y(e,d.shadow,t)};var tt=function(e,t){Y(e,d.transform,"rotate("+t+"deg)")};var nt=function(e,t){Y(e,d.transform,t)};var rt=function(e,t){Y(e,d.backgroundSize,t)};var it=function(e,t){Y(e,d.transformOrigin,t)};var st=function(e,t,n){Y(e,d.borderRadius,t,n)};var ot=function(e,t,n,r,i){if(t==="top"){if(n==="left"){Y(e,d.borderRadiusTopLeft,r,i)}else{Y(e,d.borderRadiusTopRight,r,i)}}else{if(n==="left"){Y(e,d.borderRadiusBottomLeft,r,i)}else{Y(e,d.borderRadiusBottomRight,r,i)}}};var ut=function(e){if(e.__animate===undefined){var t=m.length;e.__animate={id:t,state:{},callback:{},dragging:false};m.push(e);return t}else{return e.__animate.id}};var at={linear:function(e,t,n,r){return n*e/r+t},quadIn:function(e,t,n,r){return n*(e/=r)*e+t},quadOut:function(e,t,n,r){return-n*(e/=r)*(e-2)+t},quadInOut:function(e,t,n,r){if((e/=r/2)<1){return n/2*e*e+t}return-n/2*(--e*(e-2)-1)+t},cubicIn:function(e,t,n,r){return n*(e/=r)*e*e+t},cubicOut:function(e,t,n,r){return n*((e=e/r-1)*e*e+1)+t},cubicInOut:function(e,t,n,r){if((e/=r/2)<1){return n/2*e*e*e+t}return n/2*((e-=2)*e*e+2)+t},easeIn:function(e,t,n,r){return n*(e/=r)*e*e+t},easeOut:function(e,t,n,r){return n*((e=e/r-1)*e*e+1)+t},easeInOut:function(e,t,n,r){if((e/=r/2)<1){return n/2*e*e*e+t}return n/2*((e-=2)*e*e+2)+t},quartIn:function(e,t,n,r){return n*(e/=r)*e*e*e+t},quartOut:function(e,t,n,r){return-n*((e=e/r-1)*e*e*e-1)+t},quartInOut:function(e,t,n,r){if((e/=r/2)<1){return n/2*e*e*e*e+t}return-n/2*((e-=2)*e*e*e-2)+t},quintIn:function(e,t,n,r){return n*(e/=r)*e*e*e*e+t},quintOut:function(e,t,n,r){return n*((e=e/r-1)*e*e*e*e+1)+t},quintInOut:function(e,t,n,r){if((e/=r/2)<1){return n/2*e*e*e*e*e+t}return n/2*((e-=2)*e*e*e*e+2)+t},sineIn:function(e,t,n,r){return-n*Math.cos(e/r*(Math.PI/2))+n+t},sineOut:function(e,t,n,r){return n*Math.sin(e/r*(Math.PI/2))+t},sineInOut:function(e,t,n,r){return-n/2*(Math.cos(Math.PI*e/r)-1)+t},expoIn:function(e,t,n,r){return e===0?t:n*Math.pow(2,10*(e/r-1))+t},expoOut:function(e,t,n,r){return e===r?t+n:n*(-Math.pow(2,-10*e/r)+1)+t},expoInOut:function(e,t,n,r){if(e===0){return t}if(e===r){return t+n}if((e/=r/2)<1){return n/2*Math.pow(2,10*(e-1))+t}return n/2*(-Math.pow(2,-10*--e)+2)+t},circIn:function(e,t,n,r){return-n*(Math.sqrt(1-(e/=r)*e)-1)+t},circOut:function(e,t,n,r){return n*Math.sqrt(1-(e=e/r-1)*e)+t},circInOut:function(e,t,n,r){if((e/=r/2)<1){return-n/2*(Math.sqrt(1-e*e)-1)+t}return n/2*(Math.sqrt(1-(e-=2)*e)+1)+t},bounceIn:function(e,t,n,r){return n-at.bounceOut(r-e,0,n,r)+t},bounceOut:function(e,t,n,r){if((e/=r)<1/2.75){return n*7.5625*e*e+t}else if(e<2/2.75){return n*(7.5625*(e-=1.5/2.75)*e+.75)+t}else if(e<2.5/2.75){return n*(7.5625*(e-=2.25/2.75)*e+.9375)+t}else{return n*(7.5625*(e-=2.625/2.75)*e+.984375)+t}},bounceInOut:function(e,t,n,r){if(e<r/2){return at.bounceIn(e*2,0,n,r)*.5+t}return at.bounceOut(e*2-r,0,n,r)*.5+n*.5+t},elasticIn:function(e,t,n,r,i,s){if(e===0){return t}if((e/=r)===1){return t+n}if(!s){s=r*.3}if(!i){i=1}var o=0;if(i<Math.abs(n)){i=n;o=s/4}else{o=s/(2*Math.PI)*Math.asin(n/i)}return-(i*Math.pow(2,10*(e-=1))*Math.sin((e*r-o)*2*Math.PI/s))+t},elasticOut:function(e,t,n,r,i,s){if(e===0){return t}if((e/=r)===1){return t+n}if(!s){s=r*.3}if(!i){i=1}var o=0;if(i<Math.abs(n)){i=n;o=s/4}else{o=s/(2*Math.PI)*Math.asin(n/i)}return i*Math.pow(2,-10*e)*Math.sin((e*r-o)*2*Math.PI/s)+n+t},elasticInOut:function(e,t,n,r,i,s){if(e===0){return t}if((e/=r/2)===2){return t+n}if(!s){s=r*.3*1.5}if(!i){i=1}var o=0;if(i<Math.abs(n)){i=n;o=s/4}else{o=s/(2*Math.PI)*Math.asin(n/i)}if(e<1){return-.5*i*Math.pow(2,10*(e-=1))*Math.sin((e*r-o)*2*Math.PI/s)+t}return i*Math.pow(2,-10*(e-=1))*Math.sin((e*r-o)*2*Math.PI/s)*.5+n+t}};t.tween=z;t.action=Q;t.register=ut;t.shadow=et;t.opacity=Z;t.borderRadius=st;t.borderRadiusCorner=ot;t.backgroundSize=rt;t.transformOrigin=it;t.rotate=tt;t.transform=nt;t.clear=$;t.play=V;t.property=M;t.getScroll=_;t.scroll=G;t.framerate=A;N();return t;
-    }(jQuery, window.PhotoMosaic.JSTween||{});
+    }(window.JQPM||jQuery, window.PhotoMosaic.JSTween||{});
 }(window));
 
 
@@ -77,11 +77,11 @@ if (!window.PhotoMosaic) {
 */
 (function(c,n){var l="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";c.fn.imagesLoaded=function(f){function m(){var b=c(i),a=c(h);d&&(h.length?d.reject(e,b,a):d.resolve(e));c.isFunction(f)&&f.call(g,e,b,a)}function j(b,a){b.src===l||-1!==c.inArray(b,k)||(k.push(b),a?h.push(b):i.push(b),c.data(b,"imagesLoaded",{isBroken:a,src:b.src}),o&&d.notifyWith(c(b),[a,e,c(i),c(h)]),e.length===k.length&&(setTimeout(m),e.unbind(".imagesLoaded")))}var g=this,d=c.isFunction(c.Deferred)?c.Deferred():
 0,o=c.isFunction(d.notify),e=g.find("img").add(g.filter("img")),k=[],i=[],h=[];c.isPlainObject(f)&&c.each(f,function(b,a){if("callback"===b)f=a;else if(d)d[b](a)});e.length?e.bind("load.imagesLoaded error.imagesLoaded",function(b){j(b.target,"error"===b.type)}).each(function(b,a){var d=a.src,e=c.data(a,"imagesLoaded");if(e&&e.src===d)j(a,e.isBroken);else if(a.complete&&a.naturalWidth!==n)j(a,0===a.naturalWidth||0===a.naturalHeight);else if(a.readyState||a.complete)a.src=l,a.src=d}):m();return d?d.promise(g):
-g}}(jQuery));
+g}}(window.JQPM||jQuery));
 
 
 /*
-    jQuery photoMosaic v2.3.4
+    jQuery photoMosaic v2.4
     requires: jQuery 1.7+ (included externally), JSTween, Mustache, Modernizr, & ImagesLoaded (included above)
     optional: prettyPhoto (included externally)
 */
@@ -93,10 +93,11 @@ g}}(jQuery));
     }
 
     var pluginName = 'photoMosaic';
+    var self;
 
     var Plugin = function (el, options, i) {
-        this._name = pluginName;
-        this.version = '2.3.4';
+        self = this;
+
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -105,7 +106,7 @@ g}}(jQuery));
         this.init();
     };
 
-    $.extend(Plugin.prototype, {
+    Plugin.prototype = {
 
         // IE sucks so hard
         log: {
@@ -192,9 +193,9 @@ g}}(jQuery));
             '</div>',
 
         loading_template: ' ' +
-                '<div id="photoMosaic_{{id}}" class="photoMosaic">' +
-                    '<div class="photoMosaicLoading">loading gallery...</div>' +
-                '</div>',
+            '<div id="photoMosaic_{{id}}" class="photoMosaic">' +
+                '<div class="photoMosaicLoading">loading gallery...</div>' +
+            '</div>',
 
         init: function () {
             var self = this;
@@ -213,34 +214,8 @@ g}}(jQuery));
             }
 
             // Error Checks
-            if (this.opts.input === 'xml') {
-                if (typeof this.opts.gallery !== 'string' || this.opts.gallery === '') {
-                    this.log.error("No XML file path specified.");
-                    return;
-                }
-            }
-            if (this.opts.input === 'json') {
-                if (typeof this.opts.gallery === 'string') {
-                    if (this.opts.gallery === '') {
-                        this.log.error("No JSON object defined.");
-                        return;
-                    }
-                    if (typeof window[this.opts.gallery] !== 'undefined') {
-                        this.opts.gallery = window[this.opts.gallery];
-                    } else {
-                        this.log.error("No JSON object found when referencing '" + this.opts.gallery + "'.")
-                        this.log.info("Make sure your variable is avaible to the global scope (window['" + this.opts.gallery + "']) or simply pass the object literal (gallery:" + this.opts.gallery + ") instead of a string (gallery:\"" + this.opts.gallery + "\").");
-                        return;
-                    }
-                }
-                if (this.opts.gallery === 0) {
-                    this.log.error("Specified gallery data is empty.");
-                    return;
-                }
-            }
-            if (this.opts.prevent_crop && this.opts.height !== 'auto') {
-                this.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + this.opts.height + ") is being ignored so as to prevent cropping.");
-                this.opts.height = "auto";
+            if (this.errorChecks.initial()) {
+                return;
             }
 
             $.when(
@@ -300,6 +275,28 @@ g}}(jQuery));
                     setTimeout(function () {
                         self.obj.children('.photoMosaic').removeClass('loading');
                     }, 1000);
+                },
+                fail: function($images, $proper, $broken) {
+                    var id = '';
+                    var img = null;
+                    var i = 0;
+                    var j = 0;
+
+                    for (i = 0; i < $broken.length; i++) {
+                        $node = $($broken[i]);
+                        id = $node.attr('id');
+                        img = self.deepSearch(self.images, 'id', id);
+
+                        for (j = 0; j < self.images.length; j++) {
+                            if (self.images[j] === img) {
+                                self.images.splice(j,1);
+                            }
+                        };
+
+                        $node.parent().remove();
+                    };
+
+                    self.refresh();
                 }
             });
 
@@ -358,14 +355,16 @@ g}}(jQuery));
                 self.images.push(image);
             });
 
-            // remove any images that failed to load
-            this.images = this.errorCheck(this.images);
+            // ERROR CHECK: remove any images that didn't 404 but failed to load
+            this.images = this.errorChecks.imageDimensions(this.images);
+            if (this.images.length === 0) {
+                return PhotoMosaic.Mustache.to_html('', {});
+            }
 
             var json = this.makeMosaicView();
 
             // ERROR CHECK: don't load if the layout is broken
-            if (this.layoutHasErrors(json)) {
-                this.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
+            if (this.errorChecks.layout(json)) {
                 return PhotoMosaic.Mustache.to_html('', {});
             }
 
@@ -471,9 +470,9 @@ g}}(jQuery));
 
             // this.opts.sizes only supported in PM4WP
             var sizes = {
-                thumbnail : (this.opts.sizes) ? this.opts.sizes.thumbnail : 150,
-                medium : (this.opts.sizes) ? this.opts.sizes.medium : 300,
-                large : (this.opts.sizes) ? this.opts.sizes.large : 1024
+                thumbnail : (this.opts.sizes && this.opts.sizes.thumbnail) ? this.opts.sizes.thumbnail : 150,
+                medium : (this.opts.sizes && this.opts.sizes.medium) ? this.opts.sizes.medium : 300,
+                large : (this.opts.sizes && this.opts.sizes.large) ? this.opts.sizes.large : 1024
             };
             var maths = {
                 plus : (sizes.medium + (sizes.thumbnail / 1.2)),
@@ -770,39 +769,6 @@ g}}(jQuery));
             return json;
         },
 
-        errorCheck: function (images) {
-            var to_delete = [];
-
-            $.each(images, function (i) {
-                if (isNaN(this.height.adjusted)){
-                    to_delete.push(i);
-                }
-            });
-
-            for (var i = to_delete.length - 1; i >= 0; i--) {
-                this.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
-                var rest = images.slice( to_delete[i] + 1 );
-                images.length = to_delete[i];
-                images.push.apply(images, rest);
-            }
-
-            return images;
-        },
-
-        layoutHasErrors: function (json) {
-            var hasErrors = false;
-
-            for (var i = 0; i < json.columns.length; i++) {
-                for (var j = 0; j < json.columns[i].images.length; j++) {
-                    if (json.columns[i].images[j].height.constraint <= 0) {
-                        hasErrors = true;
-                    }
-                };
-            };
-
-            return hasErrors;
-        },
-
         preloadify: function () {
             var $images = $('<div>').attr({
                     'id': this.preload,
@@ -951,19 +917,21 @@ g}}(jQuery));
 
             for (var i = 0; i < $images.length; i++) {
                 var $image = $images.eq(i)
-                var image = {};
+                var image = {
+                    caption : $image.attr('title'),
+                    alt : $image.attr('alt'),
+                    width : parseInt( $image.attr('width') ),
+                    height : parseInt( $image.attr('height') )
+                };
 
                 if ($image.parent('a').length > 0 && this.opts.links) {
                     image.src = $image.attr('src');
                     image.url = $image.parent('a').attr('href');
                 } else if ($image.parent('a').length > 0) {
-                    image.src = $image.parent('a').attr('src');
+                    image.src = $image.parent('a').attr('href');
                 } else {
                     image.src = $image.attr('src');
                 }
-
-                image.caption = $images.eq(i).attr('title');
-                image.alt = $images.eq(i).attr('alt');
 
                 gallery.push(image);
             }
@@ -1047,10 +1015,6 @@ g}}(jQuery));
         },
 
         refresh: function () {
-            if (this._options.width !== 'auto') {
-                return;
-            }
-
             var self = this;
             var image = null;
             var $img = null;
@@ -1058,11 +1022,10 @@ g}}(jQuery));
             var json = null;
             var size = this.pickImageSize(this.images);
 
-
             this.obj.addClass('resizing');
 
             // get the container width
-            this.opts.width = this.obj.width();
+            this.opts.width = (this._options.width !== 'auto') ? this.opts.width : this.obj.width();
 
             // get new column count & math
             this.opts.columns = this.autoCols();
@@ -1189,9 +1152,88 @@ g}}(jQuery));
             );
         },
 
-        __: function () { return this.version }
+        errorChecks: {
+            // "self" refers to the global "self", something I hate doing.
+            // making this a closure doesn't really solve the problem because this gets called willy-nilly
+            // var self = this; // :(
+            initial: function () {
+                if (self.opts.input === 'xml') {
+                    if (typeof self.opts.gallery !== 'string' || self.opts.gallery === '') {
+                        self.log.error("No XML file path specified.");
+                        return true;
+                    }
+                }
 
-    });
+                if (self.opts.input === 'json') {
+                    if (typeof self.opts.gallery === 'string') {
+                        if (self.opts.gallery === '') {
+                            self.log.error("No JSON object defined.");
+                            return true;
+                        }
+
+                        if (typeof window[self.opts.gallery] !== 'undefined') {
+                            self.opts.gallery = window[self.opts.gallery];
+                        } else {
+                            self.log.error("No JSON object found when referencing '" + self.opts.gallery + "'.")
+                            self.log.info("Make sure your variable is avaible to the global scope (window['" + self.opts.gallery + "']) or simply pass the object literal (gallery:" + self.opts.gallery + ") instead of a string (gallery:\"" + self.opts.gallery + "\").");
+                            return true;
+                        }
+                    }
+
+                    if (self.opts.gallery.length === 0) {
+                        self.log.error("Specified gallery data is empty.");
+                        return true;
+                    }
+                }
+
+                if (self.opts.prevent_crop && self.opts.height !== 'auto') {
+                    self.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + self.opts.height + ") is being ignored so as to prevent cropping.");
+                    self.opts.height = "auto";
+                }
+                return false;
+            },
+
+            imageDimensions: function (images) {
+                var to_delete = [];
+
+                $.each(images, function (i) {
+                    if (isNaN(this.height.adjusted)) {
+                        to_delete.push(i);
+                    }
+                });
+
+                for (var i = to_delete.length - 1; i >= 0; i--) {
+                    self.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
+                    var rest = images.slice( to_delete[i] + 1 );
+                    images.length = to_delete[i];
+                    images.push.apply(images, rest);
+                }
+
+                return images;
+            },
+
+            layout: function (json) {
+                var i = 0;
+                var j = 0;
+
+                for (i = 0; i < json.columns.length; i++) {
+                    for (j = 0; j < json.columns[i].images.length; j++) {
+                        if (json.columns[i].images[j].height.constraint <= 0) {
+                            self.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
+                            return true;
+                        }
+                    };
+                };
+
+                return false;
+            }
+        },
+
+        _name : pluginName,
+
+        version : '2.4'
+
+    };
 
 
     $.fn[pluginName] = function (options) {
@@ -1209,4 +1251,4 @@ g}}(jQuery));
         });
     };
 
-}(jQuery));
+}(window.JQPM||jQuery));

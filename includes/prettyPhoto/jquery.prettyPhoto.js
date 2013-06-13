@@ -1,10 +1,15 @@
 /*
-    Version: 3.1.5b
+    Version: 3.1.5c
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
+    # b
      - new jQuery namespace (JQPM)
      - _getFileType (#662) extended to autodetect image URLs (avoid the need for "iframe=true")
      - content type switch (#330) extended to support iframe URLs w/o "iframe=true"
-     -! minified and included in jquery.photoMosaic.js
+    # c
+     - normalized all jQuery references to '$'
+     - self-invoke arguments ref the window and test for availability (window.JQPM || jQuery)
+
+    !! minified and included in jquery.photoMosaic.js
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto
@@ -16,7 +21,7 @@
     $.prettyPhoto = {version: '3.1.5'};
     
     $.fn.prettyPhoto = function(pp_settings) {
-        pp_settings = jQuery.extend({
+        pp_settings = $.extend({
             hook: 'rel', /* the attribute tag to use for prettyPhoto hooks. default: 'rel'. For HTML5, use "data-rel" or similar. */
             animation_speed: 'fast', /* fast/slow/normal */
             ajaxcallback: function() {},
@@ -158,13 +163,13 @@
             isSet = (galleryRegExp.exec(theRel)) ? true : false;
             
             // Put the SRCs, TITLEs, ALTs into an array.
-            pp_images = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
-            pp_titles = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
-            pp_descriptions = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
+            pp_images = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
+            pp_titles = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
+            pp_descriptions = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
             
             if(pp_images.length > settings.overlay_gallery_max) settings.overlay_gallery = false;
             
-            set_position = jQuery.inArray($(this).attr('href'), pp_images); // Define where in the array the clicked item is positionned
+            set_position = $.inArray($(this).attr('href'), pp_images); // Define where in the array the clicked item is positionned
             rel_index = (isSet) ? set_position : $("a["+settings.hook+"^='"+theRel+"']").index($(this));
             
             _build_overlay(this); // Build the overlay {this} being the caller
@@ -922,6 +927,6 @@
       return ( results == null ) ? "" : results[1];
     }
     
-})(JQPM);
+})(window.JQPM||jQuery);
 
 var pp_alreadyInitialized = false; // Used for the deep linking to make sure not to call the same function several times.

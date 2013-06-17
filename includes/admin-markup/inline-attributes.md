@@ -1,0 +1,30 @@
+## Inline Attributes {.subhead}
+
+The PhotoMosaic shortcode & template tag have full support for inline attributes (eg. `[photomosaic width="600" height="400" random="1"]`). 
+Any inline setting will override the default values set on the "Global Settings" page.  Available settings:
+
+- **id** : the post/page id for the desired gallery
+- **ids** : the list of image ids to be displayed *(requires WP v3.5+)*
+- **include** : the list of image ids to be displayed in addition to the image in the attached gallery *(only works with 'id')*
+- **exclude** : the list of image ids in the attached gallery that should not be displayed *(only works with 'id')*
+- **nggid** : the ID for the desired NextGen gallery
+- **ngaid** : the ID for the desired NextGen album
+- **padding** : any number *(in pixels)*
+- **columns** : any number
+- **width** : any number *(in pixels)*
+- **height** : any number *(in pixels)*
+- **center** : 1 = yes, 0 = no
+- **prevent_crop** : 1 = yes, 0 = no
+- **links** : 1 = yes, 0 = no
+- **order** : rows, columns, masonry, random
+- **link_to_url** : 1 = yes, 0 = no
+- **external_links** : 1 = yes, 0 = no
+- **show_loading** : 1 = yes, 0 = no
+- **loading_transition** : none, fade, scale-up|down, slide-up|down|left|right, custom
+- **responsive_transition** :  1 = yes, 0 = no
+- **lightbox** : 1 = yes, 0 = no
+- **lightbox_rel** : any alphanumeric string
+- **lightbox_group** : 1 = yes, 0 = no
+- **custom_lightbox** : 1 = yes, 0 = no
+- **custom_lightbox_name** : js function name *(eg: prettyPhoto)*
+- **custom_lightbox_params** : js object passed to the above function *(eg: {theme:'darkness'})*

@@ -14,6 +14,7 @@
             }
         });
 
+
         // JUMPLINKS
         var $jumplinks = $('.jumplinks ul');
         $('.question').each(function () {
@@ -28,10 +29,10 @@
             $jumplinks.append($li);
         });
 
+
         // TABS
         var $tabContainers = $('.tab');
         var $tabs = $('.nav-tab');
-
         $tabs.click(function() {
             var hash = $(this).attr('href');
             $tabs.removeClass('nav-tab-active').filter(this).addClass('nav-tab-active');
@@ -39,26 +40,30 @@
             return false;
         }).eq(0).click();
 
+
         // COMBO - #tab-faq?customlightbox
         var $combos = $('.combo-link');
-
         $combos.click(function() {
             var hash = $(this).attr('href');
             var hashless = hash.split('#')[1];
             var queryless = hash.split('?')[0];
             var tab = hashless.split('?')[0];
             var anchor = hashless.split('?')[1];
+            var offset = 0;
 
             // taken from above
-            $tabs.removeClass('nav-tab-active').filter('[value="'+hash+'"]').addClass('nav-tab-active');
+            $tabs.removeClass('nav-tab-active').filter('[href="'+hash+'"]').addClass('nav-tab-active');
             $tabContainers.hide().filter(queryless).show();
 
             // taken from above
-            offset = $('a[name="' + anchor + '"]').offset().top - 40;
+            if (anchor !== undefined) {
+                offset = $('a[name="' + anchor + '"]').offset().top - 40;
+            }
             $('html,body').stop().animate({ scrollTop: offset }, 300);
 
             return false;
         });
+
 
         // WHAT'S NEW TOUR
         /*

@@ -1,0 +1,32 @@
+### Where can I get step-by-step instructions for making a gallery? {.title}
+
+#### WPv3.5 and newer
+
+1. edit or create a post
+2. click the "Add Media" icon (above the text editor)
+3. click "Create Gallery" in the left column
+4. either "Upload Files" or use images in the "Media Library"
+5. select the images you'd like to appear in your gallery
+6. click "Create New Gallery" (in the bottom/right corner)
+7. drag to place in the correct order (if necessary)
+8. select "PhotoMosaic" in Gallery Settings > Template (on the right)
+9. click "Insert Gallery" (in the bottom/right corner)
+
+#### WPv3.4 and lower:
+
+1. edit or create a post
+2. click the "Add Media" icon (above the text editor)
+3. upload the images that you want to appear in your gallery
+4. if you edited any of the infoabout your images - click "Save All Changes"
+5. close the "Add media" window
+6. add `[gallery template="photomosaic"]` to your post and your gallery will appear in that spot
+
+#### NextGen Galleries:
+
+1. go to Gallery > Add Gallery / Images
+2. select the "Add new gallery" tab
+3. create your gallery
+4. select the "Upload Images" tab (if you weren't taken there automatically)
+5. select the images you want to upload and the select the gallery you want them added to
+6. go to Gallery > Manage Gallery and note the ID of your new gallery
+7. go to the post where you want to insert your gallery and add `[photomosaic nggid="*"]` (replacing the * with your gallery's ID)

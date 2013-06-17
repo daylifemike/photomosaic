@@ -1,0 +1,12 @@
+a.toplevel_page_photomosaic .wp-menu-image {
+	background: transparent url('../images/admin-page-icon.gif') 2px 0px no-repeat;
+	opacity: 0.6;
+}
+
+a.toplevel_page_photomosaic:hover .wp-menu-image {
+	opacity: 1;
+}
+
+li.current a.toplevel_page_photomosaic .wp-menu-image {
+	background-position: 2px -26px;
+}

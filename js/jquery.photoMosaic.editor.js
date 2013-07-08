@@ -1,15 +1,28 @@
 (function ($) {
     $(window).on('load', function () {
-        var gallery_option_template_template = '' +
+        var l10n = {
+            theme : (PhotoMosaic.l10n && PhotoMosaic.l10n.theme) ? PhotoMosaic.l10n.theme : 'Theme'
+        };
+        var templates = {
+            gallery_select_option : '<option value="photomosaic">PhotoMosaic</option>',
+            gallery_select : '' +
             '<label class="setting">' +
-                '<span>Template</span>' +
-                '<select class="template" data-setting="template">' +
+                '<span>' + l10n.theme + '</span>' +
+                '<select class="theme" data-setting="theme">' +
                     '<option value="default" selected>Default</option>' +
                     '<option value="photomosaic">PhotoMosaic</option>' +
                 '</select>' +
-            '</label>';
+            '</label>'
+        };
+        var $gallery_settings = $('#tmpl-gallery-settings');
+        var hasTheme = $gallery_settings.find('select.theme').length > 0;
 
-        $('#tmpl-gallery-settings').append(gallery_option_template_template);
+        if (hasTheme) {
+            // SELECT.theme is already in the form -- just add the OPTION
+            $gallery_settings.find('select.theme').append(templates.gallery_select_option);
+        } else {
+            $gallery_settings.append(templates.gallery_select);
+        }
 
         /*
             Providing an interface to allow the user to set/override PM globals would require a couple of things:

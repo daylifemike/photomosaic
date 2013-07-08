@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422?ref=makf
 Description: Adds a new display template for your WordPress and NextGen galleries. See the <a href="/wp-admin/admin.php?page=photomosaic">options page</a> for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak?ref=makfak
-Version: 2.4
+Version: 2.4.1
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
-        return '2.4';
+        return '2.4.1';
     }
 
     function comparable_version ($version) {
@@ -36,7 +36,8 @@ class PhotoMosaic {
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
         // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
-        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" template="photomosaic"]
+        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" theme="photomosaic"]
+        add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 1337, 2 ); // template="pm" --> theme="pm"
 
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
@@ -70,6 +71,16 @@ class PhotoMosaic {
 
             if ( isset( $_GET['post'] ) ) {
                 wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/jquery.photoMosaic.editor.js', __FILE__ ), array('photomosaic'));
+                echo('
+                    <script>
+                        if (!window.PhotoMosaic) {
+                            window.PhotoMosaic = {};
+                        }
+                        window.PhotoMosaic.l10n = {
+                            theme : "'. _('Theme') .'"
+                        }
+                    </script>
+                ');
             }
 
             wp_enqueue_style( 'menu', plugins_url('/css/photoMosaic.menu.css', __FILE__ ));
@@ -253,14 +264,55 @@ class PhotoMosaic {
                         },
                 ';
             }
+        } else if ( class_exists('Jetpack_Carousel') ) {
+            // Jetpack :: Carousel support
+            $output_buffer .='
+                    modal_ready_callback : function($photomosaic){
+                        var data;
+                        var id;
+                        var $fragment;
+                        var $img;
+                        var $a;
+                        var self = this;
+
+                        $("a", $photomosaic).each(function () {
+                            $a = $(this);
+                            $img = $a.find("img");
+                            id = $img.attr("id");
+                            data = self.deepSearch( self.images, "id", id );
+                            $fragment = $(data.jetpack).find("img");
+
+                            $img.attr({
+                                "data-attachment-id"     : $fragment.attr("data-attachment-id"),
+                                "data-orig-file"         : $fragment.attr("data-orig-file"),
+                                "data-orig-size"         : $fragment.attr("data-orig-size"),
+                                "data-comments-opened"   : $fragment.attr("data-comments-opened"),
+                                "data-image-meta"        : $fragment.attr("data-image-meta"),
+                                "data-image-title"       : $fragment.attr("data-image-title"),
+                                "data-image-description" : $fragment.attr("data-image-description"),
+                                "data-medium-file"       : $fragment.attr("data-medium-file"),
+                                "data-large-file"        : $fragment.attr("data-large-file")
+                            });
+
+                            $a.addClass("gallery-item");
+                        });
+
+                        $($photomosaic).parent().addClass("gallery");
+                    },
+            ';
         }
 
         $output_buffer .='
                         order: "'. $settings['order'] .'"
                     });
                 });
-            </script>
-            <div id="photoMosaicTarget'.$unique.'"></div>';
+            </script>';
+
+        /* Jetpack :: Carousel hack - it needs an HTML string to append it's data */
+        $gallery_style = "<style type='text/css'></style>";
+        $gallery_div = '<div id="photoMosaicTarget'.$unique.'">';
+        $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
+        $output_buffer .='</div>';
 
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
@@ -344,6 +396,13 @@ class PhotoMosaic {
                     $url_data = '';
                 }
 
+                // Jetpack_Carousel hacks
+                if ( class_exists('Jetpack_Carousel') ) {
+                    $jetpack_data = ',"jetpack" : '. json_encode( wp_get_attachment_link($_post->ID, 'full', false, false) );
+                } else {
+                    $jetpack_data = ',"jetpack" : false';
+                }
+
                 $output_buffer .='{
                     "src": "' . $image_full[0] . '",
                     "thumb": "' . $image_medium[0] . '",
@@ -358,6 +417,7 @@ class PhotoMosaic {
                     "width": "' . $image_full[1] . '",
                     "height": "' . $image_full[2] . '"
                     ' . $url_data . '
+                    ' . $jetpack_data . '
                 }';
 
                 if($i != $len - 1) {
@@ -458,7 +518,12 @@ class PhotoMosaic {
                 $isPhotoMosaic = true;
             }
         } else if ( isset($atts['template']) ) {
+            // deprecated in 2.4.1
             if ( $atts['template'] === 'photomosaic' ) {
+                $isPhotoMosaic = true;
+            }
+        } else if ( isset($atts['theme']) ) {
+            if ( $atts['theme'] === 'photomosaic' ) {
                 $isPhotoMosaic = true;
             }
         }
@@ -469,6 +534,23 @@ class PhotoMosaic {
             $output = PhotoMosaic::shortcode($atts);
             return $output;
         }
+    }
+
+    function scrub_post_shortcodes ( $content, $post_id ) {
+        // if we happen across any [gallery template="pm"]
+        // change it to [gallery theme="pm"]
+        if ( preg_match_all( '/\[gallery.*\]/', $content, $matches ) ) {
+            foreach ( $matches[0] as $match ) {
+                if (
+                    strpos( $match, 'template="photomosaic"' ) !== false ||
+                    strpos( $match, "template='photomosaic'" ) !== false
+                ) {
+                    $correct = str_replace( 'template=', 'theme=', $match );
+                    $content = str_replace( $match, $correct, $content );
+                }
+            }
+        }
+        return $content;
     }
 
     function setupAdminPage() {
@@ -521,10 +603,10 @@ class PhotoMosaic {
                 $tabs = array(
                     // display name, id, file
                     array('Global Settings',   'form',        'global-settings.php'),
-                    array('Usage',             'usage',       'usage.md'),
-                    array('Inline Attributes', 'inlineattrs', 'inline-attributes.md'),
+                    array('Usage',             'usage',       'usage.txt'),
+                    array('Inline Attributes', 'inlineattrs', 'inline-attributes.txt'),
                     array('FAQ',               'faq',         'faq.php'),
-                    array("What's New",        'whatsnew',    'whatsnew.md')
+                    array("What's New",        'whatsnew',    'whatsnew.txt')
                 );
             ?>
             <h2 class="nav-tab-wrapper">
@@ -538,7 +620,7 @@ class PhotoMosaic {
                     <?php
                         $url = 'includes/admin-markup/' . $tab[2];
 
-                        if ( strpos($tab[2], '.md') === false ) {
+                        if ( strpos($tab[2], '.txt') === false) {
                             include( $url );
                         } else {
                             $text = file_get_contents(  plugins_url($url, __FILE__) );

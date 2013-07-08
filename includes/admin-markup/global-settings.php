@@ -1,5 +1,5 @@
 <p>
-    These settings will be applied to all of your <code>[photomosaic]</code> galleries.
+    These settings will be applied to all of your PhotoMosaic galleries.
     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
     Any options not specified on a shortcode will default the settings chosen here.
 </p>
@@ -72,10 +72,9 @@
                     <br/><br/>
                 if no URLs are found, PhotoMosaic links to the unresized image
                     <br/><br/>
-                WP: define the caption in the "Caption" field and the link URL in the "Description" field
+                WP: define the image's caption in the "Caption" field and the link URL in the "Description" field
                     <br/><br/>
-                NextGen: it doesn't matter which field ("Alt &amp; Title Text" or "Description") gets used for which.
-                PhotoMosaic checks both fields for the URL and, if it finds one, uses the other field for the caption
+                NextGen: it doesn't matter which of the image's fields ("Alt &amp; Title Text" or "Description") are used for which. PhotoMosaic checks both fields for the URL and, if it finds one, uses the other field for the caption
                     <br/><br/>
                 requires that <b>image links</b> be checked
             </span>

@@ -7,14 +7,14 @@
 
 <?php
     $questions = array(
-        array( 'makepm',          'how-do-i-make-a-pm.md' ),
-        array( 'createedit',      'where-do-i-make-a-pm.md' ),
-        array( 'whichshortcode',  'different-shortcodes.md' ),
-        array( 'globalshortcode', 'global-vs-shortcode.md' ),
-        array( 'multiplemosaics', 'multiple-mosaics.md' ),
-        array( 'nextgen',         'nextgen-galleries.md' ),
-        array( 'stepbystep',      'step-by-step-creation.md' ),
-        array( 'customlightbox',  'custom-lightbox.md')
+        array( 'makepm',          'how-do-i-make-a-pm.txt' ),
+        array( 'createedit',      'where-do-i-make-a-pm.txt' ),
+        array( 'whichshortcode',  'different-shortcodes.txt' ),
+        array( 'globalshortcode', 'global-vs-shortcode.txt' ),
+        array( 'multiplemosaics', 'multiple-mosaics.txt' ),
+        array( 'nextgen',         'nextgen-galleries.txt' ),
+        array( 'stepbystep',      'step-by-step-creation.txt' ),
+        array( 'customlightbox',  'custom-lightbox.txt')
     );
 ?>
 <?php foreach ( $questions as $question ) : ?>

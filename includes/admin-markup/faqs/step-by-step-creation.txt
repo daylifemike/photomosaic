@@ -9,7 +9,7 @@
 5. select the images you'd like to appear in your gallery
 6. click "Create New Gallery" (in the bottom/right corner)
 7. drag to place in the correct order (if necessary)
-8. select "PhotoMosaic" in Gallery Settings > Template (on the right)
+8. select "PhotoMosaic" in Gallery Settings > Theme (on the right)
 9. click "Insert Gallery" (in the bottom/right corner)
 
 #### WPv3.4 and lower:
@@ -19,7 +19,7 @@
 3. upload the images that you want to appear in your gallery
 4. if you edited any of the infoabout your images - click "Save All Changes"
 5. close the "Add media" window
-6. add `[gallery template="photomosaic"]` to your post and your gallery will appear in that spot
+6. add `[gallery theme="photomosaic"]` to your post and your gallery will appear in that spot
 
 #### NextGen Galleries:
 

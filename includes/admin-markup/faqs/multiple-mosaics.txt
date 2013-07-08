@@ -1,0 +1,12 @@
+### How do I put multiple mosaics on the same page? {.title}
+
+#### WPv3.4 and lower:
+
+Simply specify a post that has attached images (ID = the ID for the post where the images are attached).
+
+`[gallery theme="photomosaic" id="1"]`  
+`[gallery theme="photomosaic" id="2"]`
+
+#### WPv3.5 and newer
+
+You can use the "Create Gallery" flow to generate as many `[gallery theme="photomosaic" ids="1,2,3,4,5"]` shortcodes as you like.  That's all.

@@ -1,22 +1,27 @@
 ## What's New
 
+### 2.4.1
+- Change: Renames "Template" gallery setting to "Theme" (shortcodes using "template" will continue to work)
+- Bug Fix: Renames Markdown files from .md to .txt to prevent IIS mime type blocking
+- Bug Fix: Corrects behavior that caused disabling "Image Links" to also disable "Image Loading Transition"
+
 ### 2.4
 - Enhancement: now supports `[gallery]` shortcode with `photomosaic` attribute -- `[gallery photomosaic="true"]`
 - Enhancement: now supports `[gallery]` shortcode with `template` attribute -- `[gallery template="photomosaic"]`
-- Enhancement: PhotoMosaic can now be selected during the Create Gallery flow -- Create Gallery --> template
+- Enhancement: PhotoMosaic can now be selected during the "Create Gallery" / "Edit Gallery" workflow -- Edit Gallery --> template
 - Change: custom menu icon
 
 ### 2.3.8
-- Enhancement: now supports NextGen Albums with `ngaid` attribute -- `[photomosaic ngaid="1"]`
+- Bug Fix: Auto-column math is no longer dynamic (it depended on WP image sizes and was problematic)
 
 ### 2.3.7
-- Bug Fix: images that 404 get removed from the mosaic
-
-### 2.3.6
 - Bug Fix: PrettyPhoto: all global jQuery references now point to the scoped reference
 
+### 2.3.6
+- Enhancement: now supports NextGen Albums with `ngaid` attribute -- `[photomosaic ngaid="1"]`
+
 ### 2.3.5
-- Bug Fix: Auto-column math is no longer dynamic (it depended on WP image sizes and was problematic)
+- Bug Fix: images that 404 get removed from the mosaic
 
 ### 2.3.4
 - Enhancement: NextGen: "Link to URL" no longer cares which field contains a URL and which a caption

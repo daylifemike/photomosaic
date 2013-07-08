@@ -1,0 +1,10 @@
+### How do I make a PhotoMosaic? {.title}
+
+PhotoMosaic is an extention of the `[gallery]` shortcode.  Simply make a `[gallery]` as you would normally.  On the "Edit Gallery" page of the "Create Gallery" workflow you can select "PhotoMosaic" in the "Theme" setting.
+
+Any existing `[gallery]` can become a PhotoMosaic simply by specifying the 'theme' --> `[gallery theme="photomosaic"]` (either by editing the shortcode or by editing the gallery).
+
+NextGen users must use the `[photomosaic]` shortcode.  Specifiy a gallery ID `[photomosaic nggid="1"]` or an album ID `[photomosaic ngaid="1"]` to be displayed.
+
+See [Where do I create/edit my galleries?](#createedit) for more detail.  
+See [Where can I get step-by-step instructions for making a gallery](#stepbystep) for step-by-step instructions.

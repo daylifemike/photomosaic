@@ -1,16 +1,26 @@
-## Shortcodes {.subhead .first}
+## "Create Gallery" &amp; "Edit Gallery" workflow (requires WP3.5+) {.subhead .first}
+
+Wordpress v3.5+ users can create and edit their PhotoMosaics like they would a normal Wordpress Gallery.  The last step in the "Create Gallery" workflow takes you to the same screen as you would see when editing an existing gallery : "Edit Gallery".  Once you are on the "Edit Gallery" screen, PhotoMosaic" can be selected from the "Theme" select box.
+
+
+## Shortcodes {.subhead}
 
 A PhotoMosaic shortcode can be used on any post or page to display images in the Wordpress Media Library.
 
-- `[gallery template="photomosaic"]`
+- `[gallery theme="photomosaic"]`
 - `[gallery photomosaic="true"]`
 - `[photomosaic]`
 
-There are three ways to specify the images a shortcode should use:
+When working with Wordpress galleries, there are three ways to specify the images a shortcode should use:
 
-1. `[photomosaic ids="1,2,3,4,5"]` : a list of images to be used (the result of the Create Gallery flow) *(requires WP v3.5+)*
+1. `[photomosaic ids="1,2,3,4,5"]` : a list of images to be used (the result of the "Create Gallery" workflow) *(requires WP v3.5+)*
 2. `[photomosaic id="1"]` : the ID of a post/page that has attached images that should be used
 3. `[photomosaic]` : when no ID or IDs attributes are present PhotoMosaic assumes there are images attached to the current post/page *(eg: on page ID = 5 --> `[photomosaic]` === `[photomosaic id="5"]`)*
+
+NextGen users can specify a NextGen Gallery ID or a NextGen Album ID.  For albums, all of the images in all of the galleries in the album will be displayed. Images will appear ordered, first, by album and then by the order specified in each gallery.
+
+- Gallery ID --> `[photomosaic nggid="1"]`
+- Album ID --> `[photomosaic ngaid="1"]`
 
 More information can be found in the [FAQs](#tab-faq){.combo-link}.
 

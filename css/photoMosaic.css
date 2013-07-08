@@ -1,5 +1,5 @@
 @charset "utf-8";
-/* photoMosaic 2.4 */
+/* photoMosaic 2.4.1 */
 
 /* reset */
 .photoMosaic,
@@ -35,7 +35,7 @@
 /* loading */
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/spinner-arrows.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }
 
-.photoMosaic.loading a { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
+.photoMosaic.loading .loading { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 
@@ -64,9 +64,9 @@
     transition: none;
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-none a.loading img { }
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-none .loading img { }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-custom a.loading img { 
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-custom .loading img {
     /* good for example
         opacity:0;
         -webkit-transform: rotate( -5deg ) scale( 0.95 );
@@ -77,11 +77,11 @@
     */
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-fade a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-fade .loading img {
     opacity: 0;
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-scale-up a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-scale-up .loading img {
     opacity: 0;
     -webkit-transform: scale( 0.95 );
     -moz-transform: scale( 0.95 );
@@ -90,7 +90,7 @@
     transform: scale( 0.95 );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-scale-down a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-scale-down .loading img {
     opacity: 0;
     -webkit-transform: scale( 1.15 );
     -moz-transform: scale( 1.15 );
@@ -99,7 +99,7 @@
     transform: scale( 1.15 );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-up a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-up .loading img {
     opacity: 0;
     -webkit-transform: translateY( 5% );
     -moz-transform: translateY( 5% );
@@ -108,7 +108,7 @@
     transform: translateY( 5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-down a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-down .loading img {
     opacity: 0;
     -webkit-transform: translateY( -5% );
     -moz-transform: translateY( -5% );
@@ -117,7 +117,7 @@
     transform: translateY( -5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-left a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-left .loading img {
     opacity: 0;
     -webkit-transform: translateX( 5% );
     -moz-transform: translateX( 5% );
@@ -126,7 +126,7 @@
     transform: translateX( 5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-right a.loading img {
+.PM_csstransforms.PM_csstransitions .photoMosaic.transition-slide-right .loading img {
     opacity: 0;
     -webkit-transform: translateX( -5% );
     -moz-transform: translateX( -5% );

@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.4 starts around line ~#110
+ *  PhotoMosaic v2.4.1 starts around line ~#110
  */
 
 (function (window) {
@@ -101,7 +101,7 @@ g}}(window.JQPM||jQuery));
 
 
 /*
-    jQuery photoMosaic v2.4
+    jQuery photoMosaic v2.4.1
     requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
     optional: prettyPhoto (included above)
 */
@@ -288,7 +288,7 @@ g}}(window.JQPM||jQuery));
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
-                        $($proper[$proper.length - 1]).parents('a').removeClass('loading');
+                        $($proper[$proper.length - 1]).parents('.loading').removeClass('loading');
                     }, 0);
                 },
                 always: function () {
@@ -913,7 +913,7 @@ g}}(window.JQPM||jQuery));
                     done: function ($images) {
                         var sibs = $images.siblings();
                         var id = sibs.eq(0).attr('id');
-                        $images.attr('id', id)
+                        $images.attr('id', id);
                         $images.opacity(100);
                         sibs.remove();
                         setTimeout(function () {
@@ -1087,7 +1087,7 @@ g}}(window.JQPM||jQuery));
 
                 $a.css({
                     width : image.width.constraint + 'px',
-                    height : image.height.constraint + 'px',
+                    height : image.height.constraint + 'px'
                 });
 
                 if (!this.shouldAnimate()) {
@@ -1244,7 +1244,7 @@ g}}(window.JQPM||jQuery));
 
         _name : pluginName,
 
-        version : '2.4'
+        version : '2.4.1'
 
     };
 

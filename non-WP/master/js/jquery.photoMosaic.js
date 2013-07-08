@@ -900,7 +900,7 @@ g}}(window.JQPM||jQuery));
                     done: function ($images) {
                         var sibs = $images.siblings();
                         var id = sibs.eq(0).attr('id');
-                        $images.attr('id', id)
+                        $images.attr('id', id);
                         $images.opacity(100);
                         sibs.remove();
                         setTimeout(function () {
@@ -1074,7 +1074,7 @@ g}}(window.JQPM||jQuery));
 
                 $a.css({
                     width : image.width.constraint + 'px',
-                    height : image.height.constraint + 'px',
+                    height : image.height.constraint + 'px'
                 });
 
                 if (!this.shouldAnimate()) {

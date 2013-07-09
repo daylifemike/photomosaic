@@ -4,7 +4,7 @@ Most lightbox plugins work in one of four ways.  The methods, explained below, a
 
 1. ### Aggressive
         
-    Some lightbox plugins are very aggressive about finding links/images.  These plugins make integration with PhotoMosaic easy because require no additional work.
+    Some lightbox plugins are very aggressive about finding links/images.  These plugins make integration with PhotoMosaic easy because they require no additional work.
     
     In the PhotoMosaic settings:
     

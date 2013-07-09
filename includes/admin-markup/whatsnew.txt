@@ -1,6 +1,7 @@
 ## What's New
 
 ### 2.4.1
+- Enhancement: Adds support for Jetpack :: Carousel
 - Change: Renames "Template" gallery setting to "Theme" (shortcodes using "template" will continue to work)
 - Bug Fix: Renames Markdown files from .md to .txt to prevent IIS mime type blocking
 - Bug Fix: Corrects behavior that caused disabling "Image Links" to also disable "Image Loading Transition"

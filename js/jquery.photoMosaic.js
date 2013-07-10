@@ -492,10 +492,10 @@ g}}(window.JQPM||jQuery));
                 minus : 175 // (300 - (150 / 1.2))
             };
 
-            if (num_images < this.opts.columns) {
+            cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
+
+            if (num_images < cols) {
                 cols = num_images;
-            } else {
-                cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
             }
 
             return cols;

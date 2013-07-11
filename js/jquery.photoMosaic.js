@@ -241,7 +241,7 @@ g}}(window.JQPM||jQuery));
             $.when(
                 this.getGalleryData()
             ).then(function (data) {
-                self.opts.gallery = data;
+                self.opts.gallery = self.setImageIDs(data);
                 self.configure();
             });
         },
@@ -337,8 +337,6 @@ g}}(window.JQPM||jQuery));
                 var image = $.extend(true, {}, this); // jQuery deep copy
                 var image_url = (image.thumb && image.thumb !== '') ? image.thumb : image.src;
                 var modal_text;
-
-                image.id = self.makeID();
 
                 // image sizes
                 image.full = image.src;
@@ -787,10 +785,14 @@ g}}(window.JQPM||jQuery));
                     'id': this.preload,
                     'class' : 'PM_preloadify'
                 });
+            var self = this;
 
             $.each(this.opts.gallery, function (i) {
                 var image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src;
-                var $item = $('<img>').attr({src : image_url});
+                var $item = $('<img>')
+                                .attr({ src : image_url })
+                                .addClass(this.id);
+
                 $images.append($item);
             });
 
@@ -803,8 +805,7 @@ g}}(window.JQPM||jQuery));
             var $preload = $('#' + this.preload);
 
             $.each(gallery, function (i) {
-                var image_url = (this.thumb && this.thumb !== '') ? this.thumb : this.src;
-                var $img = $preload.find('img[src="'+ image_url +'"]');
+                $img = $preload.find('.' + this.id);
 
                 this.width = {
                     original: $img.width()
@@ -867,6 +868,13 @@ g}}(window.JQPM||jQuery));
                         }
                     );
             }
+        },
+
+        setImageIDs: function (gallery) {
+            for (var i = 0; i < gallery.length; i++) {
+                gallery[i].id = this.makeID();
+            };
+            return gallery;
         },
 
         pickImageSize: function (gallery) {
@@ -1201,7 +1209,7 @@ g}}(window.JQPM||jQuery));
                         if (typeof window[self.opts.gallery] !== 'undefined') {
                             self.opts.gallery = window[self.opts.gallery];
                         } else {
-                            self.log.error("No JSON object found when referencing '" + self.opts.gallery + "'.")
+                            self.log.error("No JSON object found when referencing '" + self.opts.gallery + "'.");
                             self.log.info("Make sure your variable is avaible to the global scope (window['" + self.opts.gallery + "']) or simply pass the object literal (gallery:" + self.opts.gallery + ") instead of a string (gallery:\"" + self.opts.gallery + "\").");
                             return true;
                         }

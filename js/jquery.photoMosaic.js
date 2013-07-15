@@ -179,7 +179,7 @@ g}}(window.JQPM||jQuery));
         },
 
         template: ' ' +
-            '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{transition}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
+            '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{clazz}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                 '{{#images}}' +
                     '{{#link}}' +
                         '<a class="loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
@@ -420,7 +420,7 @@ g}}(window.JQPM||jQuery));
             // construct template object
             var json = {
                     id: this._id,
-                    transition: this.getTransition(),
+                    clazz: this.makeSpecialClasses(),
                     width: (this.col_width * this.columns.length) + (this.opts.padding * (this.columns.length - 1)),
                     center: this.opts.center,
                     columns:[]
@@ -1017,6 +1017,20 @@ g}}(window.JQPM||jQuery));
                 transition = this.opts.loading_transition
             }
             return 'transition-' + transition;
+        },
+
+        getAvia: function () {
+            // Kriesi's Avia framework overwrites the 'left' prop on my links
+            // 'noLightbox' prevents that shit from happening
+            return (typeof window.avia_framework_globals !== 'undefined') ? 'noLightbox' : '';
+        },
+
+        makeSpecialClasses: function () {
+            var classes = [
+                this.getTransition(),
+                this.getAvia()
+            ];
+            return classes.join(' ');
         },
 
         bindEvents: function () {

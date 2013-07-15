@@ -32,6 +32,7 @@ class PhotoMosaic {
     }
 
     function init() {
+        ob_start(); // prevents the `echo` below from throwing an error when deleting a post
         $options = get_option('photomosaic_options');
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget

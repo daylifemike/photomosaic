@@ -625,7 +625,14 @@ class PhotoMosaic {
                         if ( strpos($tab[2], '.txt') === false) {
                             include( $url );
                         } else {
-                            $text = file_get_contents(  plugins_url($url, __FILE__) );
+                            if ( ini_get('allow_url_fopen') ) {
+                                // I like this because it seems more stable
+                                $text = file_get_contents(  plugins_url($url, __FILE__) );
+                            } else {
+                                // some servers aren't allowed to address themselves
+                                $text = file_get_contents( dirname(__file__) . '/' . $url );
+                            }
+
                             echo Markdown($text);
                         }
                     ?>

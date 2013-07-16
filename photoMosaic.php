@@ -5,7 +5,7 @@ Plugin URI: http://codecanyon.net/item/photomosaic-for-wordpress/243422?ref=makf
 Description: Adds a new display template for your WordPress and NextGen galleries. See the <a href="/wp-admin/admin.php?page=photomosaic">options page</a> for examples and instructions.
 Author: makfak
 Author URI: http://www.codecanyon.net/user/makfak?ref=makfak
-Version: 2.4.1
+Version: 2.4.2
 */
 
 if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) { 
@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     function version () {
-        return '2.4.1';
+        return '2.4.2';
     }
 
     function comparable_version ($version) {
@@ -202,6 +202,7 @@ class PhotoMosaic {
         $unique = floor(((time() + rand(21,40)) * rand(1,5)) / rand(1,5));
 
         $output_buffer = '
+            <!-- PhotoMosaic v'. PhotoMosaic::version() .' -->
             <script type="text/javascript" data-photomosaic-gallery="true">
                 var PMalbum'.$unique.' = [';
 
@@ -311,7 +312,7 @@ class PhotoMosaic {
 
         /* Jetpack :: Carousel hack - it needs an HTML string to append it's data */
         $gallery_style = "<style type='text/css'></style>";
-        $gallery_div = '<div id="photoMosaicTarget'.$unique.'">';
+        $gallery_div = '<div id="photoMosaicTarget'. $unique .'" data-version="'. PhotoMosaic::version() .'">';
         $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
         $output_buffer .='</div>';
 

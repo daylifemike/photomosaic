@@ -1,5 +1,11 @@
 ## What's New
 
+### 2.4.2
+- Bug Fix: adds Output Buffering; prevents errors when deleting posts and when activating the plugin
+- Bug Fix: prevents Kriesi's Avia framework from overwriting PM's image position
+- Bug Fix: corrects AutoCols logic (comparing an int to a str)
+- Change: preloaded image matching is now based on the unique ID (rather than URL)
+
 ### 2.4.1
 - Enhancement: Adds support for Jetpack :: Carousel
 - Change: Renames "Template" gallery setting to "Theme" (shortcodes using "template" will continue to work)

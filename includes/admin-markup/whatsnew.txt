@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.4.3 - in progress
+- Bug Fix: admin page now accounts for servers that disallow 'allow_url_fopen'
+- Bug Fix: spinner no longer dissapears early in certain conditions
+
 ### 2.4.2
 - Bug Fix: adds Output Buffering; prevents errors when deleting posts and when activating the plugin
 - Bug Fix: prevents Kriesi's Avia framework from overwriting PM's image position

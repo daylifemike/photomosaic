@@ -310,10 +310,16 @@ class PhotoMosaic {
                 });
             </script>';
 
-        /* Jetpack :: Carousel hack - it needs an HTML string to append it's data */
-        $gallery_style = "<style type='text/css'></style>";
         $gallery_div = '<div id="photoMosaicTarget'. $unique .'" data-version="'. PhotoMosaic::version() .'">';
-        $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
+
+        /* Jetpack :: Carousel hack - it needs an HTML string to append it's data */
+        if ( class_exists('Jetpack_Carousel') ) {
+            $gallery_style = "<style type='text/css'></style>";
+            $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
+        } else {
+            $output_buffer .= $gallery_div;
+        }
+
         $output_buffer .='</div>';
 
         return preg_replace('/\s+/', ' ', $output_buffer);

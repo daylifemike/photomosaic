@@ -259,14 +259,6 @@ g}}(window.JQPM||jQuery));
 
             this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
 
-            this._size = this.pickImageSize(this.opts.gallery);
-
-            if (this._size) {
-                for (var i = 0; i < this.opts.gallery.length; i++) {
-                    this.opts.gallery[i].thumb = this.opts.gallery[i].sizes[this._size];
-                };
-            }
-
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
             if (this.hasDims()) {
@@ -471,6 +463,16 @@ g}}(window.JQPM||jQuery));
             // lightboxes index by node order and we add nodes by columns
             // leading to a mismatch between read order and lightbox-gallery-step-through order
             json.images = this.unpackColumns(json.columns);
+
+            // double check that we're using the best image
+            var size = null;
+
+            for (var i = 0; i < json.images.length; i++) {
+                size = this.pickImageSize(json.images[i]);
+                if (size) {
+                    json.images[i].src = json.images[i].sizes[size.name];
+                }
+            };
 
             return json;
         },
@@ -877,25 +879,51 @@ g}}(window.JQPM||jQuery));
             return gallery;
         },
 
-        pickImageSize: function (gallery) {
-            var size = null;
-
+        pickImageSize: function (image) {
             // currently only supported in PM4WP
-            if (!this.opts.sizes || !gallery[0].sizes) {
+            if (!this.opts.sizes || !image.sizes) {
                 return null;
             }
 
+            var size = null;
+            var scaled = {
+                width : 0,
+                height : 0
+            };
+
             for (key in this.opts.sizes) {
-                if (!size && (this.opts.sizes[key] > this.col_width)) {
-                    size = key;
+                if (this.opts.sizes.hasOwnProperty(key)) {
+                    // are we dealing with a portrait or landscape image?
+                    if (image.width.original >= image.height.original) {
+                        scaled.width = this.opts.sizes[key];
+                        scaled.height = Math.floor((scaled.width * image.height.original) / image.width.original);
+                    } else {
+                        scaled.height = this.opts.sizes[key];
+                        scaled.width = Math.floor((scaled.height * image.width.original) / image.height.original);
+                    }
+
+                    // compare the dims of the image to the space to which is has been scaled
+                    // if either of the image's dims are less than the container's dims - we'd be scaling up
+                    // scaling up is bad
+                    // keep looping until we scale the image down
+                    if (scaled.width < image.width.adjusted || scaled.height < image.height.adjusted) {
+                        continue;
+                    } else {
+                        size = key;
+                        break;
+                    }
                 }
             };
 
+            // if none of the known sizes are big enough, go with the biggest we've got
             if (!size) {
                 size = 'full';
             }
 
-            return size;
+            return {
+                name : size,
+                px : this.opts.sizes[size]
+            };
         },
 
         swapImage: function (image, size) {
@@ -908,6 +936,7 @@ g}}(window.JQPM||jQuery));
                                 .attr('style', $img.attr('style'))
                                 .opacity(0);
 
+            // the size classname + check is a hacky window.resize debounce
             if (
                 $a.find('.' + size).length === 0 &&
                 $a.find('img[src="' + image.sizes[size] + '"]').length === 0
@@ -930,6 +959,8 @@ g}}(window.JQPM||jQuery));
                     }
                 });
             }
+
+            return image.sizes[size];
         },
 
         constructGalleryFromHTML: function () {
@@ -1055,7 +1086,7 @@ g}}(window.JQPM||jQuery));
             var $img = null;
             var $a = null;
             var json = null;
-            var size = this.pickImageSize(this.images);
+            var size = null;
 
             this.obj.addClass('resizing');
 
@@ -1072,11 +1103,19 @@ g}}(window.JQPM||jQuery));
                 image.width.adjusted = this.col_width;
                 image.height.adjusted = Math.floor((image.height.original * image.width.adjusted) / image.width.original);
 
+                size = this.pickImageSize(image);
+
                 if (size) {
-                    // we get a new image if we need a bigger image
-                    if (this.opts.sizes[size] > this.opts.sizes[this._size]) {
-                        this.swapImage(image, size);
-                    }
+                    for (key in image.sizes) {
+                        if (image.sizes.hasOwnProperty(key)) {
+                            if (image.sizes[key] === image.src) {
+                                // we get a new image if we need a bigger image
+                                if (size.px > this.opts.sizes[key]) {
+                                    image.src = this.swapImage(image, size.name);
+                                }
+                            }
+                        }
+                    };
                 }
 
                 this.images[i] = image;

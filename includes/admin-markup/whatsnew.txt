@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.4.3
+- Bug Fix: corrects bug that prevented the PhotoMosaic admin page from rendering correctly under certain server configurations
+- Bug Fix: loading spinner was disappearing early in certain conditions
+- Bug Fix: corrects image-selection logic that caused the wrong size to be chosen for extremely tall images
+
 ### 2.4.2
 - Bug Fix: adds Output Buffering; prevents errors when deleting posts and when activating the plugin
 - Bug Fix: prevents Kriesi's Avia framework from overwriting PM's image position

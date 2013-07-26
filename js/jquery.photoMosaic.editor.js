@@ -17,12 +17,17 @@
         var $gallery_settings = $('#tmpl-gallery-settings');
         var hasTheme = $gallery_settings.find('select.theme').length > 0;
 
+        // convert the template string into HTML so it can be traversed
+        var $fragment = $('<div></div>').html( $gallery_settings.text() );
+
         if (hasTheme) {
             // SELECT.theme is already in the form -- just add the OPTION
-            $gallery_settings.find('select.theme').append(templates.gallery_select_option);
+            $fragment.find('select.theme').append(templates.gallery_select_option);
         } else {
-            $gallery_settings.append(templates.gallery_select);
+            $fragment.append(templates.gallery_select);
         }
+
+        $gallery_settings.html( $fragment.html() );
 
         /*
             Providing an interface to allow the user to set/override PM globals would require a couple of things:

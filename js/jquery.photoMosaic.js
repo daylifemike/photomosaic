@@ -143,8 +143,8 @@ g}}(window.JQPM||jQuery));
             },
 
             print: function (msg) {
-                if (console !== 'undefined') {
-                    console.log(msg);
+                if (window.console !== 'undefined') {
+                    window.console.log(msg);
                 }
             }
         },

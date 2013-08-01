@@ -222,6 +222,8 @@
             $links = $form.find('input[name="links"]'),
             $link_to_url = $form.find('input[name="link_to_url"]'),
             $external_links = $form.find('input[name="external_links"]');
+            $height = $form.find('input[name="height"]');
+            $prevent_crop = $form.find('input[name="prevent_crop"]');
 
         $form.find(':input').change(function(e) {
             var item = null;
@@ -282,15 +284,27 @@
                 {
                     id: 'lightbox-links',
                     test: function() { return ($lb.is(':checked') && $link_to_url.is(':checked')); },
-                    text: 'Enabling "<strong>Use Default Lightbox</strong>" and "<strong>Link to URL</strong>" causes all \
-                            links to open in the lightbox.  This includes images, videos, and links to other pages.'
+                    text: 'Enabling "<strong>Use Default Lightbox</strong>" and "<strong>Link to URL</strong>" causes all' +
+                            'links to open in the lightbox.  This includes images, videos, and links to other pages.'
                 },
                 {
                     id: 'customlightbox-links',
                     test: function() { return ($custom_lb.is(':checked') && $link_to_url.is(':checked')); },
-                    text: 'Enabling "<strong>Use Custom Lightbox</strong>" and "<strong>Link to URL</strong>" causes all \
-                            links to open in the lightbox.  This includes images, videos, and links to other pages. \
-                            Please be sure that your lightbox supports these features.'
+                    text: 'Enabling "<strong>Use Custom Lightbox</strong>" and "<strong>Link to URL</strong>" causes all' +
+                            'links to open in the lightbox.  This includes images, videos, and links to other pages.' +
+                            'Please be sure that your lightbox supports these features.'
+                },
+                {
+                    id: 'preventcrop-height',
+                    test: function() {
+                        return (
+                            $prevent_crop.is(':checked') &&
+                            ($height.val() !== "0" && $height.val() !== "auto")
+                        );
+                    },
+                    text: 'Adjusting the <strong>Height</strong> of the mosaic is only possible if images can be cropped.  When ' +
+                            '<strong>Prevent Image Cropping</strong> is enabled the <strong>Height</strong> setting is ignored' +
+                            'and a value of "0" (auto) is used.'
                 }
             ];
 

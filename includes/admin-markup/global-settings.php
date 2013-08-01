@@ -128,15 +128,15 @@ rows   |  columns |  masonry
             <p><label>Image Loading Transition</label></p>
             <p>
                 <select name="loading_transition">
-                  <option value="none" <?php if($options['loading_transition'] == 'none') echo "selected"; ?> >None</option>
-                  <option value="fade" <?php if($options['loading_transition'] == 'fade') echo "selected"; ?> > Fade</option>
-                  <option value="scale-up" <?php if($options['loading_transition'] == 'scale-up') echo "selected"; ?> >Scale Up</option>
-                  <option value="scale-down" <?php if($options['loading_transition'] == 'scale-down') echo "selected"; ?> >Scale Down</option>
-                  <option value="slide-up" <?php if($options['loading_transition'] == 'slide-up') echo "selected"; ?> >Slide Up</option>
-                  <option value="slide-down" <?php if($options['loading_transition'] == 'slide-down') echo "selected"; ?> >Slide Down</option>
-                  <option value="slide-left" <?php if($options['loading_transition'] == 'slide-left') echo "selected"; ?> >Slide Left</option>
-                  <option value="slide-right" <?php if($options['loading_transition'] == 'slide-right') echo "selected"; ?> >Slide Right</option>
-                  <option value="custom" <?php if($options['loading_transition'] == 'custom') echo "selected"; ?> >Custom</option>
+                    <option value="none" <?php if($options['loading_transition'] == 'none') echo "selected"; ?> >None</option>
+                    <option value="fade" <?php if($options['loading_transition'] == 'fade') echo "selected"; ?> > Fade</option>
+                    <option value="scale-up" <?php if($options['loading_transition'] == 'scale-up') echo "selected"; ?> >Scale Up</option>
+                    <option value="scale-down" <?php if($options['loading_transition'] == 'scale-down') echo "selected"; ?> >Scale Down</option>
+                    <option value="slide-up" <?php if($options['loading_transition'] == 'slide-up') echo "selected"; ?> >Slide Up</option>
+                    <option value="slide-down" <?php if($options['loading_transition'] == 'slide-down') echo "selected"; ?> >Slide Down</option>
+                    <option value="slide-left" <?php if($options['loading_transition'] == 'slide-left') echo "selected"; ?> >Slide Left</option>
+                    <option value="slide-right" <?php if($options['loading_transition'] == 'slide-right') echo "selected"; ?> >Slide Right</option>
+                    <option value="custom" <?php if($options['loading_transition'] == 'custom') echo "selected"; ?> >Custom</option>
                 </select>
             </p>
             <span class="info">
@@ -161,6 +161,8 @@ rows   |  columns |  masonry
                 prevents images from being cropped
                     <br><br>
                 causes the bottom of the mosaic to be uneven / jagged
+                    <br><br>
+                causes the <b>height</b> setting to be ignored, uses "auto" instead
             </span>
         </div>
     </div>

@@ -595,32 +595,6 @@ class PhotoMosaic {
         );
     }
 
-    function getFile($url) {
-        // server is allowed to address itself across HTTP
-        if ( ini_get('allow_url_fopen') ) {
-            $filename = plugins_url($url, __FILE__);
-
-            // 401 makes these false
-            if (file_exists($filename) && is_readable($filename)) {
-                $text = file_get_contents($filename);
-            } else {
-                // try using the current user
-                $username = $_SERVER["PHP_AUTH_USER"];
-                $password = $_SERVER["PHP_AUTH_PW"];
-                $context = stream_context_create(array(
-                    'http' => array(
-                        'header'  => "Authorization: Basic " . base64_encode("$username:$password")
-                    )
-                ));
-                $text = file_get_contents($filename, false, $context);
-            }
-        } else {
-            $text = file_get_contents( dirname(__file__) . '/' . $url );
-        }
-
-        return $text;
-    }
-
     function renderAdminPage() {
         require_once( 'includes/Markdown.php' );
         $options = PhotoMosaic::getOptions();
@@ -657,8 +631,7 @@ class PhotoMosaic {
                         if ( strpos($tab[2], '.txt') === false) {
                             include( $url );
                         } else {
-                            $text = PhotoMosaic::getFile($url);
-
+                            $text = file_get_contents( dirname(__file__) . '/' . $url );
                             echo Markdown($text);
                         }
                     ?>

@@ -19,11 +19,11 @@ class PhotoMosaic {
     // http://daringfireball.net/2010/07/improved_regex_for_matching_urls
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
-    function version () {
+    public static function version () {
         return '2.4.3';
     }
 
-    function comparable_version ($version) {
+    public static function comparable_version ($version) {
         $v = explode('.', $version);
         if ( !isset( $v[2] ) ) {
             $v[2] = 0;
@@ -31,7 +31,7 @@ class PhotoMosaic {
         return ($v[0] * 10000 + $v[1] * 100 + $v[2]);
     }
 
-    function init() {
+    public static function init() {
         ob_start(); // prevents the `echo` below from throwing an error when deleting a post
         $options = get_option('photomosaic_options');
 
@@ -88,7 +88,7 @@ class PhotoMosaic {
         }
     }
 
-    function getOptions() {
+    public static function getOptions() {
         $defaults = array(
             'padding' => 2,
             'columns' => 0,
@@ -123,7 +123,7 @@ class PhotoMosaic {
         return $options;
     }
 
-    function adjustDeprecatedOptions($options) {
+    public static function adjustDeprecatedOptions($options) {
         // 'random' & 'force_order' - v2.2
         if (array_key_exists('random', $options)) {
             if ($options['random']) {
@@ -156,13 +156,13 @@ class PhotoMosaic {
         return $options;
     }
 
-    function ajaxHandler () {
+    public static function ajaxHandler () {
         // not currently being used
         $options = PhotoMosaic::getOptions();
         die(json_encode($options));
     }
 
-    function shortcode( $atts ) {
+    public static function shortcode( $atts ) {
         global $post;
         $post_id = intval($post->ID);
         $base = array(
@@ -237,13 +237,7 @@ class PhotoMosaic {
                         modal_group: ' . $settings['lightbox_group'] . ',
             ';
 
-        $output_buffer .='
-                        sizes: {
-                            thumbnail: '. get_option("thumbnail_size_w") .',
-                            medium: '. get_option("medium_size_w") .',
-                            large: '. get_option("large_size_w") .'
-                        },
-        ';
+        $output_buffer .= PhotoMosaic::getSizeObj($atts['nggid'], $atts['ngaid']);
 
         if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
             if( $settings['lightbox'] == 'true' ) {
@@ -325,7 +319,7 @@ class PhotoMosaic {
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
-    function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {
+    public static function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {
         global $wp_version;
 
         $output_buffer = '';
@@ -439,7 +433,7 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-    function galleryFromNextGen($id, $link_to_url, $type) {
+    public static function galleryFromNextGen($id, $link_to_url, $type) {
         global $wpdb, $post;
         $pattern = PhotoMosaic::$URL_PATTERN;
         $picturelist = array();
@@ -480,7 +474,11 @@ class PhotoMosaic {
 
             $output_buffer .='{
                 "src": "' . $picture->imageURL . '",
-                "thumb": "' . $picture->imageURL . '",
+                "thumb": "' . $picture->thumbURL . '",
+                "sizes": {
+                    "thumbnail" : "' . $picture->thumbURL . '",
+                    "full" : "' . $picture->imageURL . '"
+                },
                 "caption": "' . $image_description . '",
                 "alt": "' . $image_alttext . '",
                 "width": "' . $picture->meta_data['width'] . '",
@@ -497,7 +495,72 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-    function the_posts( $posts ) {
+    public static function getSizeObj($nggid, $ngaid) {
+        $images = array();
+        $output = '';
+
+        if ( !empty($nggid) ) {
+
+            $images = array_merge( $images, nggdb::get_gallery($nggid) );
+
+        } else if ( !empty($ngaid) ) {
+            $album = nggdb::find_album( $ngaid );
+            $galleryIDs = $album->gallery_ids;
+            foreach ($galleryIDs as $key => $galleryID) {
+                $images = array_merge( $images, nggdb::get_gallery($galleryID) );
+            }
+
+        } else {
+            // we're dealing with Wordpress and this is easy
+            $output ='
+                sizes: {
+                    thumbnail: '. get_option("thumbnail_size_w") .',
+                    medium: '. get_option("medium_size_w") .',
+                    large: '. get_option("large_size_w") .'
+                },
+            ';
+        }
+
+        if ( !empty($images) ) {
+            // we're dealing with NextGen and life is horrible
+            $width_mem = array();
+            $width_count = 0;
+            $width_val = 0;
+
+            $height_mem = array();
+            $height_count = 0;
+            $height_val = 0;
+
+            foreach ($images as $key => $image) {
+                array_push( $width_mem, $image->meta_data['thumbnail']['width'] );
+                array_push( $height_mem, $image->meta_data['thumbnail']['height'] );
+            }
+
+            $width_count = array_count_values($width_mem);
+            $width_val = array_search( max($width_count), $width_count );
+
+            $height_count = array_count_values($height_mem);
+            $height_val = array_search( max($height_count), $height_count );
+
+            if ( count($width_count) === 1 && count($height_count) === 1 ) {
+                // fixed dimensions
+                $val = '1';
+            } else {
+                // proportional
+                $val = (count($width_count) === 1 ? $width_val : $height_val);
+            }
+
+            $output .='
+                sizes: {
+                    thumbnail: '. $val .'
+                },
+            ';
+        }
+
+        return $output;
+    }
+
+    public static function the_posts( $posts ) {
         // ok...
         // currently we load the JS and CSS on every non-admin page regardless if there is a mosaic
         // checks here could be used to only enqueue PM when needed
@@ -516,7 +579,7 @@ class PhotoMosaic {
         return $posts;
     }
 
-    function post_gallery( $empty = '', $atts = array() ) {
+    public static function post_gallery( $empty = '', $atts = array() ) {
         global $post;
 
         $isPhotoMosaic = false;
@@ -544,7 +607,7 @@ class PhotoMosaic {
         }
     }
 
-    function scrub_post_shortcodes ( $content, $post_id ) {
+    public static function scrub_post_shortcodes ( $content, $post_id ) {
         // if we happen across any [gallery template="pm"]
         // change it to [gallery theme="pm"]
         if ( preg_match_all( '/\[gallery.*\]/', $content, $matches ) ) {
@@ -561,7 +624,7 @@ class PhotoMosaic {
         return $content;
     }
 
-    function setupAdminPage() {
+    public static function setupAdminPage() {
         if(isset($_POST['photomosaic_save'])) {
             $options = PhotoMosaic::getOptions();
 
@@ -595,7 +658,7 @@ class PhotoMosaic {
         );
     }
 
-    function renderAdminPage() {
+    public static function renderAdminPage() {
         require_once( 'includes/Markdown.php' );
         $options = PhotoMosaic::getOptions();
         $options = PhotoMosaic::adjustDeprecatedOptions($options);

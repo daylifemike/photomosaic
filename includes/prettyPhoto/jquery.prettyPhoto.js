@@ -1,5 +1,5 @@
 /*
-    Version: 3.1.5c
+    Version: 3.1.5d
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
     # b
      - new jQuery namespace (JQPM)
@@ -8,6 +8,8 @@
     # c
      - normalized all jQuery references to '$'
      - self-invoke arguments ref the window and test for availability (window.JQPM || jQuery)
+    # d
+     - new namespace on events
 
     !! minified and included in jquery.photoMosaic.js
 */
@@ -121,10 +123,10 @@
         doresize = true, scroll_pos = _get_scroll();
     
         // Window/Keyboard events
-        $(window).unbind('resize.prettyphoto').bind('resize.prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
+        $(window).unbind('resize.pm-prettyphoto').bind('resize.pm-prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
         
         if(pp_settings.keyboard_shortcuts) {
-            $(document).unbind('keydown.prettyphoto').bind('keydown.prettyphoto',function(e){
+            $(document).unbind('keydown.pm-prettyphoto').bind('keydown.pm-prettyphoto',function(e){
                 if(typeof $pp_pic_holder != 'undefined'){
                     if($pp_pic_holder.is(':visible')){
                         switch(e.keyCode){
@@ -175,7 +177,7 @@
             _build_overlay(this); // Build the overlay {this} being the caller
             
             if(settings.allow_resize)
-                $(window).bind('scroll.prettyphoto',function(){ _center_overlay(); });
+                $(window).bind('scroll.pm-prettyphoto',function(){ _center_overlay(); });
             
             
             $.prettyPhoto.open();
@@ -489,7 +491,7 @@
                 
                 $(this).remove(); // No more need for the prettyPhoto markup
                 
-                $(window).unbind('scroll.prettyphoto');
+                $(window).unbind('scroll.pm-prettyphoto');
                 
                 clearHashtag();
                 
@@ -900,7 +902,7 @@
             setTimeout(function(){ $("a["+pp_settings.hook+"^='"+hashRel+"']:eq("+hashIndex+")").trigger('click'); },50);
         }
         
-        return this.unbind('click.prettyphoto').bind('click.prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
+        return this.unbind('click.pm-prettyphoto').bind('click.pm-prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
     };
     
     function getHashtag(){

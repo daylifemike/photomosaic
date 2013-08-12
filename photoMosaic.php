@@ -39,6 +39,7 @@ class PhotoMosaic {
         // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
         add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" theme="photomosaic"]
         add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 1337, 2 ); // template="pm" --> theme="pm"
+        add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_action_links' ), 10, 2);
 
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
@@ -655,6 +656,22 @@ class PhotoMosaic {
             array('PhotoMosaic', 'renderAdminPage'),
             'div'
         );
+    }
+
+    public static function plugin_action_links($links, $file) {
+        // http://wp.smashingmagazine.com/2011/03/08/ten-things-every-wordpress-plugin-developer-should-know/
+        static $this_plugin;
+
+        if (!$this_plugin) {
+            $this_plugin = plugin_basename(__FILE__);
+        }
+
+        if ($file == $this_plugin) {
+            $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=photomosaic">Settings</a>';
+            array_unshift($links, $settings_link);
+        }
+
+        return $links;
     }
 
     public static function renderAdminPage() {

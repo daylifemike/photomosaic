@@ -237,7 +237,7 @@ class PhotoMosaic {
                         modal_group: ' . $settings['lightbox_group'] . ',
             ';
 
-        $output_buffer .= PhotoMosaic::getSizeObj($atts['nggid'], $atts['ngaid']);
+        $output_buffer .= PhotoMosaic::getSizeObj($atts);
 
         if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
             if( $settings['lightbox'] == 'true' ) {
@@ -495,16 +495,15 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-    public static function getSizeObj($nggid, $ngaid) {
+    public static function getSizeObj($atts) {
         $images = array();
         $output = '';
 
-        if ( !empty($nggid) ) {
+        if ( !empty($atts['nggid']) ) {
+            $images = array_merge( $images, nggdb::get_gallery($atts['nggid']) );
 
-            $images = array_merge( $images, nggdb::get_gallery($nggid) );
-
-        } else if ( !empty($ngaid) ) {
-            $album = nggdb::find_album( $ngaid );
+        } else if ( !empty($atts['ngaid']) ) {
+            $album = nggdb::find_album( $atts['ngaid'] );
             $galleryIDs = $album->gallery_ids;
             foreach ($galleryIDs as $key => $galleryID) {
                 $images = array_merge( $images, nggdb::get_gallery($galleryID) );

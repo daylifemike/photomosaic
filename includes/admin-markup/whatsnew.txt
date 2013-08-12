@@ -1,5 +1,11 @@
 ## What's New
 
+### 2.4.4
+- Enhancement: improved logic for selecting and hot-swapping NextGen thumbnails
+- Enhancement: default PrettyPhoto has PhotoMosaic-specific event namespacing (should prevent event conflicts with non-PM PrettyPhoto plugins)
+- FAQ: Why are my images stretched and distorted?
+- Bug Fix: 'Theme' option wasn't displaying in certain browsers
+
 ### 2.4.3
 - Bug Fix: corrects bug that prevented the PhotoMosaic admin page from rendering correctly under certain server configurations
 - Bug Fix: loading spinner was disappearing early in certain conditions

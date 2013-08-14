@@ -7,6 +7,8 @@ This usually means that your image's thumbnail doesn't have the same aspect rati
 
 Go to your Media Settings (Settings > Media).  If "Crop thumbnail to exact dimensions (normally thumbnails are proportional)" is checked that's the source of your problem.  To fix it you'll need to uncheck that box, save those changes, and then regenerate your thumbnails. 
 
+If "Crop thumbnail to exact dimensions (normally thumbnails are proportional)" isn't checked, it's likely that your images were uploaded before you changed the "Thumbnail Size" values and you haven't regenerated your thumbnails.  Simply regenerating your thumbnails should solve the problem.
+
 To regenerate your thumbnails I recommend the "Regenerate Thumbnails" plugin by Viper007Bond.  Once installed and activated, you can regenerate all of your thumbnails by going to Tools (Tools > Regen. Thumbnails) and clicking the button.  This will replace all of your cropped thumbnails with the new uncropped version.
 
 If you want to regenerate the thumbnails for specific images, this can be done in the Media Library (Media > Library) by selecting the images you wish to regenerate and choosing "Regenerate Thumbnails" in the "Bulk Actions" menu.

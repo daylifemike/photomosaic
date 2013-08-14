@@ -277,19 +277,8 @@ class PhotoMosaic {
                             $img = $a.find("img");
                             id = $img.attr("id");
                             data = self.deepSearch( self.images, "id", id );
-                            $fragment = $(data.jetpack).find("img");
 
-                            $img.attr({
-                                "data-attachment-id"     : $fragment.attr("data-attachment-id"),
-                                "data-orig-file"         : $fragment.attr("data-orig-file"),
-                                "data-orig-size"         : $fragment.attr("data-orig-size"),
-                                "data-comments-opened"   : $fragment.attr("data-comments-opened"),
-                                "data-image-meta"        : $fragment.attr("data-image-meta"),
-                                "data-image-title"       : $fragment.attr("data-image-title"),
-                                "data-image-description" : $fragment.attr("data-image-description"),
-                                "data-medium-file"       : $fragment.attr("data-medium-file"),
-                                "data-large-file"        : $fragment.attr("data-large-file")
-                            });
+                            $img.attr( data.jetpack );
 
                             $a.addClass("gallery-item");
                         });
@@ -401,7 +390,17 @@ class PhotoMosaic {
 
                 // Jetpack_Carousel hacks
                 if ( class_exists('Jetpack_Carousel') ) {
-                    $jetpack_data = ',"jetpack" : '. json_encode( wp_get_attachment_link($_post->ID, 'full', false, false) );
+                    $html = wp_get_attachment_link($_post->ID, 'full', false, false);
+                    $dom = new DOMDocument();
+                    $dom->loadHTML($html);
+                    $node = $dom->getElementsByTagName('img')->item(0);
+                    $attrs = array();
+                    foreach ( $node->attributes as $attribute ) {
+                        if ( strstr($attribute->name, 'data-') ) {
+                            $attrs[$attribute->name] = $attribute->value;
+                        }
+                    }
+                    $jetpack_data = ',"jetpack" : '. json_encode($attrs);
                 } else {
                     $jetpack_data = ',"jetpack" : false';
                 }

@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.4.5
+- Bug Fix: 'Theme' option wasn't appearing on New Post/Page pages
+- Bug Fix: accounts for the odd situation when Jetpack's markup isn't properly escaped
+- FAQ: updates 'Why are my images stretched and distorted?'
+
 ### 2.4.4
 - Enhancement: improved logic for selecting and hot-swapping NextGen thumbnails
 - Enhancement: default PrettyPhoto has PhotoMosaic-specific event namespacing (should prevent event conflicts with non-PM PrettyPhoto plugins)

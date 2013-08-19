@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.4.6
+- Bug Fix: corrects issue that caused PhotoMosaic to break some other [gallery] plugins
+
 ### 2.4.5
 - Bug Fix: 'Theme' option wasn't appearing on New Post/Page pages
 - Bug Fix: accounts for the odd situation when Jetpack's markup isn't properly escaped

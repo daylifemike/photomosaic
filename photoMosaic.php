@@ -603,7 +603,7 @@ class PhotoMosaic {
         }
 
         if ( !$isPhotoMosaic ) {
-            return;
+            return $empty;
         } else {
             $output = PhotoMosaic::shortcode($atts);
             return $output;

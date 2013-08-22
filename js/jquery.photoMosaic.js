@@ -280,7 +280,7 @@ g}}(window.JQPM||jQuery));
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
-                        $($proper[$proper.length - 1]).parents('a.loading').removeClass('loading');
+                        $($proper[$proper.length - 1]).parents('span.loading, a.loading').removeClass('loading');
                     }, 0);
                 },
                 always: function () {

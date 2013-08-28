@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.4.7
+- Bug Fix: the image loading animation wasn't being shown in some cases if images's weren't links
+
 ### 2.4.6
 - Bug Fix: corrects issue that caused PhotoMosaic to break some other [gallery] plugins
 

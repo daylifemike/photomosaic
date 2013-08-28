@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.4.6 starts around line ~#110
+ *  PhotoMosaic v2.4.7 starts around line ~#110
  */
 
 (function (window) {
@@ -101,7 +101,7 @@ g}}(window.JQPM||jQuery));
 
 
 /*
-    jQuery photoMosaic v2.4.6
+    jQuery photoMosaic v2.4.7
     requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
     optional: prettyPhoto (included above)
 */
@@ -1305,7 +1305,7 @@ g}}(window.JQPM||jQuery));
 
         _name : pluginName,
 
-        version : '2.4.6'
+        version : '2.4.7'
 
     };
 

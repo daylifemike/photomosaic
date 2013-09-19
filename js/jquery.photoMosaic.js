@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.4.7 starts around line ~#110
+ *  PhotoMosaic v2.4.8 starts around line ~#110
  */
 
 (function (window) {
@@ -101,7 +101,7 @@ g}}(window.JQPM||jQuery));
 
 
 /*
-    jQuery photoMosaic v2.4.7
+    jQuery photoMosaic v2.4.8
     requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
     optional: prettyPhoto (included above)
 */
@@ -277,16 +277,39 @@ g}}(window.JQPM||jQuery));
 
             this.obj.html(this.makeMosaic());
 
+            if ( self.opts.loading_transition !== 'none' && !PhotoMosaic.Modernizr.csstransitions ) {
+                this.obj.find('img').css('opacity','0');
+            }
+
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
-                        $($proper[$proper.length - 1]).parents('span.loading, a.loading').removeClass('loading');
+                        if ( self.opts.loading_transition === 'none' || PhotoMosaic.Modernizr.csstransitions ) {
+                            $($proper[$proper.length - 1]).parents('span.loading, a.loading');
+
+                            if ( ($proper.length + $broken.length) === $images.length ) {
+                                self.obj.children('.photoMosaic').removeClass('loading');
+                            }
+
+                        } else {
+                            $($proper[$proper.length - 1]).animate(
+                                { 'opacity' : '1' },
+                                self.opts.responsive_transition_settings.duration * 1000,
+                                function(){
+                                    $(this).parents('span.loading, a.loading').removeClass('loading');
+
+                                    if ( ($proper.length + $broken.length) === $images.length ) {
+                                        self.obj.children('.photoMosaic').removeClass('loading');
+                                    }
+                                }
+                            );
+                        }
                     }, 0);
                 },
                 always: function () {
-                    setTimeout(function () {
-                        self.obj.children('.photoMosaic').removeClass('loading');
-                    }, 1000);
+                    // setTimeout(function () {
+                    //     self.obj.children('.photoMosaic').removeClass('loading');
+                    // }, 1000);
                 },
                 fail: function($images, $proper, $broken) {
                     var id = '';
@@ -1151,7 +1174,7 @@ g}}(window.JQPM||jQuery));
                     height : image.height.constraint + 'px'
                 });
 
-                if (!this.shouldAnimate()) {
+                if ( !this.shouldAnimate() || !PhotoMosaic.Modernizr.csstransitions ) {
                     $a.css({
                         top : image.position.top + 'px',
                         left : image.position.left + 'px'
@@ -1305,7 +1328,7 @@ g}}(window.JQPM||jQuery));
 
         _name : pluginName,
 
-        version : '2.4.7'
+        version : '2.4.8'
 
     };
 

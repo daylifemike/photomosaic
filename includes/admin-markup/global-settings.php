@@ -142,7 +142,7 @@ rows   |  columns |  masonry
             <span class="info">
                 a subtle 'arrival' effect on an image after it has been loaded
                     <br/><br/>
-                uses CSS transforms/transitions (CSS3) - non-modern browser behave normally but don't see the effect
+                uses CSS transforms/transitions (CSS3) - browsers that don't support CSS transitions will fall back to 'fade'
                     <br/><br/>
                 "custom" adds "transition-custom" class to use as a hook in your own CSS
             </span>
@@ -151,7 +151,11 @@ rows   |  columns |  masonry
             <p>
                 <label><input name="responsive_transition" type="checkbox" value="1" <?php if($options['responsive_transition']) echo "checked='checked'"; ?> /> Show Responsive Transition</label>
             </p>
-            <span class="info">animates image positions during browser resize</span>
+            <span class="info">
+                animates image positions during browser resize
+                    <br/><br/>
+                uses RequestAnimationFrame to prevent pop-in - browsers that don't support RequestAnimationFrame won't see the animation
+            </span>
         </div>
         <div class="field">
             <p>

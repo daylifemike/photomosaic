@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.4.8
+- Enhancement: improves animation support for older browsers
+- Bug Fix: guards against multiple instances of Modernizr introducing whitespace bugs in classnames
+- Change: adopts Wordpress' prefered method for checking the post_content to see if other post_gallery filters have already been applied
+
 ### 2.4.7
 - Bug Fix: the image loading animation wasn't being shown in some cases if images's weren't links
 

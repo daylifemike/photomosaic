@@ -285,7 +285,7 @@ g}}(window.JQPM||jQuery));
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
                         if ( self.opts.loading_transition === 'none' || PhotoMosaic.Modernizr.csstransitions ) {
-                            $($proper[$proper.length - 1]).parents('span.loading, a.loading');
+                            $($proper[$proper.length - 1]).parents('span.loading, a.loading').removeClass('loading');
 
                             if ( ($proper.length + $broken.length) === $images.length ) {
                                 self.obj.children('.photoMosaic').removeClass('loading');

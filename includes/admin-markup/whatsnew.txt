@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.4.9
+- Bug Fix: corrects a regression that caused images to fail to appear in certain conditions
+
+
 ### 2.4.8
 - Enhancement: improves animation support for older browsers
 - Bug Fix: guards against multiple instances of Modernizr introducing whitespace bugs in classnames

@@ -219,11 +219,14 @@
             $custom_lb_params = $form.find('textarea[name="custom_lightbox_params"]'),
             $auto_play = $form.find('textarea[name="auto_play"]'),
             $auto_play_interval = $form.find('textarea[name="auto_play_interval"]'),
-            $links = $form.find('input[name="links"]'),
-            $link_to_url = $form.find('input[name="link_to_url"]'),
+            $link_behavior = $form.find('input[name="link_behavior"]:checked'),
             $external_links = $form.find('input[name="external_links"]');
             $height = $form.find('input[name="height"]');
             $prevent_crop = $form.find('input[name="prevent_crop"]');
+
+        $form.find('input[name="link_behavior"]').change(function () {
+            $link_behavior = $(this);
+        });
 
         $form.find(':input').change(function(e) {
             var item = null;
@@ -237,9 +240,6 @@
                 if ($lb.is(':checked') && $external_links.is(':checked')) {
                     $external_links.removeAttr('checked');
                 }
-                if ($lb.is(':checked') && $links.is(':not(":checked")')) {
-                    $links.attr('checked', true);
-                }
             }
 
             if ($custom_lb[0] === target[0]) {
@@ -248,15 +248,6 @@
                 }
                 if ($custom_lb.is(':checked') && $external_links.is(':checked')) {
                     $external_links.removeAttr('checked');
-                }
-                if ($custom_lb.is(':checked') && $links.is(':not(":checked")')) {
-                    $links.attr('checked', true);
-                }
-            }
-
-            if ($link_to_url[0] === target[0]) {
-                if ($link_to_url.is(':checked') && $links.is(':not(":checked")')) {
-                    $links.attr('checked', true);
                 }
             }
 
@@ -267,31 +258,31 @@
                 if ($external_links.is(':checked') && $custom_lb.is(':checked')) {
                     $custom_lb.removeAttr('checked');
                 }
-                if ($external_links.is(':checked') && $links.is(':not(":checked")')) {
-                    $links.attr('checked', true);
-                }
-            }
-
-            if ($links[0] === target[0]) {
-                if ($links.is(':not(":checked")')) {
-                    $link_to_url.removeAttr('checked');
-                    $external_links.removeAttr('checked');
-                }
             }
 
             // == WARNINGS ==
             var warnings = [
                 {
                     id: 'lightbox-links',
-                    test: function() { return ($lb.is(':checked') && $link_to_url.is(':checked')); },
-                    text: 'Enabling "<strong>Use Default Lightbox</strong>" and "<strong>Link to URL</strong>" causes all' +
-                            'links to open in the lightbox.  This includes images, videos, and links to other pages.'
+                    test: function() {
+                        var isLB = $lb.is(':checked');
+                        var isAttachement = $link_behavior.val() === 'attachment';
+                        var isCustom = $link_behavior.val() === 'custom';
+                        return (isLB && (isAttachement || isCustom));
+                    },
+                    text: 'Enabling "<strong>Use Default Lightbox</strong>" and setting "<strong>Link To</strong>" to anything other than ' +
+                            '"None" causes all links to open in the lightbox.  This includes images, videos, and links to other pages.'
                 },
                 {
                     id: 'customlightbox-links',
-                    test: function() { return ($custom_lb.is(':checked') && $link_to_url.is(':checked')); },
-                    text: 'Enabling "<strong>Use Custom Lightbox</strong>" and "<strong>Link to URL</strong>" causes all' +
-                            'links to open in the lightbox.  This includes images, videos, and links to other pages.' +
+                    test: function() {
+                        var isLB = $custom_lb.is(':checked');
+                        var isAttachement = $link_behavior.val() === 'attachment';
+                        var isCustom = $link_behavior.val() === 'custom';
+                        return (isLB && (isAttachement || isCustom));
+                    },
+                    text: 'Enabling "<strong>Use Custom Lightbox</strong>" and setting "<strong>Link To</strong>" to anything other than ' +
+                            '"None" causes all links to open in the lightbox.  This includes images, videos, and links to other pages.' +
                             'Please be sure that your lightbox supports these features.'
                 },
                 {
@@ -350,17 +341,13 @@
                 returnState = false;
             }
             
-            if( !$links.is(':checked') ) {
+            if( $link_behavior.val() === 'none' ) {
                 if ($lb.is(':checked') || $custom_lb.is(':checked')) {
-                    $errorList.append('<li>"Image Links" must be selected to use a lightbox.</li>');
-                    returnState = false;
-                }
-                if ($link_to_url.is(':checked')) {
-                    $errorList.append('<li>"Link to URL" requires "Image Links"</li>');
+                    $errorList.append('<li>To use a lightbox, "Link To" cannot be set to "None".</li>');
                     returnState = false;
                 }
                 if ($external_links.is(':checked')) {
-                    $errorList.append('<li>"Open Links in New Window" requires "Image Links"</li>');
+                    $errorList.append('<li>To "Open Links in New Window", "Link To" cannot be set to "None".</li>');
                     returnState = false;
                 }
             }

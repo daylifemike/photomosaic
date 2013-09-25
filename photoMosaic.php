@@ -20,7 +20,7 @@ class PhotoMosaic {
     public static $URL_PATTERN = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
 
     public static function version () {
-        return '2.4.9';
+        return '2.5';
     }
 
     public static function comparable_version ($version) {
@@ -99,9 +99,11 @@ class PhotoMosaic {
             'columns' => 0,
             'width' => 0,
             'height' => 0,
-            'links' => true,
             'order' => 'rows',
-            'link_to_url' => false,
+            'link_behavior' => 'image',
+            // deprecated v2.5
+            // 'links' => true,
+            // 'link_to_url' => false,
             'external_links' => false,
             'center' => true,
             'prevent_crop' => false,
@@ -156,6 +158,19 @@ class PhotoMosaic {
             unset($options['has_taken_tour']);
         }
 
+        // 'link_behavior' replaces 'links' & link_to_url' - v2.5
+        if (array_key_exists('links', $options)) {
+            if ( intval($options['links']) ) {
+                if ( intval($options['link_to_url']) ) {
+                    $options['link_behavior'] = 'custom';
+                } else {
+                    $options['link_behavior'] = 'image';
+                }
+            }
+            unset($options['links']);
+            unset($options['link_to_url']);
+        }
+
         update_option('photomosaic_options', $options);
 
         return $options;
@@ -178,7 +193,22 @@ class PhotoMosaic {
         );
         $options = PhotoMosaic::getOptions();
         $options = wp_parse_args($base, $options);
-        $settings = shortcode_atts($options, $atts);
+        $settings = wp_parse_args($atts, $options);
+
+        // backwards compatibility
+        // 'links' & 'link_to_url' might exist on the shortcode
+        // convert them to 'link_behavior'
+        if ( array_key_exists('links', $settings) ) {
+            if ( intval($settings['links']) ) {
+                $settings['link_behavior'] = 'image';
+
+                if ( array_key_exists('link_to_url', $settings) && intval($settings['link_to_url']) ) {
+                    $settings['link_behavior'] = 'custom';
+                }
+            } else {
+                $settings['link_behavior'] = 'none';
+            }
+        }
 
         $auto_settings = array(
             'height', 'width', 'columns'
@@ -212,11 +242,18 @@ class PhotoMosaic {
                 var PMalbum'.$unique.' = [';
 
         if ( !empty($atts['nggid']) ) {
-            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $settings['link_to_url'], 'gallery');
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['nggid'], $settings['link_behavior'], 'gallery');
         } else if ( !empty($atts['ngaid']) ) {
-            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['ngaid'], $settings['link_to_url'], 'album');
+            $output_buffer .= PhotoMosaic::galleryFromNextGen($atts['ngaid'], $settings['link_behavior'], 'album');
         } else {
-            $output_buffer .= PhotoMosaic::galleryFromWP($settings['id'], $settings['link_to_url'], $settings['include'], $settings['exclude'], $settings['ids']);
+            $output_buffer .= PhotoMosaic::galleryFromWP($settings['id'], $settings['link_behavior'], $settings['include'], $settings['exclude'], $settings['ids']);
+        }
+
+        // convert 'link_behavior' to 'links'
+        if ( $settings['link_behavior'] === 'none' ) {
+            $settings['links'] = "false";
+        } else {
+            $settings['links'] = "true";
         }
 
         $output_buffer .='];
@@ -313,7 +350,7 @@ class PhotoMosaic {
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
-    public static function galleryFromWP($id, $link_to_url, $include, $exclude, $ids) {
+    public static function galleryFromWP($id, $link_behavior, $include, $exclude, $ids) {
         global $wp_version;
 
         $output_buffer = '';
@@ -384,10 +421,12 @@ class PhotoMosaic {
                 $image_alttext = esc_attr(get_post_meta($_post->ID, '_wp_attachment_image_alt', true));
                 $image_caption = esc_attr($_post->post_excerpt);
                 $image_description = $_post->post_content; // this is where we hide a link_url
+                $image_attachment_page = get_attachment_link($_post->ID); // url for attachment page
 
-                // is the description a URL
-                if ( intval($link_to_url) && preg_match("#$pattern#i", $image_description) ) {
+                if ( $link_behavior === 'custom' && preg_match("#$pattern#i", $image_description) ) {
                     $url_data = ',"url": "' . $image_description . '"';
+                } elseif ( $link_behavior === 'attachment' ) {
+                    $url_data = ',"url": "' . $image_attachment_page . '"';
                 } else {
                     $url_data = '';
                 }
@@ -437,7 +476,7 @@ class PhotoMosaic {
         return $output_buffer;
     }
 
-    public static function galleryFromNextGen($id, $link_to_url, $type) {
+    public static function galleryFromNextGen($id, $link_behavior, $type) {
         global $wpdb, $post;
         $pattern = PhotoMosaic::$URL_PATTERN;
         $picturelist = array();
@@ -459,13 +498,18 @@ class PhotoMosaic {
             $image_description = $picture->description;
             $image_alttext = $picture->alttext;
 
+            // NextGen doesn't have attachment pages (that i can find)
+            if ($link_behavior === 'attachment') {
+                $link_behavior = 'image';
+            }
+
             // is the description a URL
-            if ( intval($link_to_url) && preg_match("#$pattern#i", $image_description) ) {
+            if ( $link_behavior === 'custom' && preg_match("#$pattern#i", $image_description) ) {
                 $url_data = ',"url": "' . $image_description . '"';
                 $image_description = esc_attr($image_alttext);
                 $image_alttext = $image_description;
 
-            } else if ( intval($link_to_url) && preg_match("#$pattern#i", $image_alttext) ) {
+            } elseif ( $link_behavior === 'custom' && preg_match("#$pattern#i", $image_alttext) ) {
                 $url_data = ',"url": "' . $image_alttext . '"';
                 $image_description = esc_attr($image_description);
                 $image_alttext = $image_description;

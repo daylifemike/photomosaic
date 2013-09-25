@@ -1,8 +1,13 @@
 ## What's New
 
+### 2.5
+- Deleted: removed 'Image Links' setting (now part of 'Link Behavior') (shortcodes using "links" will continue to work)
+- Deleted: removed 'Link to URL' setting (now part of 'Link Behavior') (shortcodes using "link_to_url" will continue to work)
+- Enhancement: adds "Link Behavior" setting
+- Enchancement: adds ability to link to WP Image Attachment Page
+
 ### 2.4.9
 - Bug Fix: corrects a regression that caused images to fail to appear in certain conditions
-
 
 ### 2.4.8
 - Enhancement: improves animation support for older browsers

@@ -227,10 +227,12 @@ class PhotoMosaic {
         }
 
         foreach ( $bool_settings as $key ) {
-            if(intval($settings[$key])){
-                $settings[$key] = "true";
-            } else {
-                $settings[$key] = "false";
+            if ( array_key_exists('links', $settings) ) {
+                if(intval($settings[$key])){
+                    $settings[$key] = "true";
+                } else {
+                    $settings[$key] = "false";
+                }
             }
         }
 

@@ -1,5 +1,5 @@
 /* 
- *  PhotoMosaic v2.4.9 starts around line ~#110
+ *  PhotoMosaic v2.5 starts around line ~#110
  */
 
 (function (window) {
@@ -101,7 +101,7 @@ g}}(window.JQPM||jQuery));
 
 
 /*
-    jQuery photoMosaic v2.4.9
+    jQuery photoMosaic v2.5
     requires: jQuery 1.7+, JSTween, Mustache, Modernizr, & ImagesLoaded (all included above)
     optional: prettyPhoto (included above)
 */

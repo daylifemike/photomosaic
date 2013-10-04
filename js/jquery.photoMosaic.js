@@ -121,7 +121,8 @@ g}}(window.JQPM||jQuery));
         this.el = el;
         this.obj = $(el);
         this._options = options;
-        this._id = (Date.parse(new Date()) + Math.round(Math.random() * 10000));
+
+        this._id = this.makeID(true);
 
         this.init();
     };
@@ -1220,10 +1221,13 @@ g}}(window.JQPM||jQuery));
             return opts;
         },
 
-        makeID: function () {
+        makeID: function (small) {
             var S4 = function () {
                 return ( ( (1 + Math.random()) * 0x10000 ) | 0 ).toString(16).substring(1);
             };
+            if (small) {
+                return S4() + S4() + '' + S4() + S4();
+            }
             return 'pm_' + ( S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4() );
         },
 

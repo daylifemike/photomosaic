@@ -38,8 +38,8 @@ class PhotoMosaic {
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
         // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
-        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 10, 2 ); // [gallery photomosaic="true" theme="photomosaic"]
-        add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 10, 2 ); // template="pm" --> theme="pm"
+        add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" theme="photomosaic"]
+        add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 1337, 2 ); // template="pm" --> theme="pm"
         add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_action_links' ), 10, 2);
 
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );

@@ -1,18 +1,15 @@
 (function ($) {
     $(window).on('load', function () {
-        var l10n = {
-            theme : (PhotoMosaic.l10n && PhotoMosaic.l10n.theme) ? PhotoMosaic.l10n.theme : 'Theme'
-        };
         var templates = {
             gallery_select_option : '<option value="photomosaic">PhotoMosaic</option>',
             gallery_select : '' +
-            '<label class="setting">' +
-                '<span>' + l10n.theme + '</span>' +
-                '<select class="theme" data-setting="theme">' +
-                    '<option value="default" selected>Default</option>' +
-                    '<option value="photomosaic">PhotoMosaic</option>' +
-                '</select>' +
-            '</label>'
+                '<label class="setting">' +
+                    '<span>Theme</span>' +
+                    '<select class="theme" data-setting="theme">' +
+                        '<option value="default" selected>Default</option>' +
+                        '<option value="photomosaic">PhotoMosaic</option>' +
+                    '</select>' +
+                '</label>'
         };
         var $gallery_settings = $('#tmpl-gallery-settings');
         var hasTheme = $gallery_settings.find('select.theme').length > 0;

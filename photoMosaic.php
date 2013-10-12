@@ -32,8 +32,8 @@ class PhotoMosaic {
     }
 
     public static function init() {
-        ob_start(); // prevents the `echo` below from throwing an error when deleting a post
         global $pagenow;
+
         $options = get_option('photomosaic_options');
 
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
@@ -77,16 +77,6 @@ class PhotoMosaic {
                     in_array( $pagenow, array( 'post-new.php' ) )
             ) {
                 wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/jquery.photoMosaic.editor.js', __FILE__ ), array('photomosaic'));
-                echo('
-                    <script>
-                        if (!window.PhotoMosaic) {
-                            window.PhotoMosaic = {};
-                        }
-                        window.PhotoMosaic.l10n = {
-                            theme : "'. _('Theme') .'"
-                        }
-                    </script>
-                ');
             }
 
             wp_enqueue_style( 'menu', plugins_url('/css/photoMosaic.menu.css', __FILE__ ));

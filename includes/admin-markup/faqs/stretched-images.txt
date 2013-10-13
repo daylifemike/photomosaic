@@ -1,6 +1,6 @@
-### Why are my images stretched and distorted? {.title}
+### Why isn't PhotoMosaic using my Wordpress Thumbnails? {.title}
 
-This usually means that your image's thumbnail doesn't have the same aspect ratio as the original image.  In order for PhotoMosaic to smoothly switch between different image resolutions it has to assume that all of the variations of the image (that Wordpress creates) have the same aspect ratio.
+In order to prevent stretching and distorting your images, and to make it possible to seamlessly switch between different image resolutions (in responsive situations), PhotoMosaic needs all of the resolutions available for each image to have the same aspect ratio.  When PhotoMosaic detects that the aspect ratios for each image's thumbnail and full-size don't match, it ignores the thumbnail.  If you'd like PhotoMosaic to use the thumbnail, when it makes sense to do so, simply follow the steps below to regenerate your thumbnails so that they have the same aspect ratio as their full-size counterparts.
 
 
 #### Wordpress’s Gallery Users

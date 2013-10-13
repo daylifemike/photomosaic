@@ -271,6 +271,12 @@ class PhotoMosaic {
                         modal_group: ' . $settings['lightbox_group'] . ',
             ';
 
+        $required_atts = array('id', 'link_behavior', 'include', 'exclude', 'ids');
+        foreach ( $required_atts as $key ) {
+            if( empty( $atts[$key] ) ){
+                $atts[$key] = $settings[$key];
+            }
+        }
         $output_buffer .= PhotoMosaic::getSizeObj($atts);
 
         if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
@@ -342,7 +348,7 @@ class PhotoMosaic {
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
-    public static function galleryFromWP($id, $link_behavior, $include, $exclude, $ids) {
+    public static function galleryFromWP($id, $link_behavior, $include, $exclude, $ids, $return_img_obj = false) {
         global $wp_version;
 
         $output_buffer = '';
@@ -396,6 +402,10 @@ class PhotoMosaic {
                     }
                 }
             }
+        }
+
+        if ( $return_img_obj ) {
+            return $attachments;
         }
 
         if ( !empty($attachments) ) {
@@ -536,49 +546,51 @@ class PhotoMosaic {
     }
 
     public static function getSizeObj($atts) {
+        // we want to ignore thumbnails if they all have the same aspect ratio
         $images = array();
+        $widths = array();
+        $heights = array();
+        $width_count = 0;
+        $height_count = 0;
+        $width_val = 0;
+        $height_val = 0;
         $output = '';
 
-        if ( !empty($atts['nggid']) ) {
-            $images = array_merge( $images, nggdb::get_gallery($atts['nggid']) );
+        if ( empty($atts['nggid']) || empty($atts['ngaid']) ) {
+            // it's a WP gallery
+            $images = PhotoMosaic::galleryFromWP($atts['id'], $atts['link_behavior'], $atts['include'], $atts['exclude'], $atts['ids'], true);
 
-        } else if ( !empty($atts['ngaid']) ) {
-            $album = nggdb::find_album( $atts['ngaid'] );
-            $galleryIDs = $album->gallery_ids;
-            foreach ($galleryIDs as $key => $galleryID) {
-                $images = array_merge( $images, nggdb::get_gallery($galleryID) );
+            foreach ( $images as $_post ) {
+                $image_thumbnail = wp_get_attachment_image_src($_post->ID , 'thumbnail');
+                array_push( $widths, $image_thumbnail[1] );
+                array_push( $heights, $image_thumbnail[2] );
             }
 
         } else {
-            // we're dealing with Wordpress and this is easy
-            $output ='
-                sizes: {
-                    thumbnail: '. get_option("thumbnail_size_w") .',
-                    medium: '. get_option("medium_size_w") .',
-                    large: '. get_option("large_size_w") .'
-                },
-            ';
+            // it's a NextGen gallery
+            if ( !empty($atts['nggid']) ) {
+                $images = array_merge( $images, nggdb::get_gallery($atts['nggid']) );
+
+            } else if ( !empty($atts['ngaid']) ) {
+                $album = nggdb::find_album( $atts['ngaid'] );
+                $galleryIDs = $album->gallery_ids;
+                foreach ($galleryIDs as $key => $galleryID) {
+                    $images = array_merge( $images, nggdb::get_gallery($galleryID) );
+                }
+
+            }
+
+            foreach ($images as $key => $image) {
+                array_push( $widths, $image->meta_data['thumbnail']['width'] );
+                array_push( $heights, $image->meta_data['thumbnail']['height'] );
+            }
         }
 
         if ( !empty($images) ) {
-            // we're dealing with NextGen and life is horrible
-            $width_mem = array();
-            $width_count = 0;
-            $width_val = 0;
-
-            $height_mem = array();
-            $height_count = 0;
-            $height_val = 0;
-
-            foreach ($images as $key => $image) {
-                array_push( $width_mem, $image->meta_data['thumbnail']['width'] );
-                array_push( $height_mem, $image->meta_data['thumbnail']['height'] );
-            }
-
-            $width_count = array_count_values($width_mem);
+            $width_count = array_count_values($widths);
             $width_val = array_search( max($width_count), $width_count );
 
-            $height_count = array_count_values($height_mem);
+            $height_count = array_count_values($heights);
             $height_val = array_search( max($height_count), $height_count );
 
             if ( count($width_count) === 1 && count($height_count) === 1 ) {
@@ -589,11 +601,21 @@ class PhotoMosaic {
                 $val = (count($width_count) === 1 ? $width_val : $height_val);
             }
 
-            $output .='
-                sizes: {
-                    thumbnail: '. $val .'
-                },
-            ';
+            if ( empty($atts['nggid']) || empty($atts['ngaid']) ) {
+                $output ='
+                    sizes: {
+                        thumbnail: '. ($val === '1' ? $val : get_option("thumbnail_size_w") ) .',
+                        medium: '. get_option("medium_size_w") .',
+                        large: '. get_option("large_size_w") .'
+                    },
+                ';
+            } else {
+                $output .='
+                    sizes: {
+                        thumbnail: '. $val .'
+                    },
+                ';
+            }
         }
 
         return $output;

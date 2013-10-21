@@ -515,8 +515,7 @@ g}}(window.JQPM||jQuery));
                 plus : 425, // (300 + (150 / 1.2))
                 minus : 175 // (300 - (150 / 1.2))
             };
-
-            cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
+            var cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
 
             if (num_images < cols) {
                 cols = num_images;
@@ -915,7 +914,7 @@ g}}(window.JQPM||jQuery));
                 height : 0
             };
 
-            for (key in this.opts.sizes) {
+            for (var key in this.opts.sizes) {
                 if (this.opts.sizes.hasOwnProperty(key)) {
                     // are we dealing with a portrait or landscape image?
                     if (image.width.original >= image.height.original) {

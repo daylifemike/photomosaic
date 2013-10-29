@@ -556,7 +556,7 @@ class PhotoMosaic {
         $height_val = 0;
         $output = '';
 
-        if ( empty($atts['nggid']) || empty($atts['ngaid']) ) {
+        if ( empty($atts['nggid']) && empty($atts['ngaid']) ) {
             // it's a WP gallery
             $images = PhotoMosaic::galleryFromWP($atts['id'], $atts['link_behavior'], $atts['include'], $atts['exclude'], $atts['ids'], true);
 
@@ -601,7 +601,7 @@ class PhotoMosaic {
                 $val = (count($width_count) === 1 ? $width_val : $height_val);
             }
 
-            if ( empty($atts['nggid']) || empty($atts['ngaid']) ) {
+            if ( empty($atts['nggid']) && empty($atts['ngaid']) ) {
                 $output ='
                     sizes: {
                         thumbnail: '. ($val === '1' ? $val : get_option("thumbnail_size_w") ) .',

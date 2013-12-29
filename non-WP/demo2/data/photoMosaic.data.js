@@ -1,5 +1,146 @@
 var PMalbum = [
     {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/armor.jpg",
+        "caption" : "&quot;Armor&quot; by Mira Ruido",
+        "width" : 900,
+        "height" : 1206
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/astronaut.jpg",
+        "caption" : "&quot;Astronaut&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 825
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/bold.jpg",
+        "caption" : "&quot;Bold&quot; by Mira Ruido",
+        "width" : 1100,
+        "height" : 1760
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/esquire_1.jpg",
+        "caption" : "&quot;Esquire #1&quot; by Mira Ruido",
+        "width" : 900,
+        "height" : 1200
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/invasion.jpg",
+        "caption" : "&quot;Invasion&quot; by Mira Ruido",
+        "width" : 800,
+        "height" : 1131
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/journey.jpg",
+        "caption" : "&quot;Journey&quot; by Mira Ruido",
+        "width" : 800,
+        "height" : 1000
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/kiteman.jpg",
+        "caption" : "&quot;Kiteman&quot; by Mira Ruido",
+        "width" : 1100,
+        "height" : 1100
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/lost.jpg",
+        "caption" : "&quot;Lost&quot; by Mira Ruido",
+        "width" : 1100,
+        "height" : 1100
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/manonfire.jpg",
+        "caption" : "&quot;Man On Fire&quot; by Mira Ruido",
+        "width" : 1389,
+        "height" : 1389
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/missing_1.jpg",
+        "caption" : "Screengrab from &quot;Missing&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 675
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/missing_2.jpg",
+        "caption" : "Screengrab from &quot;Missing&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 675
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/missing_3.jpg",
+        "caption" : "Screengrab from &quot;Missing&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 675
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/newscientist_1.jpg",
+        "caption" : "&quot;New Scientist #1&quot; by Mira Ruido",
+        "width" : 1000,
+        "height" : 1315
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/newscientist_2.jpg",
+        "caption" : "&quot;New Scientist #2&quot; by Mira Ruido",
+        "width" : 1000,
+        "height" : 522
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/newscientist_3.jpg",
+        "caption" : "&quot;New Scientist #3&quot; by Mira Ruido",
+        "width" : 1000,
+        "height" : 1315
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/newscientist_5.jpg",
+        "caption" : "&quot;New Scientist #5&quot; by Mira Ruido",
+        "width" : 800,
+        "height" : 1038
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/observatory.jpg",
+        "caption" : "&quot;Observatory&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 900
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/ourneighbor1.jpg",
+        "caption" : "&quot;Our Neighbor&quot; by Mira Ruido",
+        "width" : 1300,
+        "height" : 1300
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/routine.jpg",
+        "caption" : "&quot;Routine&quot; by Mira Ruido",
+        "width" : 1300,
+        "height" : 861
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/tornado.jpg",
+        "caption" : "&quot;Tornado&quot; by Mira Ruido",
+        "width" : 1100,
+        "height" : 1100
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/trapped.jpg",
+        "caption" : "&quot;Trapped&quot; by Mira Ruido",
+        "width" : 1200,
+        "height" : 1093
+    },
+    {
+        "src" : "https://dl.dropboxusercontent.com/u/24540155/mira-ruido/trunk.jpg",
+        "caption" : "&quot;Trunk&quot; by Mira Ruido",
+        "width" : 1100,
+        "height" : 1121
+    }
+/*
+    {
+        "src" : "",
+        "caption" : "",
+        "width" : 0,
+        "height" : 0
+    }
+*/
+/*
+    {
         "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/51a04d31e4b0c8a2f31f2de6/51a04d45e4b0d31a97ad9ab4/1369460038428/Owlie02_17x22_700.jpeg",
         "caption" : "'Owlie' from 'Owls' by ZSO",
         "width" : 700,
@@ -8,24 +149,6 @@ var PMalbum = [
     {
         "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a00584ae1835d7e7cc12/5050a035c4aaf3413fd60155/1347461173488/JoshuaDavis_01_700.jpeg",
         "caption" : "'Joshua Davis' from 'Friend Portraits' by ZSO",
-        "width" : 700,
-        "height" : 891
-    },
-    {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a08a84ae1835d7e7ccbf/5050a092c4aaf3413fd601d4/1347461266656/SugarSkull_03_web.jpeg",
-        "caption" : "'Sugar Skull' from 'Calavera' by ZSO",
-        "width" : 700,
-        "height" : 891
-    },
-    {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/504f7561c4aa4ae7238f4f11/50509f4ec4aaaae9eb1c55e9/1347460942236/Girl006_ZSO_SaraBlake.jpeg",
-        "caption" : "'Girl 006' from '100 Girls' by ZSO",
-        "width" : 700,
-        "height" : 891
-    },
-    {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a33ac4aaaae9eb1c6156/5050a34bc4aaaae9eb1c6164/1347461963518/Picasso_ZSO_SaraBlake.jpeg",
-        "caption" : "'Picasso' from 'Spanish Masters' by ZSO",
         "width" : 700,
         "height" : 891
     },
@@ -60,18 +183,6 @@ var PMalbum = [
         "height" : 796
     },
     {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a8bdc4aaaae9eb1c6c3a/5050ad04c4aaf3413fd61cc1/1347464452616/Headress_Color_01_web.jpeg",
-        "caption" : "'Headress' from 'Daisy &amp; Elizabeth' by ZSO",
-        "width" : 700,
-        "height" : 700
-    },
-    {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050b5d8c4aaf3413fd62e7c/5051152624ac3544de304380/1347491110756/AwTAC_longB_web.jpg",
-        "caption" : "'AwTAC long' from 'AWTAC' by ZSO",
-        "width" : 700,
-        "height" : 838
-    },
-    {
         "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a40fe4b03f467b8fabf1/5050a42bc4aaaae9eb1c6251/1347462187572/JoshDavis_SaraBlake_coral_700.jpeg",
         "caption" : "'Coral' from 'Joshua Davis x ZSO' by ZSO",
         "width" : 700,
@@ -96,22 +207,10 @@ var PMalbum = [
         "height" : 1308
     },
     {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050a4dfe4b0fa06c0545fe4/5050a504e4b03f467b8fad3a/1347462404565/Bi_poster_stuchhi_ZSO_web.jpeg",
-        "caption" : "'Stuchhi' from 'Bicycle Film Festival' by ZSO",
-        "width" : 700,
-        "height" : 990
-    },
-    {
         "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050ab86e4b03f467b8fba9b/5050b442e4b03f467b8fd04b/1347466306974/Dylan_notype.jpeg",
         "caption" : "'Dylan' from 'Idols 2009' by ZSO",
         "width" : 700,
         "height" : 980
-    },
-    {
-        "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050ad91c4aaaae9eb1c789e/5050ad99e4b09dcfb921fef5/1347464601256/RYJ_skull_master_02_web.jpeg",
-        "caption" : "'Skull' from 'Run Your Jewels' by ZSO",
-        "width" : 700,
-        "height" : 541
     },
     {
         "src" : "http://static.squarespace.com/static/504f7560c4aa4ae7238f4efb/5050afade4b03f467b8fc3b9/5050afb6e4b09dcfb9220448/1347465142528/MJ_Syrup_SaraBlake_01.jpeg",
@@ -119,4 +218,5 @@ var PMalbum = [
         "width" : 700,
         "height" : 467
     }
+*/
 ];

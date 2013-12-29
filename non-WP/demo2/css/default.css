@@ -395,3 +395,5 @@ body .pp_inline li { margin-bottom:0.5em; }
 body .pp_inline strong { font-style:italic; }
 body div.pp_default .pp_description { font-size:1em; font-weight:normal; margin-left:20px; }
 body .photoMosaic { margin-bottom:0; }
+#cache { width:0; height:0; visibility:hidden; pointer-events:none; }
+#credit { position:fixed; bottom:3px; right:3px; font-size:12px; background:rgba(245, 244, 239, 0.8); padding:0.3em 0.5em; border-radius:3px; }

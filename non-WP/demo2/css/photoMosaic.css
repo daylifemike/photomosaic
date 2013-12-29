@@ -67,14 +67,13 @@
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-none a.loading img { }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-custom a.loading img { 
-    /* good for example
+    /* good for example */
         opacity:0;
         -webkit-transform: rotate( -5deg ) scale( 0.95 );
         -moz-transform: rotate( -5deg ) scale( 0.95 );
         -o-transform: rotate( -5deg ) scale( 0.95 );
         -ms-transform: rotate( -5deg ) scale( 0.95 );
         transform: rotate( -5deg ) scale( 0.95 );
-    */
 }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-fade a.loading img {

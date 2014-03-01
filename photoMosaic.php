@@ -641,9 +641,6 @@ class PhotoMosaic {
     }
 
     public static function post_gallery( $empty = '', $atts = array() ) {
-        if ( !empty( $empty ) ) { // something else is overriding post_gallery, like a custom VIP shortcode
-            return $empty;
-        }
         global $post;
 
         $isPhotoMosaic = false;

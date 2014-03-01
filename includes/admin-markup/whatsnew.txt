@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.5.2
+- Bug Fix: cleans up some leaking JS vars
+- Bug Fix: NextGen mosaics no longer uses thumbnails when they shouldn't
+- Bug Fix: removes politeness check that sometimes prevented [gallery theme="photomosaic"] shortcodes from being mosaic'd
+
 ### 2.5.1
 - Update: changes run-priority to support the recent Jetpack Carousel update
 - Change: ignores the 'thumbnail' size if it doesn't have the same aspect ratio as the full-sized image

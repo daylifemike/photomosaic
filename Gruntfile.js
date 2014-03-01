@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
 
+// pass a param or call a task that picks HOME or WORK path
+// http://gruntjs.com/api/grunt.option
 var path = '../wordpress/wp-content/plugins/photomosaic-for-wordpress/';
 /*
 THE OLD WAY
@@ -32,13 +34,15 @@ THE OLD WAY
             main: {
                 files: [
                     {
+                        expand: true,
+                        cwd: 'app/',
                         src: ['css/**/*', 'images/**/*', 'js/**/*', 'includes/admin-markup/**/*'],
                         dest: path,
                         filter: 'isFile'
                     },
                     {
                         expand: true,
-                        cwd: 'includes/vendor/',
+                        cwd: 'app/includes/vendor/',
                         src: ['markdown.php'],
                         dest: path + 'includes/',
                         filter: 'isFile',
@@ -48,12 +52,14 @@ THE OLD WAY
                     },
                     {
                         expand: true,
-                        cwd: 'includes/vendor/prettyphoto/',
+                        cwd: 'app/includes/vendor/prettyphoto/',
                         src: ['**/*'],
                         dest: path + 'includes/prettyPhoto/',
                         filter: 'isFile'
                     },
                     {
+                        expand: true,
+                        cwd: 'app/',
                         src: ['photomosaic.php'],
                         dest: path,
                         filter: 'isFile',

@@ -45,10 +45,10 @@ class PhotoMosaic {
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
-        wp_register_script( 'photomosaic', plugins_url('/js/jquery.photoMosaic.js', __FILE__ ));
+        wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.js', __FILE__ ));
         wp_enqueue_script('photomosaic');
 
-        wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photoMosaic.css', __FILE__ ));
+        wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 
         if (!is_admin()) {
             if($options['lightbox']) {
@@ -67,8 +67,8 @@ class PhotoMosaic {
         } else {
             if ( isset($_GET['page']) ) {
                 if ( $_GET['page'] == "photoMosaic.php" || $_GET['page'] == "photomosaic" ) {
-                    wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/jquery.photoMosaic.wp.admin.js', __FILE__ ), array('photomosaic'));
-                    wp_enqueue_style( 'photomosaic_admin_css', plugins_url('/css/photoMosaic.admin.css', __FILE__ ));
+                    wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/photomosaic.admin.js', __FILE__ ), array('photomosaic'));
+                    wp_enqueue_style( 'photomosaic_admin_css', plugins_url('/css/photomosaic.admin.css', __FILE__ ));
                 }
             }
 
@@ -76,10 +76,10 @@ class PhotoMosaic {
                     isset( $_GET['post'] ) ||
                     in_array( $pagenow, array( 'post-new.php' ) )
             ) {
-                wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/jquery.photoMosaic.editor.js', __FILE__ ), array('photomosaic'));
+                wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/photomosaic.editor.js', __FILE__ ), array('photomosaic'));
             }
 
-            wp_enqueue_style( 'menu', plugins_url('/css/photoMosaic.menu.css', __FILE__ ));
+            wp_enqueue_style( 'menu', plugins_url('/css/photomosaic.menu.css', __FILE__ ));
         }
     }
 

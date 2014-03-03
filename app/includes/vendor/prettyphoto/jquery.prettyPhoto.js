@@ -10,8 +10,6 @@
      - self-invoke arguments ref the window and test for availability (window.JQPM || jQuery)
     # d
      - new namespace on events
-
-    !! minified and included in jquery.photoMosaic.js
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto

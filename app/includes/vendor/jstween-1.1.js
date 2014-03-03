@@ -29,7 +29,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      - hardcoded jQuery references changed to '$'
      - JQPM added to closure
      - moved from window.JSTween to PhotoMosaic.JSTween
-     -! minified and included inline in jquery.photoMosaic.js
 */
 (function (window) {
     if (!window.PhotoMosaic) {
@@ -37,7 +36,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
     }
 }(window));
 
-window.PhotoMosaic.JSTween = ( function ( $, that ) {
+window.PhotoMosaic.JSTween = (function ($, that) {
 
     var __prop = /[\-]{0,1}[0-9\.]{1,}|#[0-9\.abcdef]{3,6}/gi,
         __unit = /[pxemtcin%]{1,2}|deg/gi,
@@ -1348,4 +1347,4 @@ window.PhotoMosaic.JSTween = ( function ( $, that ) {
 
     return that;
 
-}( JQPM, window.PhotoMosaic.JSTween || {} ) );
+}( window.JQPM||jQuery, window.PhotoMosaic.JSTween||{} ));

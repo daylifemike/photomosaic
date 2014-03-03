@@ -45,21 +45,15 @@ class PhotoMosaic {
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
-        wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.js', __FILE__ ));
+        wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.min.js', __FILE__ ));
         wp_enqueue_script('photomosaic');
 
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 
         if (!is_admin()) {
             if($options['lightbox']) {
-                wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/prettyPhoto/prettyPhoto.css', __FILE__ ));
-
-                // for testing - comment out in jquery.photoMosaic.js
-                // wp_enqueue_script( 'photomosaic_prettyphoto_js', plugins_url('/includes/prettyPhoto/jquery.prettyPhoto.js', __FILE__ ), array('photomosaic'));
+                wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/vendor/prettyPhoto/prettyPhoto.css', __FILE__ ));
             }
-
-            // for testing - comment out in jquery.photoMosaic.js
-            // wp_enqueue_script( 'photomosaic_jstween_js', plugins_url('/includes/jstween-1.1.js', __FILE__ ), array('photomosaic'));
 
             add_shortcode( 'photoMosaic', array( __CLASS__, 'shortcode' ) );
             add_shortcode( 'photomosaic', array( __CLASS__, 'shortcode' ) );

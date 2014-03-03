@@ -45,7 +45,7 @@ class PhotoMosaic {
         add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
 
-        wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.min.js', __FILE__ ));
+        wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.js', __FILE__ ));
         wp_enqueue_script('photomosaic');
 
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));

@@ -20,14 +20,25 @@ module.exports = function(grunt) {
         concat : {
             js : {
                 src : [
+                    // base
                     'app/js/app.js',
+                    // dependencies
                     'app/includes/vendor/jquery-1.9.1.min.js',
                     'app/includes/vendor/jstween-1.1.js',
                     'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
                     'app/includes/vendor/mustache.js',
                     'app/includes/vendor/modernizr.js',
                     'app/includes/vendor/imagesloaded.js',
-                    'app/js/photomosaic.js'
+                    // utils
+                    'app/js/utils.js',
+                    'app/js/error_checks.js',
+                    'app/js/inputs.js',
+                    // view constructors
+                    // 'app/js/layouts/columns.js',
+                    // 'app/js/layouts/rows.js',
+                    // 'app/js/layouts/grid.js',
+                    // photomosaic
+                    'app/js/core.js'
                 ],
                 dest : dist_path + 'js/photomosaic.js',
                 nonull : true
@@ -45,9 +56,9 @@ module.exports = function(grunt) {
                     },
                     {
                         expand : true,
-                        cwd : 'app/',
-                        src : ['js/photomosaic.admin.js', 'js/photomosaic.editor.js'],
-                        dest : dist_path,
+                        cwd : 'app/js/admin/',
+                        src : ['photomosaic.admin.js', 'photomosaic.editor.js'],
+                        dest : dist_path + 'js/',
                         filter : 'isFile'
                     },
                     {

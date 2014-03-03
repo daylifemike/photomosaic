@@ -30,13 +30,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
      - JQPM added to closure
      - moved from window.JSTween to PhotoMosaic.JSTween
 */
-(function (window) {
-    if (!window.PhotoMosaic) {
-        window.PhotoMosaic = {};
-    }
-}(window));
-
-window.PhotoMosaic.JSTween = (function ($, that) {
+window.PhotoMosaic.Plugins.JSTween = (function ($, that) {
 
     var __prop = /[\-]{0,1}[0-9\.]{1,}|#[0-9\.abcdef]{3,6}/gi,
         __unit = /[pxemtcin%]{1,2}|deg/gi,
@@ -1347,4 +1341,4 @@ window.PhotoMosaic.JSTween = (function ($, that) {
 
     return that;
 
-}( window.JQPM||jQuery, window.PhotoMosaic.JSTween||{} ));
+}( window.JQPM, window.PhotoMosaic.Plugins.JSTween||{} ));

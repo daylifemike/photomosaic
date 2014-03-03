@@ -4,12 +4,6 @@
     optional: prettyPhoto
 */
 (function ($) {
-    // for debugging
-    if (window.PhotoMosaic) {
-        window.PhotoMosaic.$ = $;
-        window.PhotoMosaic.mosaics = [];
-    }
-
     var pluginName = 'photoMosaic';
     var self;
 
@@ -20,34 +14,12 @@
         this.obj = $(el);
         this._options = options;
 
-        this._id = this.makeID(true);
+        this._id = PhotoMosaic.Utils.makeID(true);
 
         this.init();
     };
 
     Plugin.prototype = {
-
-        // IE sucks so hard
-        log: {
-            info: function (msg) {
-                this.prefix(msg);
-            },
-
-            error: function (msg) {
-                this.prefix("ERROR: " + msg);
-            },
-
-            prefix: function (msg) {
-                this.print("PhotoMosaic: " + msg);
-            },
-
-            print: function (msg) {
-                if (window.console !== 'undefined') {
-                    window.console.log(msg);
-                }
-            }
-        },
-
         _defaults: {
             input : 'json', // json, html, xml
             gallery : 'PMalbum', // json object, xml file path
@@ -125,15 +97,12 @@
 
             this.preload = 'PM_preloadify' + this._id;
 
-            this.images = [];
-            this.columns = [];
-
             if (this.opts.width === 'auto') {
                 this.opts.width = this.obj.width();
             }
 
             // Error Checks
-            if (this.errorChecks.initial()) {
+            if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) {
                 return;
             }
 
@@ -149,14 +118,10 @@
             var self = this;
 
             if (this.opts.show_loading) {
-                this.obj.html(PhotoMosaic.Mustache.to_html(this.loading_template, {
+                this.obj.html(PhotoMosaic.Plugins.Mustache.to_html(this.loading_template, {
                     id: this._id
                 }));
             }
-
-            this.opts.columns = this.autoCols();
-
-            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
 
             // if all items have defined w/h we don't need to
             // wait for them to load to do the mosaic math
@@ -174,16 +139,19 @@
         render: function () {
             var self = this;
 
+            // var view_model = new PhotoMosaic.Layouts.columns(this.opts.gallery, this.opts);
+            // var html = PhotoMosaic.Plugins.Mustache.to_html(this.template, view_model);
+            // this.obj.html( html );
             this.obj.html(this.makeMosaic());
 
-            if ( self.opts.loading_transition !== 'none' && !PhotoMosaic.Modernizr.csstransitions ) {
+            if ( self.opts.loading_transition !== 'none' && !PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                 this.obj.find('img').css('opacity','0');
             }
 
             this.obj.imagesLoaded({
                 progress: function (isBroken, $images, $proper, $broken) {
                     setTimeout(function () {
-                        if ( self.opts.loading_transition === 'none' || PhotoMosaic.Modernizr.csstransitions ) {
+                        if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                             $($proper[$proper.length - 1]).parents('span.loading, a.loading').removeClass('loading');
 
                             if ( ($proper.length + $broken.length) === $images.length ) {
@@ -239,68 +207,41 @@
             this.modalCallback();
 
             if (this.opts.log_gallery_data) {
-                this.logGalleryData();
+                PhotoMosaic.Utils.logGalleryData(this.opts.gallery);
             }
         },
 
         makeMosaic: function () {
             var self = this;
 
-            // get image sizes, set modalhook, & get link paths
+            this.images = [];
+            this.columns = [];
+            this.opts.columns = this.autoCols();
+            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
+
             $.each(this.opts.gallery, function (i) {
-                var image = $.extend(true, {}, this); // jQuery deep copy
-                var image_url = (image.thumb && image.thumb !== '') ? image.thumb : image.src;
-                var modal_text;
+                this.width.adjusted = self.col_width;
+                this.height.adjusted = Math.floor((this.height.original * this.width.adjusted) / this.width.original);
 
-                // image sizes
-                image.full = image.src;
-                image.src = image_url;
-                image.padding = self.opts.padding;
-
-                image.width.adjusted = self.col_width;
-                image.height.adjusted = Math.floor((image.height.original * image.width.adjusted) / image.width.original);
-
-                // modal hooks
-                if (self.opts.modal_name) {
-                    if (self.opts.modal_group) {
-                        modal_text = self.opts.modal_name + '[' + self._id + ']';
-                    } else {
-                        modal_text = self.opts.modal_name;
-                    }
-                    image.modal = modal_text;
-                }
-
-                // link paths
-                if (self.opts.links && image.url) {
-                    image.link = true;
-                    image.path = image.url;
-                    image.external = self.opts.external_links;
-                    // delete image.modal;
-                } else if (self.opts.links) {
-                    image.link = true;
-                    image.path = image.full;
-                    image.external = self.opts.external_links;
-                } else {
-                    image.link = false;
-                }
-
-                self.images.push(image);
+                self.images.push(this);
             });
 
             // ERROR CHECK: remove any images that didn't 404 but failed to load
-            this.images = this.errorChecks.imageDimensions(this.images);
+            // TODO : make less Layout::columns -centric
+            this.images = PhotoMosaic.ErrorChecks.imageDimensions(this.images);
             if (this.images.length === 0) {
-                return PhotoMosaic.Mustache.to_html('', {});
+                return PhotoMosaic.Plugins.Mustache.to_html('', {});
             }
 
             var json = this.makeMosaicView();
 
             // ERROR CHECK: don't load if the layout is broken
-            if (this.errorChecks.layout(json)) {
-                return PhotoMosaic.Mustache.to_html('', {});
+            // TODO : make less Layout::columns -centric
+            if (PhotoMosaic.ErrorChecks.layout(json)) {
+                return PhotoMosaic.Plugins.Mustache.to_html('', {});
             }
 
-            return PhotoMosaic.Mustache.to_html(this.template, json);
+            return PhotoMosaic.Plugins.Mustache.to_html(this.template, json);
         },
 
         makeMosaicView: function (isRefreshing) {
@@ -724,39 +665,74 @@
             return $images.imagesLoaded();
         },
 
-        addPreloadData: function (gallery) {
+        prepData: function (gallery, isPreload) {
+            var self = this;
             var $preload = $('#' + this.preload);
+            var $img = null;
+            var image = null;
+            var image_url = '';
+            var modal_text = '';
+            var mem = {};
+            var images = [];
 
             $.each(gallery, function (i) {
-                $img = $preload.find('.' + this.id);
+                image = $.extend(true, {}, this); // jQuery deep copy
 
-                this.width = {
-                    original: $img.width()
-                };
-                this.height = {
-                    original: $img.height()
-                };
-            });
+                if (isPreload) {
+                    $img = $img = $preload.find('.' + this.id);
+                    mem = {
+                        w : $img.width(),
+                        h : $img.height()
+                    };
+                } else {
+                    mem = {
+                        w : parseInt(this.width),
+                        h : parseInt(this.height)
+                    };
+                }
 
-            return gallery;
-        },
-
-        prepData: function (gallery) {
-            var mem = { w:0, h:0 };
-
-            $.each(gallery, function (i) {
-                mem.w = parseInt(this.width);
-                mem.h = parseInt(this.height);
-
-                this.width = {
+                image.width = {
                     original: mem.w
                 };
-                this.height = {
+                image.height = {
                     original: mem.h
                 };
+
+                image_url = (image.thumb && image.thumb !== '') ? image.thumb : image.src;
+
+                // image sizes
+                image.full = image.src;
+                image.src = image_url;
+                image.padding = self.opts.padding;
+
+                // modal hooks
+                if (self.opts.modal_name) {
+                    if (self.opts.modal_group) {
+                        modal_text = self.opts.modal_name + '[' + self._id + ']';
+                    } else {
+                        modal_text = self.opts.modal_name;
+                    }
+                    image.modal = modal_text;
+                }
+
+                // link paths
+                if (self.opts.links && image.url) {
+                    image.link = true;
+                    image.path = image.url;
+                    image.external = self.opts.external_links;
+                    // delete image.modal;
+                } else if (self.opts.links) {
+                    image.link = true;
+                    image.path = image.full;
+                    image.external = self.opts.external_links;
+                } else {
+                    image.link = false;
+                }
+
+                images.push(image);
             });
 
-            return gallery;
+            return images;
         },
 
         getGalleryData: function () {
@@ -764,10 +740,10 @@
 
             // construct the gallery
             if (this.opts.input === 'json') {
-                return this.opts.gallery;
+                return PhotoMosaic.Inputs.json(this.opts.gallery);
 
             } else if (this.opts.input === 'html') {
-                return this.constructGalleryFromHTML();
+                return PhotoMosaic.Inputs.html(this.obj, this.opts);
 
             } else if (this.opts.input === 'xml' ) {
                 return $.when(
@@ -777,16 +753,15 @@
                         function (data) {
                             var gallery;
                             if ($(data).find('photos').length > 0) {
-                                gallery = $(data).find('photos');
-                                return self.constructGalleryFromXML(gallery);
+                                return PhotoMosaic.Inputs.xml( $(data).find('photos') );
                             } else {
-                                self.log.error("The XML doesn't contain any <photo> nodes.");
+                                PhotoMosaic.Utils.log.error("The XML doesn't contain any <photo> nodes.");
                                 return;
                             }
                         },
                         // fail
                         function () {
-                            self.log.error("The XML either couldn't be found or was malformed.");
+                            PhotoMosaic.Utils.log.error("The XML either couldn't be found or was malformed.");
                             return;
                         }
                     );
@@ -795,7 +770,7 @@
 
         setImageIDs: function (gallery) {
             for (var i = 0; i < gallery.length; i++) {
-                gallery[i].id = this.makeID();
+                gallery[i].id = PhotoMosaic.Utils.makeID(false, 'pm');
             };
             return gallery;
         },
@@ -884,55 +859,6 @@
             return image.sizes[size];
         },
 
-        constructGalleryFromHTML: function () {
-            var gallery = [];
-            var $images = this.obj.find('img');
-
-            for (var i = 0; i < $images.length; i++) {
-                var $image = $images.eq(i)
-                var image = {
-                    caption : $image.attr('title'),
-                    alt : $image.attr('alt'),
-                    width : parseInt( $image.attr('width') ),
-                    height : parseInt( $image.attr('height') )
-                };
-
-                if ($image.parent('a').length > 0 && this.opts.links) {
-                    image.src = $image.attr('src');
-                    image.url = $image.parent('a').attr('href');
-                } else if ($image.parent('a').length > 0) {
-                    image.src = $image.parent('a').attr('href');
-                } else {
-                    image.src = $image.attr('src');
-                }
-
-                gallery.push(image);
-            }
-
-            return gallery;
-        },
-
-        constructGalleryFromXML: function (gallery) {
-            var response = [];
-
-            gallery.find('photo').each(function (i) {
-                var photo = {};
-                var data = $(this);
-
-                photo.caption = data.children('title').text();
-                photo.alt = data.children('alt').text();
-                photo.src = data.children('src').text();
-                photo.thumb = data.children('thumb').text();
-                photo.url = data.children('url').text();
-                photo.width = data.children('width').text();
-                photo.height = data.children('height').text();
-
-                response.push(photo);
-            });
-
-            return response;
-        },
-
         hasDims: function () {
             var some = false; // set to true if any dims are found
             var all = true; // set to false if any dims aren't found
@@ -962,7 +888,7 @@
             };
 
             if (some && !all) {
-                this.log.error("Width / Height data not present for all images.");
+                PhotoMosaic.Utils.log.error("Width / Height data not present for all images.");
             }
 
             this.hasSpecifiedDims = all;
@@ -973,7 +899,7 @@
         getTransition: function () {
             var transition = 'none';
 
-            if (PhotoMosaic.Modernizr.csstransitions && PhotoMosaic.Modernizr.csstransforms) {
+            if (PhotoMosaic.Plugins.Modernizr.csstransitions && PhotoMosaic.Plugins.Modernizr.csstransforms) {
                 transition = this.opts.loading_transition
             }
             return 'transition-' + transition;
@@ -1072,7 +998,7 @@
                     height : image.height.constraint + 'px'
                 });
 
-                if ( !this.shouldAnimate() || !PhotoMosaic.Modernizr.csstransitions ) {
+                if ( !this.shouldAnimate() || !PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                     $a.css({
                         top : image.position.top + 'px',
                         left : image.position.left + 'px'
@@ -1118,31 +1044,6 @@
             return opts;
         },
 
-        makeID: function (small) {
-            var S4 = function () {
-                return ( ( (1 + Math.random()) * 0x10000 ) | 0 ).toString(16).substring(1);
-            };
-            if (small) {
-                return S4() + S4() + '' + S4() + S4();
-            }
-            return 'pm_' + ( S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4() );
-        },
-
-        logGalleryData: function () {
-            var response = [];
-            for (var i = 0; i < this.opts.gallery.length; i++) {
-                response.push({
-                    src: this.opts.gallery[i].src,
-                    thumb: this.opts.gallery[i].thumb,
-                    caption: this.opts.gallery[i].caption,
-                    width: this.opts.gallery[i].width.original,
-                    height: this.opts.gallery[i].height.original
-                });
-            }
-            this.log.info("Generate Gallery Data...");
-            this.log.print( JSON.stringify(response) );
-        },
-
         shouldAnimate: function () {
             return (
                 this._auto_cols &&
@@ -1150,86 +1051,9 @@
             );
         },
 
-        errorChecks: {
-            // "self" refers to the global "self", something I hate doing.
-            // making this a closure doesn't really solve the problem because this gets called willy-nilly
-            // var self = this; // :(
-            initial: function () {
-                if (self.opts.input === 'xml') {
-                    if (typeof self.opts.gallery !== 'string' || self.opts.gallery === '') {
-                        self.log.error("No XML file path specified.");
-                        return true;
-                    }
-                }
-
-                if (self.opts.input === 'json') {
-                    if (typeof self.opts.gallery === 'string') {
-                        if (self.opts.gallery === '') {
-                            self.log.error("No JSON object defined.");
-                            return true;
-                        }
-
-                        if (typeof window[self.opts.gallery] !== 'undefined') {
-                            self.opts.gallery = window[self.opts.gallery];
-                        } else {
-                            self.log.error("No JSON object found when referencing '" + self.opts.gallery + "'.");
-                            self.log.info("Make sure your variable is avaible to the global scope (window['" + self.opts.gallery + "']) or simply pass the object literal (gallery:" + self.opts.gallery + ") instead of a string (gallery:\"" + self.opts.gallery + "\").");
-                            return true;
-                        }
-                    }
-
-                    if (self.opts.gallery.length === 0) {
-                        self.log.error("Specified gallery data is empty.");
-                        return true;
-                    }
-                }
-
-                if (self.opts.prevent_crop && self.opts.height !== 'auto') {
-                    self.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + self.opts.height + ") is being ignored so as to prevent cropping.");
-                    self.opts.height = "auto";
-                }
-                return false;
-            },
-
-            imageDimensions: function (images) {
-                var to_delete = [];
-
-                $.each(images, function (i) {
-                    if (isNaN(this.height.adjusted)) {
-                        to_delete.push(i);
-                    }
-                });
-
-                for (var i = to_delete.length - 1; i >= 0; i--) {
-                    self.log.error("The following image failed to load and was skipped.\n" + images[to_delete[i]].src);
-                    var rest = images.slice( to_delete[i] + 1 );
-                    images.length = to_delete[i];
-                    images.push.apply(images, rest);
-                }
-
-                return images;
-            },
-
-            layout: function (json) {
-                var i = 0;
-                var j = 0;
-
-                for (i = 0; i < json.columns.length; i++) {
-                    for (j = 0; j < json.columns[i].images.length; j++) {
-                        if (json.columns[i].images[j].height.constraint <= 0) {
-                            self.log.error("Your gallery's height is too small for your current settings and won't render correctly.");
-                            return true;
-                        }
-                    };
-                };
-
-                return false;
-            }
-        },
-
         _name : pluginName,
 
-        version : '2.5.2'
+        version : PhotoMosaic.version
 
     };
 
@@ -1241,7 +1065,8 @@
                 $.data(this, pluginName, new Plugin(this, options));
 
                 // for debugging
-                window.PhotoMosaic.mosaics.push({
+                window.PhotoMosaic.$ = $;
+                window.PhotoMosaic.Mosaics.push({
                     'el' : this,
                     'opts' : options
                 });
@@ -1249,4 +1074,4 @@
         });
     };
 
-}(window.JQPM||jQuery));
+}(window.JQPM));

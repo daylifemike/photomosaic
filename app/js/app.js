@@ -12,6 +12,7 @@
     }
 
     registerNamespace('JQPM', window.jQuery || {});
+    registerNamespace('PhotoMosaic.$', window.jQuery || {});
     registerNamespace('PhotoMosaic.Utils');
     registerNamespace('PhotoMosaic.Inputs');
     registerNamespace('PhotoMosaic.Layouts');

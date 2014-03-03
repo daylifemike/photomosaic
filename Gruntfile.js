@@ -23,7 +23,6 @@ module.exports = function(grunt) {
                     // base
                     'app/js/app.js',
                     // dependencies
-                    'app/includes/vendor/jquery-1.9.1.min.js',
                     'app/includes/vendor/jstween-1.1.js',
                     'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
                     'app/includes/vendor/mustache.js',

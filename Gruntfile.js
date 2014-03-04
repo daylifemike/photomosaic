@@ -151,6 +151,12 @@ module.exports = function(grunt) {
                     archive : plugin_name + '-<%= version %>.zip'
                 }
             }
+        },
+        watch : {
+            dev: {
+                files: [ 'app/**/*' ],
+                tasks: [ 'default' ]
+            }
         }
     });
 

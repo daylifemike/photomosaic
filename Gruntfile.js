@@ -1,11 +1,32 @@
 module.exports = function(grunt) {
 
-    // pass a param or call a task that picks HOME or WORK path
-    // http://gruntjs.com/api/grunt.option
-    var plugin_path = '../wordpress/wp-content/plugins/photomosaic-for-wordpress/';
+    var plugin_name = 'photomosaic-for-wordpress';
+    var plugin_path = '../wordpress/wp-content/plugins/' + plugin_name + '/';
     var dist_path = 'app/dist/';
+    var release_path = '../' + plugin_name + '/';
+    var files = [
+        // base
+        'app/js/app.js',
+        // dependencies
+        'app/includes/vendor/jstween-1.1.js',
+        'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
+        'app/includes/vendor/mustache.js',
+        'app/includes/vendor/modernizr.js',
+        'app/includes/vendor/imagesloaded.js',
+        // utils
+        'app/js/utils.js',
+        'app/js/error_checks.js',
+        'app/js/inputs.js',
+        // view constructors
+        // 'app/js/layouts/columns.js',
+        // 'app/js/layouts/rows.js',
+        // 'app/js/layouts/grid.js',
+        // photomosaic
+        'app/js/core.js'
+    ];
 
     grunt.initConfig({
+        version : '0.0.0',
         clean : {
             dist : {
                 src : dist_path
@@ -15,35 +36,43 @@ module.exports = function(grunt) {
                 options : {
                     force : true
                 }
+            },
+            release : {
+                src : release_path + '/**/*',
+                options : {
+                    force : true
+                }
+            },
+            codecanyon : {
+                src : plugin_name + '-<%= version %>/'
             }
         },
         concat : {
             js : {
-                src : [
-                    // base
-                    'app/js/app.js',
-                    // dependencies
-                    'app/includes/vendor/jstween-1.1.js',
-                    'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
-                    'app/includes/vendor/mustache.js',
-                    'app/includes/vendor/modernizr.js',
-                    'app/includes/vendor/imagesloaded.js',
-                    // utils
-                    'app/js/utils.js',
-                    'app/js/error_checks.js',
-                    'app/js/inputs.js',
-                    // view constructors
-                    // 'app/js/layouts/columns.js',
-                    // 'app/js/layouts/rows.js',
-                    // 'app/js/layouts/grid.js',
-                    // photomosaic
-                    'app/js/core.js'
-                ],
+                src : files,
                 dest : dist_path + 'js/photomosaic.js',
                 nonull : true
             }
         },
         copy : {
+            plugin : {
+                expand : true,
+                cwd : dist_path,
+                src : '**/*',
+                dest : plugin_path
+            },
+            release : {
+                expand : true,
+                cwd : dist_path,
+                src : '**/*',
+                dest : release_path
+            },
+            readme : {
+                expand : true,
+                cwd : 'app/',
+                src : 'readme.txt',
+                dest : plugin_name + '-<%= version %>/'
+            },
             dist : {
                 files : [
                     {
@@ -78,12 +107,6 @@ module.exports = function(grunt) {
                         filter : 'isFile'
                     }
                 ]
-            },
-            plugin : {
-                expand : true,
-                cwd : dist_path,
-                src : '**/*',
-                dest : plugin_path 
             }
         },
         uglify : {
@@ -91,10 +114,26 @@ module.exports = function(grunt) {
                 src : dist_path + 'js/photomosaic.js',
                 dest : dist_path + 'js/photomosaic.min.js',
                 options : {
-                    // sourceMap : true,
                     preserveComments : 'all',
-                    mangle: false,
-                    banner : '/* !!! PhotoMosaic v2.5.2 !!! */'
+                    mangle: false
+                }
+            }
+        },
+        compress : {
+            wordpress : {
+                expand : true,
+                cwd : dist_path,
+                src : ['**/*'],
+                options : {
+                    archive : plugin_name + '-<%= version %>/' + plugin_name + '.zip'
+                }
+            },
+            codecanyon : {
+                expand : true,
+                cwd : plugin_name + '-<%= version %>/',
+                src : ['**/*'],
+                options : {
+                    archive : plugin_name + '-<%= version %>.zip'
                 }
             }
         }
@@ -104,6 +143,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('default', [ 'concat', 'copy:dist', 'uglify:dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
+    grunt.registerTask('dist', [ 'clean:dist', 'concat', 'copy:dist' /*, 'uglify:dist'*/]);
+    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
+    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'clean:dist' ]);
+    grunt.registerTask('codecanyon', function (version) {
+        grunt.config.data.version = version || grunt.config.data.version;
+        grunt.task.run([ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon' ]);
+    });
 };

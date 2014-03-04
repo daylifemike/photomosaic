@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.5.3
+- Enhancement: adds the ability to be updated through the Wordpress Admin
+- Change: switches to the jQuery included with Wordpress (no longer supports WP older than v3.3)
+
 ### 2.5.2
 - Bug Fix: cleans up some leaking JS vars
 - Bug Fix: NextGen mosaics no longer uses thumbnails when they shouldn't

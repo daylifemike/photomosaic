@@ -62,10 +62,24 @@ module.exports = function(grunt) {
                 dest : plugin_path
             },
             release : {
-                expand : true,
-                cwd : dist_path,
-                src : '**/*',
-                dest : release_path
+                files : [
+                    {
+                        expand : true,
+                        cwd : dist_path,
+                        src : '**/*',
+                        dest : release_path
+                    },
+                    {
+                        expand : true,
+                        cwd : dist_path + 'includes/admin-markup/',
+                        src : 'whatsnew.txt',
+                        dest : release_path,
+                        filter : 'isFile',
+                        rename : function (dest, src) {
+                            return dest + 'CHANGES.md';
+                        }
+                    }
+                ]
             },
             readme : {
                 expand : true,

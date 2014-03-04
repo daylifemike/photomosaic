@@ -1,5 +1,5 @@
 /*
-    jQuery photoMosaic v2.5.2
+    PhotoMosaic v2.5.2
     requires: jQuery 1.7+, JSTween 1.1, Mustache, Modernizr, & ImagesLoaded
     optional: prettyPhoto
 */

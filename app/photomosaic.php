@@ -14,6 +14,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
 }
 
 add_action('init', array('PhotoMosaic', 'init'));
+add_action( 'plugins_loaded', array( 'PhotoMosaic', 'includeGitHubUpdater' ) );
 
 class PhotoMosaic {
 
@@ -43,8 +44,8 @@ class PhotoMosaic {
         add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 1337, 2 ); // template="pm" --> theme="pm"
         add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_action_links' ), 10, 2);
 
-        add_action( 'admin_menu', array('PhotoMosaic', 'setupAdminPage') );
-        add_action( 'wp_ajax_photomosaic_whatsnew', array('PhotoMosaic', 'ajaxHandler') );
+        add_action( 'admin_menu', array( __CLASS__, 'setupAdminPage') );
+        add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajaxHandler') );
 
         wp_register_script( 'photomosaic', plugins_url('/js/photomosaic.js', __FILE__ ), array('jquery'));
         wp_enqueue_script('photomosaic');
@@ -67,14 +68,19 @@ class PhotoMosaic {
                 }
             }
 
-            if (
-                    isset( $_GET['post'] ) ||
-                    in_array( $pagenow, array( 'post-new.php' ) )
-            ) {
+            if ( isset( $_GET['post'] ) || in_array( $pagenow, array( 'post-new.php' ) ) ) {
                 wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/photomosaic.editor.js', __FILE__ ), array('photomosaic'));
             }
 
             wp_enqueue_style( 'menu', plugins_url('/css/photomosaic.menu.css', __FILE__ ));
+        }
+    }
+
+    public static function includeGitHubUpdater () {
+        if ( !(isset($_GET['action']) && $_GET['action'] == 'activate') ) {
+            if ( !class_exists('GitHub_Plugin_Updater') ) {
+                require_once( 'includes/vendor/github-updater/github-updater.php' );
+            }
         }
     }
 
@@ -731,7 +737,9 @@ class PhotoMosaic {
     }
 
     public static function renderAdminPage() {
-        require_once( 'includes/Markdown.php' );
+        if ( !class_exists('MarkdownExtra_Parser') ) {
+            require_once( 'includes/Markdown.php' );
+        }
         $options = PhotoMosaic::getOptions();
         $options = PhotoMosaic::adjustDeprecatedOptions($options);
         ?>

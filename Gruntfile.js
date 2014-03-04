@@ -62,24 +62,25 @@ module.exports = function(grunt) {
                 dest : plugin_path
             },
             release : {
-                files : [
-                    {
-                        expand : true,
-                        cwd : dist_path,
-                        src : '**/*',
-                        dest : release_path
-                    },
-                    {
-                        expand : true,
-                        cwd : dist_path + 'includes/admin-markup/',
-                        src : 'whatsnew.txt',
-                        dest : release_path,
-                        filter : 'isFile',
-                        rename : function (dest, src) {
-                            return dest + 'CHANGES.md';
-                        }
+                expand : true,
+                cwd : dist_path,
+                src : '**/*',
+                dest : release_path
+            },
+            changelog : {
+                expand : true,
+                cwd : dist_path + 'includes/admin-markup/',
+                src : 'whatsnew.txt',
+                dest : release_path,
+                filter : 'isFile',
+                rename : function (dest, src) {
+                    return dest + 'CHANGES.md';
+                },
+                options : {
+                    process: function (content, srcpath) {
+                        return content.replace(/(#{2,3})/g,"#$1");
                     }
-                ]
+                }
             },
             readme : {
                 expand : true,
@@ -162,7 +163,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dist', [ 'clean:dist', 'concat', 'copy:dist' /*, 'uglify:dist'*/]);
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
-    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'clean:dist' ]);
+    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     grunt.registerTask('codecanyon', function (version) {
         grunt.config.data.version = version || grunt.config.data.version;
         grunt.task.run([ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon' ]);

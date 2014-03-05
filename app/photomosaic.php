@@ -63,8 +63,6 @@ class PhotoMosaic {
             if ( isset( $_GET['post'] ) || in_array( $pagenow, array( 'post-new.php' ) ) ) {
                 wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/photomosaic.editor.js', __FILE__ ), array('photomosaic_js'));
             }
-
-            wp_enqueue_style( 'photomosaic_menu_css', plugins_url('/css/photomosaic.menu.css', __FILE__ ));
         }
     }
 
@@ -671,12 +669,13 @@ class PhotoMosaic {
         }
 
         add_menu_page(
-            'PhotoMosaic v' . PhotoMosaic::version(),
-            'PhotoMosaic',
-            'update_plugins',
-            'photomosaic', // basename(__FILE__) == 'photoMosaic.php'
-            array('PhotoMosaic', 'render_admin_page'),
-            'div'
+            'PhotoMosaic v' . PhotoMosaic::version(), // page tite
+            'PhotoMosaic', // menu title
+            'update_plugins', // capability
+            'photomosaic', // menu slug
+            array('PhotoMosaic', 'render_admin_page'), // function
+            plugins_url('/images/admin-page-icon.gif', __FILE__ ) // icon url
+            // position
         );
     }
 

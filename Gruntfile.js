@@ -131,7 +131,7 @@ module.exports = function(grunt) {
                 options : {
                     mangle: false,
                     sourceMap : true,
-                    banner : '/* === <%= pkg.name %> v<%= pkg.version %> : <%= grunt.template.today("yyyy-mm-dd") %> === */\n'
+                    banner : '/*\n<%= pkg.name %> v<%= pkg.version %>\n<%= grunt.template.today("dddd, mmmm d, yyyy h:MM:ss TT Z") %>\n*/\n'
                 }
             }
         },

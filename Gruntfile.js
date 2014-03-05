@@ -26,7 +26,7 @@ module.exports = function(grunt) {
     ];
 
     grunt.initConfig({
-        version : '0.0.0',
+        pkg: grunt.file.readJSON('package.json'),
         clean : {
             dist : {
                 src : dist_path
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
                 }
             },
             codecanyon : {
-                src : plugin_name + '-<%= version %>/'
+                src : plugin_name + '-<%= pkg.version %>/'
             }
         },
         concat : {
@@ -86,7 +86,7 @@ module.exports = function(grunt) {
                 expand : true,
                 cwd : 'app/',
                 src : 'readme.txt',
-                dest : plugin_name + '-<%= version %>/'
+                dest : plugin_name + '-<%= pkg.version %>/'
             },
             dist : {
                 files : [
@@ -129,8 +129,8 @@ module.exports = function(grunt) {
                 src : dist_path + 'js/photomosaic.js',
                 dest : dist_path + 'js/photomosaic.min.js',
                 options : {
-                    preserveComments : 'all',
-                    mangle: false
+                    sourceMap : true,
+                    banner : '/* === <%= pkg.name %> v<%= pkg.version %> : <%= grunt.template.today("yyyy-mm-dd") %> === */\n'
                 }
             }
         },
@@ -140,21 +140,21 @@ module.exports = function(grunt) {
                 cwd : dist_path,
                 src : ['**/*'],
                 options : {
-                    archive : plugin_name + '-<%= version %>/' + plugin_name + '.zip'
+                    archive : plugin_name + '-<%= pkg.version %>/' + plugin_name + '.zip'
                 }
             },
             codecanyon : {
                 expand : true,
-                cwd : plugin_name + '-<%= version %>/',
+                cwd : plugin_name + '-<%= pkg.version %>/',
                 src : ['**/*'],
                 options : {
-                    archive : plugin_name + '-<%= version %>.zip'
+                    archive : plugin_name + '-<%= pkg.version %>.zip'
                 }
             }
         },
         watch : {
             dev: {
-                files: [ 'app/**/*' ],
+                files: [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
                 tasks: [ 'default' ]
             }
         }
@@ -167,11 +167,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('dist', [ 'clean:dist', 'concat', 'copy:dist' /*, 'uglify:dist'*/]);
-    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
-    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
-    grunt.registerTask('codecanyon', function (version) {
-        grunt.config.data.version = version || grunt.config.data.version;
-        grunt.task.run([ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon' ]);
-    });
+    grunt.registerTask('dist', [ 'clean:dist', 'concat', 'copy:dist', 'uglify:dist' ]);
+    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin' ]);
+    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog' ]);
+    grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon' ]);
 };

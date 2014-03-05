@@ -1,7 +1,7 @@
 {
-  "name": "photomosaic",
+  "name": "PhotoMosaic",
   "description": "A Wordpress Plugin that turns a [gallery] into a mosaic.",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "repository": {
     "type": "git",
     "url": "git@github.com:daylifemike/photomosaic-wp.git"
@@ -15,7 +15,7 @@
     "grunt-contrib-copy": "~0.5.0",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-ugly": "~0.4.0",
+    "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-compress": "~0.7.0",
     "grunt-contrib-watch": "~0.5.3"
   },

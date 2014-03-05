@@ -148,59 +148,53 @@
                 this.obj.find('img').css('opacity','0');
             }
 
-            this.obj.imagesLoaded({
-                progress: function (isBroken, $images, $proper, $broken) {
+            this.obj.imagesLoaded()
+                .progress( function (instance, image) {
+                    // after each image has loaded
                     setTimeout(function () {
                         if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
-                            $($proper[$proper.length - 1]).parents('span.loading, a.loading').removeClass('loading');
-
-                            if ( ($proper.length + $broken.length) === $images.length ) {
-                                self.obj.children('.photoMosaic').removeClass('loading');
-                            }
-
+                            $(image.img).parents('span.loading, a.loading').removeClass('loading');
                         } else {
-                            $($proper[$proper.length - 1]).animate(
+                            $(image.img).animate(
                                 { 'opacity' : '1' },
                                 self.opts.responsive_transition_settings.duration * 1000,
                                 function(){
                                     $(this).parents('span.loading, a.loading').removeClass('loading');
-
-                                    if ( ($proper.length + $broken.length) === $images.length ) {
-                                        self.obj.children('.photoMosaic').removeClass('loading');
-                                    }
                                 }
                             );
                         }
                     }, 0);
-                },
-                always: function () {
-                    // setTimeout(function () {
-                    //     self.obj.children('.photoMosaic').removeClass('loading');
-                    // }, 1000);
-                },
-                fail: function($images, $proper, $broken) {
+                })
+                .fail( function (instance) {
+                    // after all images have been loaded with at least one broken image
                     var id = '';
                     var img = null;
                     var i = 0;
                     var j = 0;
 
-                    for (i = 0; i < $broken.length; i++) {
-                        $node = $($broken[i]);
-                        id = $node.attr('id');
-                        img = self.deepSearch(self.images, 'id', id);
+                    for (i = 0; i < instance.images.length; i++) {
+                        if (!instance.images[i].isLoaded) {
+                            $node = $(instance.images[i].img);
+                            id = $node.attr('id');
+                            img = self.deepSearch(self.images, 'id', id);
 
-                        for (j = 0; j < self.images.length; j++) {
-                            if (self.images[j] === img) {
-                                self.images.splice(j,1);
-                            }
-                        };
+                            for (j = 0; j < self.images.length; j++) {
+                                if (self.images[j] === img) {
+                                    self.images.splice(j,1);
+                                }
+                            };
 
-                        $node.parent().remove();
+                            $node.parent().remove();
+                        }
                     };
 
                     self.refresh();
-                }
-            });
+
+                })
+                .always( function (instance) {
+                    // after all images have been either loaded or confirmed broken
+                    self.obj.children('.photoMosaic').removeClass('loading');
+                });
 
             this.bindEvents();
 

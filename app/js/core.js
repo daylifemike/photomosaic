@@ -130,7 +130,7 @@
                 this.render();
             } else {
                 $.when(this.preloadify()).then(function () {
-                    self.opts.gallery = self.addPreloadData(self.opts.gallery);
+                    self.opts.gallery = self.prepData(self.opts.gallery);
                     self.render();
                 });
             }

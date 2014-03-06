@@ -1,5 +1,13 @@
 ## What's New
 
+### 2.6
+- Enhancement: minified JS is now 60% smaller
+- Enhancement: fallsback to the default [gallery] layout for uses with JS turned off or for pages with JS errors
+- Enhancement: updates ImagesLoaded to v3.1.4
+- Change: updates admin icon to the new WP3.8 style
+- Bug Fix: corrects the check that looks for a preexisting 'theme' select
+- Bug Fix: corrects 'addPreloadData' regression introduced in the last release
+
 ### 2.5.3
 - Enhancement: adds the ability to be updated through the Wordpress Admin
 - Change: switches to the jQuery included with Wordpress (no longer supports WP older than v3.3)

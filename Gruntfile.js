@@ -168,8 +168,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
-    grunt.registerTask('dist', [ 'clean:dist', 'concat', 'copy:dist', 'uglify:dist' ]);
-    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin' ]);
-    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog' ]);
-    grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon' ]);
+    grunt.registerTask('dist', [ 'concat', 'copy:dist', 'uglify:dist' ]);
+    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
+    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
+    grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
 };

@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.6.2
+- Bug Fix: corrects a regression that caused images without dimension data to fail to load
+
 ### 2.6.1
 - Change: uses jQuery.Migrate.sub() to create an isolated jQuery instance (JQPM)
 - Bug Fix: corrects filename capitalization

@@ -8,11 +8,12 @@ module.exports = function(grunt) {
         // base
         'app/js/app.js',
         // dependencies
-        'app/includes/vendor/jstween-1.1.js',
-        'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
-        'app/includes/vendor/mustache.js',
         'app/includes/vendor/modernizr.js',
+        'app/includes/vendor/mustache.js',
+        'app/includes/vendor/jstween.js',
         'app/includes/vendor/imagesloaded.js',
+        'app/includes/vendor/waypoints.js',
+        'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
         // utils
         'app/js/utils.js',
         'app/js/error_checks.js',

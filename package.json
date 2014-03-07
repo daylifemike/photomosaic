@@ -1,7 +1,7 @@
 {
   "name": "PhotoMosaic",
   "description": "A Wordpress Plugin that turns a [gallery] into a mosaic.",
-  "version": "2.6",
+  "version": "2.6.1",
   "repository": {
     "type": "git",
     "url": "git@github.com:daylifemike/photomosaic-wp.git"

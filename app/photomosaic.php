@@ -39,14 +39,13 @@ class PhotoMosaic {
         add_action( 'admin_menu', array( __CLASS__, 'setup_admin_page') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajax_handler') );
 
-        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery'));
+        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.js', __FILE__ ), array('jquery'));
         wp_enqueue_script('photomosaic_js');
-
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 
         if (!is_admin()) {
             if($options['lightbox']) {
-                wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/vendor/prettyPhoto/prettyPhoto.css', __FILE__ ));
+                wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/vendor/prettyphoto/prettyphoto.css', __FILE__ ));
             }
 
             add_shortcode( 'photoMosaic', array( __CLASS__, 'shortcode' ) );
@@ -230,8 +229,8 @@ class PhotoMosaic {
             <script type="text/javascript" data-photomosaic-call="true">';
 
         $output_buffer .='
-                JQPM(document).ready(function($) {
-                    $("#photoMosaicTarget'.$unique.'").photoMosaic({
+                JQPM(document).ready(function() {
+                    JQPM("#photoMosaicTarget'.$unique.'").photoMosaic({
                         gallery: PMalbum'.$unique.',
                         padding: '. intval($settings['padding']) .',
                         columns: '. $settings['columns'] .',
@@ -260,7 +259,7 @@ class PhotoMosaic {
             if( $settings['lightbox'] == 'true' ) {
                 $output_buffer .='
                         modal_ready_callback : function($photomosaic){
-                            $("a[rel^=\''.$settings['lightbox_rel'].'\']", $photomosaic).prettyPhoto({
+                            JQPM("a[rel^=\''.$settings['lightbox_rel'].'\']", $photomosaic).prettyPhoto({
                                 overlay_gallery: false,
                                 slideshow: false,
                                 theme: "pp_default",
@@ -288,7 +287,7 @@ class PhotoMosaic {
                         var $a;
                         var self = this;
 
-                        $("a", $photomosaic).each(function () {
+                        jQuery("a", $photomosaic).each(function () {
                             $a = $(this);
                             $img = $a.find("img");
                             id = $img.attr("id");
@@ -299,7 +298,7 @@ class PhotoMosaic {
                             $a.addClass("gallery-item");
                         });
 
-                        $($photomosaic).parent().addClass("gallery");
+                        jQuery($photomosaic).parent().addClass("gallery");
                     },
             ';
         }

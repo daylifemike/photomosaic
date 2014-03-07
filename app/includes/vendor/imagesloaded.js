@@ -571,7 +571,7 @@
         );
     } else {
         // browser global
-        window.imagesLoaded = factory(
+        window.PhotoMosaic.Plugins.imagesLoaded = factory(
             window,
             window.EventEmitter,
             window.eventie
@@ -581,7 +581,7 @@
 
 // --------------------------  factory -------------------------- //
 function factory( window, EventEmitter, eventie ) {
-    var $ = window.jQuery;
+    var $ = window.JQPM;
     var console = window.console;
     var hasConsole = typeof console !== 'undefined';
 

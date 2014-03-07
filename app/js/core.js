@@ -43,6 +43,7 @@
             modal_name : null,
             modal_group : true,
             modal_ready_callback : null,
+            lazyload : 0, // int || false
             log_gallery_data : false
             // random : false (deprecated: v2.2)
             // force_order : false (deprecated: v2.2)
@@ -189,7 +190,6 @@
                     };
 
                     self.refresh();
-
                 })
                 .always( function (instance) {
                     // after all images have been either loaded or confirmed broken

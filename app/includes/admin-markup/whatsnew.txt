@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.6.3
+- Bug Fix: corrects a bug that caused PrettyPhoto to fail to load in certain server environments
+
 ### 2.6.2
 - Bug Fix: corrects a regression that caused images without dimension data to fail to load
 

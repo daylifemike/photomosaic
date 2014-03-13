@@ -680,7 +680,7 @@ class PhotoMosaic {
 
     public static function render_admin_page() {
         if ( !class_exists('MarkdownExtra_Parser') ) {
-            require_once( 'includes/Markdown.php' );
+            require_once( 'includes/markdown.php' );
         }
         $options = PhotoMosaic::get_options();
         $options = PhotoMosaic::adjust_deprecated_options($options);

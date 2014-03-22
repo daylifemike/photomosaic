@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.6.4
+- Bug Fix: corrects a bug that caused apostrophes to be improperly escaped
+
 ### 2.6.3
 - Bug Fix: corrects a bug that caused PrettyPhoto to fail to load in certain server environments
 

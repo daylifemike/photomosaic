@@ -4,7 +4,13 @@ PhotoMosaic is an extention of the `[gallery]` shortcode.  Simply make a `[galle
 
 Any existing `[gallery]` can become a PhotoMosaic simply by specifying the 'theme' --> `[gallery theme="photomosaic"]` (either by editing the shortcode or by editing the gallery).
 
+See [Where do I create/edit my galleries?](#createedit) for more detail.
+See [Where can I get step-by-step instructions for making a gallery](#stepbystep) for step-by-step instructions.
+
+A mosaic can also be made from the Featured Images of the most recent posts `[photomosaic category="recent" limit="20"]` or from a specific category of posts `[photomosaic category="uncategorized" limit="20"]`.
+
+See [How do I make a mosaic of my recent posts?](#recentposts) for more detail.
+
 NextGen users must use the `[photomosaic]` shortcode.  Specifiy a gallery ID `[photomosaic nggid="1"]` or an album ID `[photomosaic ngaid="1"]` to be displayed.
 
-See [Where do I create/edit my galleries?](#createedit) for more detail.  
-See [Where can I get step-by-step instructions for making a gallery](#stepbystep) for step-by-step instructions.
+See [How does PhotoMosaic work with NextGen Galleries?](#nextgen) for more detail.

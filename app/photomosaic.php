@@ -213,6 +213,23 @@ class PhotoMosaic {
             $output_buffer .= PhotoMosaic::gallery_from_nextgen($atts['nggid'], $settings['link_behavior'], 'gallery');
         } else if ( !empty($atts['ngaid']) ) {
             $output_buffer .= PhotoMosaic::gallery_from_nextgen($atts['ngaid'], $settings['link_behavior'], 'album');
+        } else if ( !empty($atts['category']) ) {
+            if ( $atts['category'] == 'recent' ) {
+                $recent_images = PhotoMosaic::recent_posts_images($atts['limit']);
+            } else {
+                $recent_images = PhotoMosaic::recent_posts_images($atts['limit'], $atts['category']);
+            }
+
+            if ( !empty($atts['link_behavior']) ) {
+                $link_behavior = $atts['link_behavior'];
+            } else {
+                $link_behavior = $recent_images;
+                $settings['lightbox'] = false;
+                $settings['custom_lightbox'] = false;
+            }
+
+            $ids = array_keys( $recent_images );
+            $output_buffer .= PhotoMosaic::gallery_from_wordpress($settings['id'], $link_behavior, $settings['include'], $settings['exclude'], $ids);
         } else {
             $output_buffer .= PhotoMosaic::gallery_from_wordpress($settings['id'], $settings['link_behavior'], $settings['include'], $settings['exclude'], $settings['ids']);
         }
@@ -325,6 +342,33 @@ class PhotoMosaic {
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
+    public static function recent_posts_images($limit = null, $category = null) {
+        if ( empty($limit) ) {
+            return '';
+        }
+
+        $response = array();
+        $args = array(
+            'numberposts' => $limit,
+            'post_status' => 'publish'
+        );
+
+        if ( !empty($category) ) {
+            $args['category'] = get_category_by_slug($category)->term_id;
+        }
+
+        $posts = wp_get_recent_posts( $args );
+
+        foreach ($posts as $post) {
+            $id = get_post_thumbnail_id( $post['ID'] );
+            if ( !empty( $id ) ) {
+                $response[ $id ] = get_permalink( $post['ID'] );
+            }
+        }
+
+        return $response;
+    }
+
     public static function gallery_from_wordpress($id, $link_behavior, $include, $exclude, $ids, $return_img_obj = false) {
         global $wp_version;
 
@@ -404,8 +448,10 @@ class PhotoMosaic {
 
                 if ( $link_behavior === 'custom' && preg_match("#$pattern#i", $image_description) ) {
                     $url_data = ',"url": "' . $image_description . '"';
-                } elseif ( $link_behavior === 'attachment' ) {
+                } else if ( $link_behavior === 'attachment' ) {
                     $url_data = ',"url": "' . $image_attachment_page . '"';
+                } else if ( is_array( $link_behavior ) ) {
+                    $url_data = ',"url": "' . $link_behavior[ $_post->ID ] . '"';
                 } else {
                     $url_data = '';
                 }

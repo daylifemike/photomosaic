@@ -14,6 +14,8 @@
         array( 'multiplemosaics', 'multiple-mosaics.txt' ),
         array( 'nextgen',         'nextgen-galleries.txt' ),
         array( 'stepbystep',      'step-by-step-creation.txt' ),
+        array( 'categoryposts',   'category-posts.txt' ),
+        array( 'recentposts',     'recent-posts.txt' ),
         array( 'customlightbox',  'custom-lightbox.txt'),
         array( 'stretchedimages', 'stretched-images.txt')
     );

@@ -1,0 +1,7 @@
+### How do I make a mosaic of my recent posts? {.title}
+
+Set your mosaic's 'category' to 'recent'.
+
+`[photomosaic category="recent" limit="20"]`
+
+See [How do I make a mosaic from posts in a category?](#categoryposts) for more detail.

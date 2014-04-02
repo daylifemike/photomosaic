@@ -1,0 +1,31 @@
+### How do I make a mosaic from posts in a category? {.title}
+
+You can create a gallery from the posts in a category by setting the 'category' attribute on your shortcode to the slug/name of the category you'd like to use.  You must also set the 'limit' to be number of posts you'd like to include.  PhotoMosaic will use each post's Featured Image.
+
+`[photomosaic category="uncategorized" limit="20"]`
+
+By default, mosaics built from a 'category' will link to each image's post.  This could, potentially, override your current 'link_behavior', 'lightbox', and 'custom_lightbox' global settings.  Setting 'link_behavior' inline on the shortcode will prevent this, causing your 'lightbox' and 'custom_lightbox' to fallback to their global settings (or the inline value if set).
+
+For example, assuming my global settings has images opening in a lightbox when clicked (link_behavior="image", lightbox="1") :
+
+- `[photomosaic category="uncategorized" limit="20"]`
+	- images will link to that image's post
+	- all lightbox settings will be ignored
+
+- `[photomosaic category="uncategorized" limit="20" link_behavior="image"]`
+	- images will link to the large version of the image
+	- all lightbox settings will be honored
+
+To find a category's slug :
+
+* in the Admin, visit the 'All Posts' page (wp-admin/edit.php)
+* select the Categories you'd like to use from the 'View All Categories' select box
+* the URL for the page should include "?category_name=" (e.g. "?category_name=uncategorized")
+
+A few more examples :
+
+| Category        | Admin URL                      | Slug            |
+|-----------------|--------------------------------|-----------------|
+| Trips           | ?category_name=trips           | trips           |
+| Favorite Places | ?category_name=favorite-places | favorite-places |
+| 123!@#          | ?category_name=123             | 123             |

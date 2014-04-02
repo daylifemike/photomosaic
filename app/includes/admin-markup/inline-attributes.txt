@@ -9,6 +9,8 @@ Any inline setting will override the default values set on the "Global Settings"
 - **exclude** : the list of image ids in the attached gallery that should not be displayed *(only works with 'id')*
 - **nggid** : the ID for the desired NextGen gallery
 - **ngaid** : the ID for the desired NextGen album
+- **category** : 'recent' or the category slug (name) for which each post's featured image will be used (if found) (requires *limit* be set)
+- **limit** : the number of post for which the featured image will be used (if found) (only works with *category*)
 - **padding** : any number *(in pixels)*
 - **columns** : any number
 - **width** : any number *(in pixels)*

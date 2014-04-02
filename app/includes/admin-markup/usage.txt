@@ -5,10 +5,9 @@ Wordpress v3.5+ users can create and edit their PhotoMosaics like they would a n
 
 ## Shortcodes {.subhead}
 
-A PhotoMosaic shortcode can be used on any post or page to display images in the Wordpress Media Library.
+A PhotoMosaic shortcode can be used on any post or page to display images in the Wordpress Media Library.  The shortcodes below are interchangeable.
 
 - `[gallery theme="photomosaic"]`
-- `[gallery photomosaic="true"]`
 - `[photomosaic]`
 
 When working with Wordpress galleries, there are three ways to specify the images a shortcode should use:
@@ -17,19 +16,24 @@ When working with Wordpress galleries, there are three ways to specify the image
 2. `[photomosaic id="1"]` : the ID of a post/page that has attached images that should be used
 3. `[photomosaic]` : when no ID or IDs attributes are present PhotoMosaic assumes there are images attached to the current post/page *(eg: on page ID = 5 --> `[photomosaic]` === `[photomosaic id="5"]`)*
 
+A PhotoMosaic can also be used to show any recent posts or recent posts from a specific category:
+
+- `[phototmosaic category="recent" limit="20"]` : show the 20 most recent posts from all categories
+- `[phototmosaic category="uncategorized" limit="10"]` : show the 10 most recent posts from from the 'uncategorized' category
+
 NextGen users can specify a NextGen Gallery ID or a NextGen Album ID.  For albums, all of the images in all of the galleries in the album will be displayed. Images will appear ordered, first, by album and then by the order specified in each gallery.
 
 - Gallery ID --> `[photomosaic nggid="1"]`
 - Album ID --> `[photomosaic ngaid="1"]`
 
-More information can be found in the [FAQs](#tab-faq){.combo-link}.
+More information about all of the above methods can be found in the [FAQs](#tab-faq){.combo-link}.
 
 
 ## Template Tag {.subhead}
 
 PhotoMosaic offers a Template Tag (`wp_photomosaic()`).  This can be added to your theme's template files to automatically add a gallery to every page.
 
-The PhotoMosaic template tag accepts an array of the attributes (listed below).  An Example:
+The PhotoMosaic template tag accepts an array of the attributes (list of supported [Inline Attributes](#tab-inlineattrs){.combo-link}).  An Example:
 
     $atts = array(
         'id' => 1,
@@ -40,6 +44,6 @@ The PhotoMosaic template tag accepts an array of the attributes (listed below). 
 
 ## Sidebar Widget {.subhead}
 
-A PhotoMosaic shortcode can be placed in a standard Text Widget.  Because Widgets aren't posts or pages they can't have attached images.  This means that you'll need to specify an ID for a post/page with attached images to be used, or a list of image IDs to be used.
+A PhotoMosaic shortcode can be placed in a standard Text Widget.  Because Widgets aren't posts or pages they can't have attached images.  This means that you'll need to use any PhotoMosaic method (id, ids, category, nggid, ngaid) except the barebones `[photomosaic]`.
 
 While the Create Gallery flow is unavailable on the Widgets page, you can create a gallery on any post/page and then simply copy/paste the resulting shortcode into your Text Widget.

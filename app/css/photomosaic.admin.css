@@ -67,3 +67,35 @@
 
 .toplevel_page_photomosaic .wp-pointer-4 .wp-pointer-arrow,
 .toplevel_page_photomosaic .wp-pointer-5 .wp-pointer-arrow { left:145px; }
+
+.toplevel_page_photomosaic table {
+    background: #ffffff;
+    border: 1px solid #E5E5E5;
+    border-spacing: 0;
+    width: 100%;
+    clear: both;
+    margin: 0;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.toplevel_page_photomosaic table * {
+    word-wrap: break-word;
+}
+
+.toplevel_page_photomosaic table th {
+    color: #333;
+    font-size: 14px;
+    line-height: 1.4em;
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid #E1E1E1;
+}
+
+.toplevel_page_photomosaic table td {
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.5em;
+    vertical-align: top;
+    padding: 8px 10px;
+}

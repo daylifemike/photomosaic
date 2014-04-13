@@ -18,6 +18,7 @@ module.exports = function(grunt) {
         'app/js/utils.js',
         'app/js/error_checks.js',
         'app/js/inputs.js',
+        'app/js/loader.js',
         // view constructors
         // 'app/js/layouts/columns.js',
         // 'app/js/layouts/rows.js',

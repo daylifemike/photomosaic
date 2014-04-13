@@ -40,6 +40,7 @@
     registerNamespace('PhotoMosaic.$', $sub || {});
     registerNamespace('PhotoMosaic.Utils');
     registerNamespace('PhotoMosaic.Inputs');
+    registerNamespace('PhotoMosaic.Loader');
     registerNamespace('PhotoMosaic.Layouts');
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');

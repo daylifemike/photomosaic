@@ -82,6 +82,7 @@ class PhotoMosaic {
             'show_loading' => false,
             'loading_transition' => 'fade',
             'responsive_transition' => true,
+            'lazyload' => 200,
             'lightbox' => true,
             'lightbox_rel' => 'pmlightbox',
             'lightbox_group' => true,
@@ -260,6 +261,7 @@ class PhotoMosaic {
                         show_loading: '. $settings['show_loading'] .',
                         loading_transition: "'. $settings['loading_transition'] .'",
                         responsive_transition: '. $settings['responsive_transition'] .',
+                        lazyload: '. intval($settings['lazyload']) .',
                         modal_name: "' . $settings['lightbox_rel'] . '",
                         modal_group: ' . $settings['lightbox_group'] . ',
             ';

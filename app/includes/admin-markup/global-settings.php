@@ -122,10 +122,10 @@ rows   |  columns |  masonry
     </div>
     <div class="set margin">
         <div class="field">
-            <p>
-                <label><input name="show_loading" type="checkbox" value="1" <?php if($options['show_loading']) echo "checked='checked'"; ?> /> Show Loading Spinner</label>
-            </p>
-            <span class="info">displays a "loading gallery..." spinner until the mosaic is ready</span>
+            <p><label>Lazyload</label></p>
+            <p><input type="text" name="lazyload" value="<?php echo($options['lazyload']); ?>" /></p>
+            <span class="info">the distance (in pixels) before the image is visible (the bottom of the viewport) to trigger loading</span>
+            <span class="info">set a negative number (e.g. -200) to set a threshold above the bottom of the viewport</span>
         </div>
         <div class="field">
             <p><label>Image Loading Transition</label></p>
@@ -161,6 +161,14 @@ rows   |  columns |  masonry
             <span class="info">prevents images from being cropped</span>
             <span class="info">causes the bottom of the mosaic to be uneven / jagged</span>
             <span class="info">causes the <b>height</b> setting to be ignored, uses "auto" instead</span>
+        </div>
+    </div>
+    <div class="set margin">
+        <div class="field">
+            <p>
+                <label><input name="show_loading" type="checkbox" value="1" <?php if($options['show_loading']) echo "checked='checked'"; ?> /> Show Loading Spinner</label>
+            </p>
+            <span class="info">displays a "loading gallery..." spinner until the mosaic is ready</span>
         </div>
     </div>
 

@@ -33,6 +33,39 @@ PhotoMosaic.Utils = (function(){
             }
         },
 
+        deepSearch : function (obj, key, value) {
+            // recursively traverses an nested arrays, and objects looking for a key/value pair
+            var response = null;
+            var i = 0;
+            var prop;
+
+            if (obj instanceof Array) {
+                for (i = 0; i < obj.length; i++) {
+                    response = this.deepSearch(obj[i], key, value);
+                    if (response) {
+                        return response;
+                    }
+                }
+            } else {
+                if (obj.hasOwnProperty(key) && obj[key] == value) {
+                    return obj
+                } else {
+                    for (prop in obj) {
+                        if (obj.hasOwnProperty(prop)) {
+                            if (obj[prop] instanceof Object || obj[prop] instanceof Array) {
+                                response = this.deepSearch(obj[prop], key, value);
+                                if (response) {
+                                    return response;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response;
+        },
+
         logGalleryData: function (gallery) {
             var output = [];
             for (var i = 0; i < gallery.length; i++) {

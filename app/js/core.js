@@ -418,42 +418,11 @@
             var images = [];
 
             for (var i = 0; i < this.images.length; i++) {
-                image = this.deepSearch(columns, 'id', this.images[i].id);
+                image = PhotoMosaic.Utils.deepSearch(columns, 'id', this.images[i].id);
                 images.push(image);
             };
 
             return images;
-        },
-
-        deepSearch : function (obj, key, value) {
-            // recursively traverses an nested arrays, and objects looking for a key/value pair
-            var response = null;
-            var i = 0;
-            var prop;
-
-            if (obj instanceof Array) {
-                for (i = 0; i < obj.length; i++) {
-                    response = this.deepSearch(obj[i], key, value);
-                    if (response) {
-                        return response;
-                    }
-                }
-            } else {
-                for (prop in obj) {
-                    if (obj.hasOwnProperty(prop)) {
-                        if ( (prop == key) && (obj[prop] == value) ) {
-                            return obj;
-                        } else if (obj[prop] instanceof Object || obj[prop] instanceof Array) {
-                            response = this.deepSearch(obj[prop], key, value);
-                            if (response) {
-                                return response;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return response;
         },
 
         adjustHeights: function (json, target_height) {

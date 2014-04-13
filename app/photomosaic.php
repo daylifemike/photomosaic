@@ -291,7 +291,7 @@ class PhotoMosaic {
                             $a = $(this);
                             $img = $a.find("img");
                             id = $img.attr("id");
-                            data = self.deepSearch( self.images, "id", id );
+                            data = PhotoMosaic.Utils.deepSearch( self.images, "id", id );
 
                             $img.attr( data.jetpack );
 

@@ -521,12 +521,14 @@
                     height:pp_dimensions['contentHeight'],
                     width:pp_dimensions['contentWidth']
                 },settings.animation_speed);
-            
+
+            var halfWidth = (windowWidth/2) - (pp_dimensions['containerWidth']/2);
+
             // Resize picture the holder
             $pp_pic_holder.animate({
                 'top': projectedTop,
-                'left': ((windowWidth/2) - (pp_dimensions['containerWidth']/2) < 0) ? 0 : (windowWidth/2) - (pp_dimensions['containerWidth']/2),
-                width:pp_dimensions['containerWidth']
+                'left': (halfWidth < 0) ? 0 : halfWidth,
+                'width': pp_dimensions['containerWidth']
             },settings.animation_speed,function(){
                 $pp_pic_holder.find('.pp_hoverContainer,#fullResImage').height(pp_dimensions['height']).width(pp_dimensions['width']);
 

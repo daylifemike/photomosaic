@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.7
+- Enhancement: adds ability to make a mosaic from all recent posts
+- Enhancement: adds ability to make a mosaic from recent posts from a category
+- Enhancement: mosaic images are now lazyloaded by default
+
 ### 2.6.4
 - Bug Fix: corrects a bug that caused apostrophes to be improperly escaped
 

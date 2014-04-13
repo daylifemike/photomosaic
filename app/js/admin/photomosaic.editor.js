@@ -14,7 +14,7 @@
         var $gallery_settings = $('#tmpl-gallery-settings');
         // convert the template string into HTML so it can be traversed
         var $fragment = $('<div></div>').html( $gallery_settings.text() );
-        var hasTheme = $gallery_settings.find('select.theme').length > 0;
+        var hasTheme = $fragment.find('select.theme').length > 0;
 
         if (hasTheme) {
             // SELECT.theme is already in the form -- just add the OPTION

@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.7.1
+- Enhancement: adds ability to bypass lazyloading
+
 ### 2.7
 - Enhancement: adds ability to make a mosaic from all recent posts
 - Enhancement: adds ability to make a mosaic from recent posts from a category

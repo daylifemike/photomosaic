@@ -184,6 +184,7 @@ class PhotoMosaic {
             'center', 'prevent_crop', 'links', 'external_links', 'show_loading',
             'responsive_transition', 'lightbox', 'custom_lightbox', 'lightbox_group'
         );
+        $int_false_settings = array('lazyload');
 
         foreach ( $auto_settings as $key ) {
             if(intval($settings[$key]) == 0){
@@ -200,6 +201,14 @@ class PhotoMosaic {
                 } else {
                     $settings[$key] = "false";
                 }
+            }
+        }
+
+       foreach ( $int_false_settings as $key ) {
+            if (empty($settings[$key]) || $settings[$key] == 'false') {
+                $settings[$key] = "false";
+            } else {
+                $settings[$key] = intval($settings[$key]);
             }
         }
 
@@ -261,7 +270,7 @@ class PhotoMosaic {
                         show_loading: '. $settings['show_loading'] .',
                         loading_transition: "'. $settings['loading_transition'] .'",
                         responsive_transition: '. $settings['responsive_transition'] .',
-                        lazyload: '. intval($settings['lazyload']) .',
+                        lazyload: '. $settings['lazyload'] .',
                         modal_name: "' . $settings['lightbox_rel'] . '",
                         modal_group: ' . $settings['lightbox_group'] . ',
             ';

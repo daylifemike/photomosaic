@@ -126,6 +126,7 @@ rows   |  columns |  masonry
             <p><input type="text" name="lazyload" value="<?php echo($options['lazyload']); ?>" /></p>
             <span class="info">the distance (in pixels) before the image is visible (the bottom of the viewport) to trigger loading</span>
             <span class="info">set a negative number (e.g. -200) to set a threshold above the bottom of the viewport</span>
+            <span class="info">leave blank or set to 'false' to prevent lazyloading</span>
         </div>
         <div class="field">
             <p><label>Image Loading Transition</label></p>

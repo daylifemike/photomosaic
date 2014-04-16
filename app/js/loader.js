@@ -7,18 +7,29 @@
         this.images = images;
         this.mosaic = mosaic;
         this.opts = mosaic.opts;
-        this.trigger_point = $.waypoints('viewportHeight') + this.opts.lazyload;
-        this.setWaypoints();
+
+        if (this.opts.lazyload === false) {
+            this.skipLazyload();
+        } else {
+            this.trigger_point = $.waypoints('viewportHeight') + this.opts.lazyload;
+            this.lazyload();
+        }
 
         return this;
     };
 
     PhotoMosaic.Loader.prototype = {
-        setWaypoints : function () {
+        lazyload : function () {
             this.images.parent().waypoint({
                 triggerOnce : true,
                 offset : this.trigger_point,
                 handler : this.handler
+            });
+        },
+
+        skipLazyload : function () {
+            this.images.parent().each(function () {
+                self.handler.apply(this);
             });
         },
 

@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.7.2
+- Bug Fix: corrects bug that caused older IEs to throw window.console errors
+
 ### 2.7.1
 - Enhancement: adds ability to bypass lazyloading
 

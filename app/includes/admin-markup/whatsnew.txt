@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.7.3
+- Bug Fix : prevents the default gallery from appearing before PM loads (fouc)
+
 ### 2.7.2
 - Bug Fix: corrects bug that caused older IEs to throw window.console errors
 

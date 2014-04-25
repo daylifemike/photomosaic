@@ -337,7 +337,7 @@ class PhotoMosaic {
                 });
             </script>';
 
-        $gallery_div = '<div id="photoMosaicTarget'. $unique .'" data-version="'. PhotoMosaic::version() .'">';
+        $gallery_div = '<div id="photoMosaicTarget'. $unique .'" class="photoMosaicTarget" data-version="'. PhotoMosaic::version() .'">';
 
         /* Jetpack :: Carousel hack - it needs an HTML string to append it's data */
         if ( class_exists('Jetpack_Carousel') ) {

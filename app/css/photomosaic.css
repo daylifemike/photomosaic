@@ -38,6 +38,8 @@
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 
+.PM_js .photoMosaicTarget .gallery { display:none; }
+
 
 /* overflow:hidden; on a container kills 3d */
 /* base */

@@ -18,7 +18,7 @@ PhotoMosaic.Utils = (function(){
             },
 
             print: function (msg) {
-                if (window.console !== 'undefined') {
+                if (window.console !== undefined) {
                     window.console.log(msg);
                 }
             }

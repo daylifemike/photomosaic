@@ -113,7 +113,7 @@ module.exports = function(grunt) {
                         dest : dist_path + 'includes/',
                         filter : 'isFile',
                         rename : function (dest, src) {
-                            return dest + 'Markdown.php';
+                            return dest + 'markdown.php';
                         }
                     },
                     {

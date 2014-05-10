@@ -96,7 +96,7 @@
                 var $mosaic = self.mosaic.obj.find('.photoMosaic')
                 var $images = $mosaic.children('a, span'); 
                 var $loading = $images.filter('.loading'); 
-                
+
                 if ($loading.length == 0) {
                     $mosaic.removeClass('loading');
                 }

@@ -54,7 +54,7 @@
             '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{clazz}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                 '{{#images}}' +
                     '{{#link}}' +
-                        '<a class="loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
+                        '<a class="photomosaic-item loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
                             ' {{#modal}}rel="{{modal}}"{{/modal}}' +
                             ' {{#caption}}title="{{caption}}"{{/caption}}' +
                             'style="' +
@@ -65,7 +65,7 @@
                         '>' +
                     '{{/link}}' +
                     '{{^link}}' +
-                        '<span class="loading"' +
+                        '<span class="photomosaic-item loading"' +
                             'style="' +
                                 ' width:{{#width}}{{constraint}}{{/width}}px;' +
                                 ' height:{{#height}}{{constraint}}{{/height}}px;' +

@@ -34,7 +34,7 @@
 /* loading */
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/spinner-arrows.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }
 
-.photoMosaic.loading .loading { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
+.photoMosaic.loading .photomosaic-item { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 

@@ -13,7 +13,7 @@ if(preg_match('#' . basename(__FILE__) . '#', $_SERVER['PHP_SELF'])) {
     die('Illegal Entry');
 }
 
-add_action('init', array('PhotoMosaic', 'init'));
+add_action( 'init', array( 'PhotoMosaic', 'init' ) );
 add_action( 'plugins_loaded', array( 'PhotoMosaic', 'include_github_updater' ) );
 
 class PhotoMosaic {
@@ -39,7 +39,7 @@ class PhotoMosaic {
         add_action( 'admin_menu', array( __CLASS__, 'setup_admin_page') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajax_handler') );
 
-        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery'));
+        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery'), PhotoMosaic::version());
         wp_enqueue_script('photomosaic_js');
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 
@@ -54,7 +54,7 @@ class PhotoMosaic {
         } else {
             if ( isset($_GET['page']) ) {
                 if ( $_GET['page'] == "photoMosaic.php" || $_GET['page'] == "photomosaic.php"  || $_GET['page'] == "photomosaic" ) {
-                    wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/photomosaic.admin.js', __FILE__ ), array('photomosaic_js'));
+                    wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/photomosaic.admin.js', __FILE__ ), array('photomosaic_js'), PhotoMosaic::version());
                     wp_enqueue_style( 'photomosaic_admin_css', plugins_url('/css/photomosaic.admin.css', __FILE__ ));
                 }
             }

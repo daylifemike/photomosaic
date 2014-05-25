@@ -1,5 +1,5 @@
 /*
-    Version: 3.1.5d
+    Version: 3.1.5e
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
     # b
      - new jQuery namespace (JQPM)
@@ -10,6 +10,10 @@
      - self-invoke arguments ref the window and test for availability (window.JQPM || jQuery)
     # d
      - new namespace on events
+    # e
+     - changed viewport buffer 200 >>> 100 (~#600)
+     - locked the overlay to the screen (CSS)
+     - removed the .ppt bumper (CSS)
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto
@@ -596,10 +600,10 @@
             
                 while (!fitting){
                     if((pp_containerWidth > windowWidth)){
-                        imageWidth = (windowWidth - 200);
+                        imageWidth = (windowWidth - 100);
                         imageHeight = (height/width) * imageWidth;
                     }else if((pp_containerHeight > windowHeight)){
-                        imageHeight = (windowHeight - 200);
+                        imageHeight = (windowHeight - 100);
                         imageWidth = (width/height) * imageHeight;
                     }else{
                         fitting = true;

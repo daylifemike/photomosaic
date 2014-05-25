@@ -255,11 +255,14 @@
 	div.pp_pic_holder a:focus { outline:none; }
 
 	div.pp_overlay {
+		/*position: absolute;*/
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
 		background: #000;
 		display: none;
-		left: 0;
-		position: absolute;
-		top: 0;
 		width: 100%;
 		z-index: 9500;
 	}
@@ -519,7 +522,9 @@
 		div.ppt {
 			color: #fff;
 			display: none;
-			font-size: 17px;
-			margin: 0 0 5px 15px;
+			/*font-size: 17px;*/
+			font-size: 0px;
+			/*margin: 0 0 5px 15px;*/
+			margin: 0;
 			z-index: 9999;
 		}

@@ -155,6 +155,16 @@ module.exports = function(grunt) {
                 }
             }
         },
+        replace : {
+            nonwp : {
+                src : dist_path + 'js/photomosaic.js',
+                overwrite : true,
+                replacements : [{
+                    from : 'JQPM',
+                    to : 'jQuery'
+                }]
+            }
+        },
         watch : {
             dev: {
                 files: [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
@@ -169,6 +179,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-text-replace');
 
     grunt.registerTask('dist', [ 'concat', 'copy:dist', 'uglify:dist' ]);
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);

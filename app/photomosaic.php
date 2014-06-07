@@ -212,7 +212,7 @@ class PhotoMosaic {
             }
         }
 
-        $unique = floor(((time() + rand(21,40)) * rand(1,5)) / rand(1,5));
+        $unique = PhotoMosaic::makeID();
 
         $output_buffer = '
             <!-- PhotoMosaic v'. PhotoMosaic::version() .' -->
@@ -995,6 +995,12 @@ class PhotoMosaic {
         $safe_text = wp_check_invalid_utf8( $text );
         $safe_text = _wp_specialchars( $safe_text, "double" );
         return apply_filters( 'attribute_escape', $safe_text, $text );
+    }
+
+    private static function makeID() {
+        // a modification of the GUID function in the Phunction framework
+        // http://sourceforge.net/projects/phunction/
+        return sprintf('%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
     }
 
 } // end PhotoMosaic

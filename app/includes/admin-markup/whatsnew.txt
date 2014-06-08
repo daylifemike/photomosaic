@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.7.5
+- Enhancement : increased the amount of the viewport the default lightbox (PrettyPhoto) uses
+- Bug Fix : corrects the bug that prevented items that should line up in a perfect grid from doing so
+- Bug Fix : corrects the bug that allowed mosaics to be placed incorrectly
+
 ### 2.7.4
 - Enhancement: updates WaypointsJS to v2.0.5
 - Bug Fix : prevents conflicts with other versions of WaypointsJS

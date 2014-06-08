@@ -444,7 +444,11 @@
                 image_end = Math.floor( column_end * ( Math.floor( (image_start / column_start) * 1000 ) / 1000 ) );
                 images_height += image_end;
 
-                image = this.setImageContraints(image, this.col_width, image_end);
+                if (this.opts.prevent_crop) {
+                    image = this.setImageContraints(image, image.width.adjusted, image.height.adjusted);
+                } else {
+                    image = this.setImageContraints(image, this.col_width, image_end);
+                }
             }
 
             col.height = images_height + total_padding;

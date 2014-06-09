@@ -66,7 +66,62 @@ PhotoMosaic.Utils = (function(){
             return response;
         },
 
-        logGalleryData: function (gallery) {
+        arrayToObj : function (array, key) {
+            var response = {};
+            for (var i = 0; i < array.length; i++) {
+                response[ array[i][key] ] = array[i];
+            };
+            return response;
+        },
+
+        pickImageSize: function (images, sizes) {
+            // currently only supported in PM4WP
+            if (!sizes || !images[0].sizes) { return images; }
+
+            for (var i = 0; i < images.length; i++) {
+                var image = images[i];
+                var size = null;
+                var scaled = {
+                    width : 0,
+                    height : 0
+                };
+
+                for (var key in sizes) {
+                    if (sizes.hasOwnProperty(key)) {
+                        // are we dealing with a portrait or landscape image?
+                        if (image.width.original >= image.height.original) {
+                            scaled.width = sizes[key];
+                            scaled.height = Math.floor((scaled.width * image.height.original) / image.width.original);
+                        } else {
+                            scaled.height = sizes[key];
+                            scaled.width = Math.floor((scaled.height * image.width.original) / image.height.original);
+                        }
+
+                        // compare the dims of the image to the space to which is has been scaled
+                        // if either of the image's dims are less than the container's dims - we'd be scaling up
+                        // scaling up is bad
+                        // keep looping until we scale the image down
+                        if (scaled.width < image.width.adjusted || scaled.height < image.height.adjusted) {
+                            continue;
+                        } else {
+                            size = key;
+                            break;
+                        }
+                    }
+                };
+
+                // if none of the known sizes are big enough, go with the biggest we've got
+                if (!size) {
+                    size = 'full';
+                }
+
+                image.src = image.sizes[size];
+            }
+
+            return images;
+        },
+
+        logGalleryData : function (gallery) {
             var output = [];
             for (var i = 0; i < gallery.length; i++) {
                 output.push({

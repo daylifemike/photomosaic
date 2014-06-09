@@ -43,6 +43,7 @@
 
 /* overflow:hidden; on a container kills 3d */
 /* base */
+.PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-item,
 .PM_csstransforms.PM_csstransitions .photoMosaic img {
     -webkit-transform-origin: center center;
        -moz-transform-origin: center center;
@@ -67,14 +68,6 @@
         -ms-backface-visibility: hidden;
          -o-backface-visibility: hidden;
             backface-visibility: hidden;
-}
-
-.PM_csstransforms.PM_csstransitions .resizing .photoMosaic img {
-    -webkit-transition: none;
-       -moz-transition: none;
-        -ms-transition: none;
-         -o-transition: none;
-            transition: none;
 }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.transition-none .loading img { }

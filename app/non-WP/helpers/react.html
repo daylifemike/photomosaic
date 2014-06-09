@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>PhotoMosaic</title>
+
+<script src="../download/files/js/jquery-1.9.1.min.js"></script>
+
+<script>
+    var PMalbum = [
+        {
+            src: "../download/files/images/imgs/moleskineh.jpg",
+            caption: "'moleskineh' - By Amir K (childofwar @ flickr)",
+            width: "500",
+            height: "321",
+            alt: '+++ alt text +++'
+        },
+        {
+            src: "../download/files/images/imgs/888.jpg",
+            caption: "'888' - By doug.siefken (siefken @ flickr)",
+            width: "500",
+            height: "371"
+        },
+        {
+            src: "../download/files/images/imgs/l_t.jpg",
+            caption: "'l_t' - Ros K (ros-k @ flickr)",
+            width: "500",
+            height: "322"
+        },
+        {
+            src: "../download/files/images/imgs/lumpini-park-lights.jpg",
+            caption: "'Lumpini Park Lights' - By Mike Behnken (mikebehnken @ flickr)",
+            width: "500",
+            height: "333"
+        },
+        {
+            src: "../download/files/images/imgs/crazy-hills-of-san-fran.jpg",
+            caption: "'Crazy Hills of San Francisco' - By Håkan Dahlström (dahlstroms @ flickr)",
+            width: "500",
+            height: "333"
+        },
+        {
+            src: "../download/files/images/imgs/christmas-25.jpg",
+            caption: "'Christmas #25' - By Kevin Dooley (pagedooley @ flickr)",
+            width: "500",
+            height: "333"
+        },
+        {
+            src: "../download/files/images/imgs/mammoths.jpg",
+            caption: "'mammoths' - By paul (dex) [dexxus @  flickr]",
+            width: "500",
+            height: "375"
+        },
+        {
+            src: "../download/files/images/imgs/empire-state-pigeon.jpg",
+            caption: "'Empire State Pigeon' - By ZeroOne (villes @ flickr)",
+            width: "500",
+            height: "500"
+        },
+        {
+            src: "../download/files/images/imgs/paris-s-eveille.jpg",
+            caption: "'Paris s'éveille' - By gadl (gadl @ flickr)",
+            width: "375",
+            height: "500"
+        },
+        {
+            src: "../download/files/images/imgs/koyaanisqatsi-patchwork.jpg",
+            caption: "'koyaanisqatsi patchwork' - By alvazer (alvazer @ flickr)",
+            width: "335",
+            height: "500"
+        },
+        {
+            src: "../download/files/images/imgs/living-off-the-land.jpg",
+            caption: "'Living Off the Land' - By MikeBehnken (mikebehnken @ flickr)",
+            width: "500",
+            height: "333"
+        },
+        {
+            src: "../download/files/images/imgs/water-tower-perspective.jpg",
+            caption: "'water tower perspective' - By Paulo Brandão (paulobrandao @ flickr)",
+            width: "500",
+            height: "500"
+        }
+    ];
+</script>
+
+<script type="text/javascript" data-photomosaic-gallery="true">
+var PMalbum2808980960 = [{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280-300x298.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280-300x298.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpfk4xLBGJ1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "886" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280-286x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280-143x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280-286x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mpvxzm8Kxs1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "931" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280-298x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280-298x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_moriu7xilg1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "892" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280-300x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280-300x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnzbicGhxV1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "891" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280-241x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280-120x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280-241x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280-823x1024.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnxrfrUDkR1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "1106" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280-300x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280-300x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnc88uF6iB1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "800", "height": "798" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280-300x297.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280-150x148.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280-300x297.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mnvniugML71qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "882" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280-298x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280-298x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mn5oawEtfH1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "894" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280-236x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280-118x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280-236x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_misbm7if9j1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "801", "height": "1016" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280-300x297.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280-150x148.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280-300x297.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mio2dvSYXk1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "882" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280-300x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280-300x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mm3102eUaG1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "576", "height": "575" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280-300x300.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280-150x150.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280-300x300.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mik50fD78O1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "814", "height": "814" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280.jpg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280-300x266.jpg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280-150x133.jpg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280-300x266.jpg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280.jpg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mimw6oWVmE1qcnj12o1_1280.jpg" }, "caption": "", "alt": "", "width": "889", "height": "790" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280.jpeg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280-249x300.jpeg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280-124x150.jpeg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280-249x300.jpeg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280.jpeg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mfijz6N5yr1qcnj12o1_1280.jpeg" }, "caption": "", "alt": "", "width": "751", "height": "904" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280.jpeg", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280-224x300.jpeg", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280-112x150.jpeg", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280-224x300.jpeg", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280.jpeg", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_mey9y7lFVL1qcnj12o1_1280.jpeg" }, "caption": "I'm a caption", "alt": "", "width": "746", "height": "997" ,"jetpack" : false },
+{ "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280.png", "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280-221x300.png", "sizes": { "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280-110x150.png", "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280-221x300.png", "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280.png", "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9usudHptO1qcnj12o1_r1_1280.png" }, "caption": "", "alt": "", "width": "733", "height": "993" ,"jetpack" : false },
+{
+    "src": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280.png",
+    "thumb": "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280-224x300.png",
+    "sizes": {
+        "thumbnail" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280-112x150.png",
+        "medium" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280-224x300.png",
+        "large" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280.png",
+        "full" : "http://localhost:8888/wp-content/uploads/2013/07/tumblr_m9q3xwLd7D1qcnj12o1_1280.png"
+    },
+    "caption": "",
+    "alt": "",
+    "width": "762",
+    "height": "1020",
+    "jetpack" : false
+}
+];</script>
+
+<link href="../../css/photomosaic.css" rel="stylesheet" type="text/css" />
+<link href="../../includes/vendor/prettyphoto/prettyphoto.css" rel="stylesheet" type="text/css" />
+
+<script src="../../js/app.js"></script>
+<script src="../../includes/vendor/modernizr.js"></script>
+
+<script src="../../includes/vendor/react-with-addons.js"></script>
+
+<script src="../../includes/vendor/mustache.js"></script>
+<script src="../../includes/vendor/jstween.js"></script>
+<script src="../../includes/vendor/imagesloaded.js"></script>
+<script src="../../includes/vendor/waypoints.js"></script>
+<script src="../../includes/vendor/prettyphoto/jquery.prettyphoto.js"></script>
+<script src="../../js/utils.js"></script>
+<script src="../../js/error_checks.js"></script>
+<script src="../../js/inputs.js"></script>
+<script src="../../js/loader.js"></script>
+<script src="../../js/layouts/columns.js"></script>
+
+<script src="../../js/layouts/react.js"></script>
+
+<script src="../../js/core.js"></script>
+
+<script>
+    JQPM(document).ready(function() {
+        JQPM('#target').photoMosaic({
+            input :'json',
+            // gallery : PMalbum,
+            gallery: PMalbum2808980960,
+            sizes: {
+                thumbnail: 150,
+                medium: 300,
+                large: 1024
+            },
+            // width : 600,
+            // columns : 5,
+            // height : 300,
+            // order : 'random',
+            // prevent_crop : true,
+            modal_name: 'prettyPhoto',
+            modal_ready_callback: function(pm) {
+                JQPM('a[rel^="prettyPhoto"]', pm).prettyPhoto({
+                    overlay_gallery: false,
+                    slideshow: false,
+                    theme: "pp_default",
+                    deeplinking: false,
+                    social_tools: "",
+                    show_title: false
+                });
+            }
+        });
+    }); 
+</script>
+
+</head>
+<body>
+    <div id="container">
+        <div id="target"></div>
+    </div>
+</body>
+</html>

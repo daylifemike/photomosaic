@@ -1,10 +1,11 @@
 (function ($) {
     var self = null;
 
-    PhotoMosaic.Loader = function (images, mosaic) {
+    PhotoMosaic.Loader = function ($container, mosaic) {
         self = this;
 
-        this.images = images;
+        this.obj = $container;
+        this.images = $container.find('img');
         this.mosaic = mosaic;
         this.opts = mosaic.opts;
 
@@ -13,6 +14,11 @@
         } else {
             this.trigger_point = $.waypoints('viewportHeight') + this.opts.lazyload;
             this.lazyload();
+        }
+
+        // if you want a loading transition but the browser doesn't support it... fade (old IEs)
+        if ( this.opts.loading_transition !== 'none' && !PhotoMosaic.Plugins.Modernizr.csstransitions ) {
+            this.images.css('opacity','0');
         }
 
         return this;
@@ -33,7 +39,7 @@
             });
         },
 
-        handler : function (direction) {
+        handler : function () {
             var $this = $(this);
             var $image = $this.children('img');
             var image_loaded = null;
@@ -49,9 +55,11 @@
         progress : function (instance, image) {
             // after each image has loaded
             setTimeout(function () {
+                // if you don't want a loading transition OR it's handled by CSS
                 if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                     $(image.img).parents('span.loading, a.loading').removeClass('loading');
                 } else {
+                    // you want a transition but the browser doesn't support CSS Transitions... fade (old IEs)
                     $(image.img).animate(
                         { 'opacity' : '1' },
                         self.opts.responsive_transition_settings.duration * 1000,

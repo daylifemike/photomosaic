@@ -4,10 +4,12 @@
     optional: prettyPhoto
 */
 (function ($) {
+    'use strict';
+
     var pluginName = 'photoMosaic';
     var self;
 
-    var Plugin = function (el, options, i) {
+    var photoMosaic = function (el, options, i) {
         self = this;
 
         this.el = el;
@@ -16,10 +18,21 @@
 
         this._id = PhotoMosaic.Utils.makeID(true);
 
+        this._transition_end_event_name = (function () {
+            var event_names = {
+                'WebkitTransition': 'webkitTransitionEnd',
+                'MozTransition': 'transitionend',
+                'OTransition': 'oTransitionEnd',
+                'msTransition': 'MSTransitionEnd',
+                'transition': 'transitionend'
+            };
+            return event_names[ PhotoMosaic.Plugins.Modernizr.prefixed( 'transition' ) ];
+        })();
+
         this.init();
     };
 
-    Plugin.prototype = {
+    photoMosaic.prototype = {
         _defaults: {
             input : 'json', // json, html, xml
             gallery : 'PMalbum', // json object, xml file path
@@ -49,7 +62,7 @@
             // force_order : false (deprecated: v2.2)
             // auto_columns : false (deprecated: v2.2)
         },
-
+//-- ???
         template: ' ' +
             '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{clazz}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
                 '{{#images}}' +
@@ -58,8 +71,8 @@
                             ' {{#modal}}rel="{{modal}}"{{/modal}}' +
                             ' {{#caption}}title="{{caption}}"{{/caption}}' +
                             'style="' +
-                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
-                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' width:{{#width}}{{container}}{{/width}}px;' +
+                                ' height:{{#height}}{{container}}{{/height}}px;' +
                                 ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
                             '"' +
                         '>' +
@@ -67,8 +80,8 @@
                     '{{^link}}' +
                         '<span class="photomosaic-item loading"' +
                             'style="' +
-                                ' width:{{#width}}{{constraint}}{{/width}}px;' +
-                                ' height:{{#height}}{{constraint}}{{/height}}px;' +
+                                ' width:{{#width}}{{container}}{{/width}}px;' +
+                                ' height:{{#height}}{{container}}{{/height}}px;' +
                                 ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
                             '"' +
                         '>' +
@@ -83,7 +96,7 @@
                     '{{^link}}</span>{{/link}}' +
                 '{{/images}}' +
             '</div>',
-
+//-- ???
         loading_template: ' ' +
             '<div id="photoMosaic_{{id}}" class="photoMosaic">' +
                 '<div class="photoMosaicLoading">loading gallery...</div>' +
@@ -97,10 +110,6 @@
             this._options = $.extend(true, {}, this.opts); // jQuery deep copy
 
             this.preload = 'PM_preloadify' + this._id;
-
-            if (this.opts.width === 'auto') {
-                this.opts.width = this.obj.width();
-            }
 
             // Error Checks
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) {
@@ -119,9 +128,10 @@
             var self = this;
 
             if (this.opts.show_loading) {
-                this.obj.html(PhotoMosaic.Plugins.Mustache.to_html(this.loading_template, {
-                    id: this._id
-                }));
+                this.react = React.renderComponent(
+                    PhotoMosaic.Layouts.React.loading({ id : this._id }),
+                    this.obj.get(0)
+                );
             }
 
             // if all items have defined w/h we don't need to
@@ -130,445 +140,55 @@
                 this.opts.gallery = this.prepData(this.opts.gallery);
                 this.render();
             } else {
-                $.when(this.preloadify()).then(function () {
-                    self.opts.gallery = self.prepData(self.opts.gallery, true);
-                    self.render();
-                });
+                $.when(this.preloadify()).then(
+                    $.proxy(this.preloadDone, this), // all loaded successfully
+                    $.proxy(this.preloadDone, this), // not all loaded successfully
+                    $.proxy(this.preloadProgress, this) // an item has finished, successful or not
+                );
             }
         },
 
         render: function () {
             var self = this;
-            var $images = null;
+            var layout_data = null;
+            var view_model = null;
+            var mosaic_data = {
+                id : this._id,
+                class_name : this.makeSpecialClasses(),
+                center : this.opts.center
+            };
 
-            // var view_model = new PhotoMosaic.Layouts.columns(this.opts.gallery, this.opts);
-            // var html = PhotoMosaic.Plugins.Mustache.to_html(this.template, view_model);
-            // this.obj.html( html );
-            this.obj.html(this.makeMosaic());
+            // bail if we don't have any images (e.g. they all failed to load)
+            if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) { return; }
 
-            $images = this.obj.find('img');
+            // TODO : add a switch for layout selection
+            layout_data = new PhotoMosaic.Layouts.columns( this );
 
-            if ( self.opts.loading_transition !== 'none' && !PhotoMosaic.Plugins.Modernizr.csstransitions ) {
-                $images.css('opacity','0');
-            }
+            view_model = $.extend({}, mosaic_data, layout_data);
 
-            setTimeout(function(){;
-                self.loader = new PhotoMosaic.Loader($images, self);
-            },0);
+            this.react = React.renderComponent(
+                PhotoMosaic.Layouts.React.mosaic(view_model), // the component to render
+                this.obj.get(0), // the dom node container
+                function () {  // the callback
+                    // triggers lazyloading / imagesLoaded
+                    self.loader = new PhotoMosaic.Loader(self.obj, self);
 
-            this.bindEvents();
+                    // update the mosaic on window.resize
+                    $(window)
+                        .unbind('resize.photoMosaic' + self._id)
+                        .bind('resize.photoMosaic' + self._id, function () {
+                            self.refresh();
+                        });
 
-            this.modalCallback();
+                    // run the user's modal_ready_callback
+                    self.modalCallback();
+                }
+            );
 
+            // logging
             if (this.opts.log_gallery_data) {
                 PhotoMosaic.Utils.logGalleryData(this.opts.gallery);
             }
-        },
-
-        makeMosaic: function () {
-            var self = this;
-
-            this.images = [];
-            this.columns = [];
-            this.opts.columns = this.autoCols();
-            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
-
-            $.each(this.opts.gallery, function (i) {
-                this.width.adjusted = self.col_width;
-                this.height.adjusted = Math.floor((this.height.original * this.width.adjusted) / this.width.original);
-
-                self.images.push(this);
-            });
-
-            // ERROR CHECK: remove any images that didn't 404 but failed to load
-            // TODO : make less Layout::columns -centric
-            this.images = PhotoMosaic.ErrorChecks.imageDimensions(this.images);
-            if (this.images.length === 0) {
-                return PhotoMosaic.Plugins.Mustache.to_html('', {});
-            }
-
-            var json = this.makeMosaicView();
-
-            // ERROR CHECK: don't load if the layout is broken
-            // TODO : make less Layout::columns -centric
-            if (PhotoMosaic.ErrorChecks.layout(json)) {
-                return PhotoMosaic.Plugins.Mustache.to_html('', {});
-            }
-
-            return PhotoMosaic.Plugins.Mustache.to_html(this.template, json);
-        },
-
-        makeMosaicView: function (isRefreshing) {
-            /*
-                Images are already in order.
-
-                Deal into columns
-                 - order == random --> randomize => rows
-                 - order == rows --> rows
-                 - order == columns --> rows => columns
-                 - order == masonry --> masonry
-            */
-            if (this.opts.order === 'random' && !isRefreshing) {
-                this.images.sort(function (a, b) {
-                    return (0.5 - Math.random());
-                });
-            }
-
-            this.columns = this.sortIntoRows(this.images);
-
-            if (this.opts.order === 'columns') {
-                this.columns = this.sortIntoColumns(this.columns, this.images);
-            }
-
-            if (this.opts.order === 'masonry') {
-                this.columns = this.sortIntoMasonry(this.images);
-            }
-
-            // construct template object
-            var json = {
-                    id: this._id,
-                    clazz: this.makeSpecialClasses(),
-                    width: (this.col_width * this.columns.length) + (this.opts.padding * (this.columns.length - 1)),
-                    center: this.opts.center,
-                    columns:[]
-                };
-
-            // get column heights (img height adjusted for col width)
-            var col_heights = [];
-
-            for (var i = 0; i < this.columns.length; i++) {
-                var col_height = 0;
-
-                for (var j = 0; j < this.columns[i].length; j++) {
-                    col_height += this.columns[i][j].height.adjusted;
-                }
-
-                col_height += (this.columns[i].length - 1) * this.opts.padding;
-                col_heights.push(col_height);
-
-                json.columns[i] = {};
-                json.columns[i].images = this.columns[i];
-                json.columns[i].height = col_height;
-                json.columns[i].padding = this.opts.padding;
-            }
-
-            // normalize column heights
-            var shortest_col = Math.min.apply( Math, col_heights );
-                var tallest_col = Math.max.apply( Math, col_heights );
-                var average_col_height = Math.ceil((shortest_col + tallest_col) / 2);
-
-            if (this.opts.height === 'auto') {
-                json = this.adjustHeights(json, average_col_height);
-            } else {
-                json = this.adjustHeights(json, this.opts.height);
-            }
-
-            // create position information for each image
-            for (var i = 0; i < json.columns.length; i++) {
-                var col_height = 0;
-
-                for (var j = 0; j < json.columns[i].images.length; j++) {
-                    json.columns[i].images[j].position = {
-                        top : col_height,
-                        left : (i * this.col_width) + (i * this.opts.padding)
-                    };
-
-                    col_height = col_height + json.columns[i].images[j].height.constraint + this.opts.padding;
-                };
-            };
-
-            // lightboxes index by node order and we add nodes by columns
-            // leading to a mismatch between read order and lightbox-gallery-step-through order
-            json.images = this.unpackColumns(json.columns);
-
-            // double check that we're using the best image
-            var size = null;
-
-            for (var i = 0; i < json.images.length; i++) {
-                size = this.pickImageSize(json.images[i]);
-                if (size) {
-                    json.images[i].src = json.images[i].sizes[size.name];
-                }
-            };
-
-            return json;
-        },
-
-        autoCols: function (){
-            if (!this._auto_cols && this.opts.columns !== 'auto') {
-                this._auto_cols = false;
-                return this.opts.columns;
-            }
-
-            this._auto_cols = true;
-
-            var max_width = this.opts.width;
-            var num_images = this.opts.gallery.length;
-            var maths = {
-                plus : 425, // (300 + (150 / 1.2))
-                minus : 175 // (300 - (150 / 1.2))
-            };
-            var cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
-
-            if (num_images < cols) {
-                cols = num_images;
-            }
-
-            return cols;
-        },
-
-        sortIntoRows: function (imgs) {
-            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
-            var col = 0;
-            var columns = [];
-
-            for (var i = 0; i < images.length; i++) {
-                col = i % this.opts.columns;
-
-                if (!columns[col]) {
-                    columns[col] = [];
-                }
-
-                columns[col].push(images[i]);
-            }
-
-            return columns;
-        },
-
-        sortIntoColumns: function (columns, imgs) {
-            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
-            var forced_cols = [];
-
-            for (var i = 0; i < columns.length; i++) {
-                for (var j = 0; j < columns[i].length; j++) {
-                    if (!forced_cols[i]) {
-                        forced_cols[i] = [];
-                    }
-                    forced_cols[i].push(images[0]);
-                    images.shift();
-                }
-            }
-
-            return forced_cols;
-        },
-
-        sortIntoMasonry: function (imgs) {
-            var images = $.extend(true, [], imgs); // jQuery deep copy || imgs.slice()
-            var col_heights = [];
-            var col = 0;
-            var columns = [];
-
-            // construct column-height memory obj
-            for (var i = 0; i < this.opts.columns; i++) {
-                col_heights[i] = 0;
-                columns.push([]);
-            }
-
-            for (var i = 0; i < images.length; i++) {
-                col = $.inArray( Math.min.apply( Math, col_heights ), col_heights );
-                columns[col].push(images[i]);
-                col_heights[col] = col_heights[col] + images[i].height.adjusted;
-            }
-
-            return columns;
-        },
-
-        unpackColumns: function (columns) {
-            var image;
-            var images = [];
-
-            for (var i = 0; i < this.images.length; i++) {
-                image = PhotoMosaic.Utils.deepSearch(columns, 'id', this.images[i].id);
-                images.push(image);
-            };
-
-            return images;
-        },
-
-        adjustHeights: function (json, target_height) {
-            var column_heights = [];
-            var column = null;
-            var adjusted_height = 0;
-
-            json = this.markLastColumn(json);
-
-            for (var i = 0; i < json.columns.length; i++) {
-                column = json.columns[i];
-                json = this.markLastImageInColumn(json, i);
-
-                if (this.opts.prevent_crop) {
-                    column = this.scaleColumn(column, column.height);
-                } else {
-                    column = this.scaleColumn(column, target_height);
-                }
-
-                column_heights.push(column.height);
-
-                json.columns[i] = column;
-            }
-
-            if (this.opts.prevent_crop) {
-                adjusted_height = Math.max.apply(Math, column_heights);
-            } else {
-                adjusted_height = Math.min.apply(Math, column_heights);
-            }
-
-            json.height = adjusted_height;
-
-            if (!this.opts.prevent_crop) {
-                json = this.flattenColumns(json, adjusted_height);
-            }
-
-            json = this.adjustImagesToConstraint(json);
-
-            return json;
-        },
-
-        scaleColumn: function (col, height) {
-            var count = col.images.length;
-            var total_padding = (this.opts.padding * (count - 1));
-            var column_start = col.height - total_padding;
-            var column_end = height - total_padding;
-            var image = null;
-            var images_height = 0;
-            var image_start = 0;
-            var image_end = 0;
-            var mod = 0;
-
-            // image's already have width|height.adjusted set
-            // they need width|height.constraint
-            for (var i = 0; i < count; i++) {
-                image = col.images[i];
-
-                image_start = image.height.adjusted;
-                image_end = Math.floor( column_end * ( Math.floor( (image_start / column_start) * 1000 ) / 1000 ) );
-                images_height += image_end;
-
-                if (this.opts.prevent_crop) {
-                    image = this.setImageContraints(image, image.width.adjusted, image.height.adjusted);
-                } else {
-                    image = this.setImageContraints(image, this.col_width, image_end);
-                }
-            }
-
-            col.height = images_height + total_padding;
-
-            return col;
-        },
-
-        flattenColumns: function (json, height) {
-            var column = null;
-            var image = null;
-            var diff = 0;
-            var total_padding = null;
-            var adjusted_height;
-
-            for (var i = 0; i < json.columns.length; i++) {
-                column = json.columns[i];
-                image = column.images[column.images.length - 1];
-                diff = Math.abs(column.height - height);
-                total_padding = (this.opts.padding * (column.images.length - 1));
-
-                if (diff > 0) {
-                    if (column.height > height) {
-                        adjusted_height = (image.height.constraint - diff);
-                    } else {
-                        adjusted_height = (image.height.constraint + diff);
-                    }
-
-                    image = this.setImageContraints(image, null, adjusted_height);
-                }
-            }
-
-            return json;
-        },
-
-        setImageContraints: function (image, width, height) {
-            image.width.constraint = width || image.width.constraint;
-            image.height.constraint = height || image.height.constraint;
-            return image;
-        },
-
-        adjustImagesToConstraint: function (json) {
-            var column;
-            var image;
-            var test_height;
-
-            for (var i = 0; i < json.columns.length; i++) {
-                column = json.columns[i];
-
-                for (var j = 0; j < column.images.length; j++) {
-                    image = column.images[j];
-
-                    // adjusted is still scaled to the column's width
-                    if (image.height.adjusted > image.height.constraint) {
-                        image.adjustment = {
-                            type : 'top',
-                            value : Math.floor((image.height.adjusted - image.height.constraint) / 2)
-                        };
-                    } else {
-                        image.width.adjusted = Math.floor((image.width.adjusted * image.height.constraint) / image.height.adjusted);
-                        image.height.adjusted = image.height.constraint;
-
-                        image.adjustment = {
-                            type : 'left',
-                            value : Math.floor((image.width.adjusted - image.width.constraint) / 2)
-                        };
-                    }
-
-                    column.images[j] = image;
-                };
-
-                json.columns[i] = column;
-            };
-
-            return json;
-        },
-
-        findSmallestImage: function (images) {
-            var smallest_height = 0;
-            var index_of_smallest = 0;
-
-            for (var i = 0; i < images.length; i++) {
-                if (smallest_height === 0) {
-                    smallest_height = images[i].height.adjusted;
-                } else if (images[i].height.adjusted < smallest_height) {
-                    smallest_height = images[i].height.adjusted;
-                    index_of_smallest = i;
-                }
-            }
-
-            return { 
-                height : smallest_height,
-                index : index_of_smallest
-            };
-        },
-
-        findLargestImage: function (images) {
-            var largest_height = 0;
-            var index_of_largest = 0;
-
-            for (var i = 0; i < images.length; i++) {
-                if (images[i].height.adjusted > largest_height) {
-                    largest_height = images[i].height.adjusted;
-                    index_of_largest = i;
-                }
-            }
-
-            return { 
-                height : largest_height,
-                index : index_of_largest
-            };
-        },
-
-        markLastColumn: function (json) {
-            json.columns[json.columns.length - 1].last = true;
-            return json;
-        },
-
-        markLastImageInColumn: function (json, i) {
-            json.columns[i].images[json.columns[i].images.length - 1].last = true;
-            return json;
         },
 
         preloadify: function () {
@@ -590,6 +210,26 @@
             $('body').append($images);
 
             return $images.imagesLoaded();
+        },
+
+        preloadDone : function () {
+            this.opts.gallery = this.prepData(this.opts.gallery, true);
+            this.render();
+        },
+
+        preloadProgress : function (instance, image) {
+            var img = null;
+            if (!image.isLoaded) {
+                id = image.img.className;
+
+                for (i = 0; i < this.opts.gallery.length; i++) {
+                    if (this.opts.gallery[i].id == id) {
+                        this.opts.gallery.splice(i,1);
+                    }
+                }
+
+                PhotoMosaic.Utils.log.error("The following image failed to load and was skipped.\n" + image.img.src);
+            }
         },
 
         prepData: function (gallery, isPreload) {
@@ -702,90 +342,6 @@
             return gallery;
         },
 
-        pickImageSize: function (image) {
-            // currently only supported in PM4WP
-            if (!this.opts.sizes || !image.sizes) {
-                return null;
-            }
-
-            var size = null;
-            var scaled = {
-                width : 0,
-                height : 0
-            };
-
-            for (var key in this.opts.sizes) {
-                if (this.opts.sizes.hasOwnProperty(key)) {
-                    // are we dealing with a portrait or landscape image?
-                    if (image.width.original >= image.height.original) {
-                        scaled.width = this.opts.sizes[key];
-                        scaled.height = Math.floor((scaled.width * image.height.original) / image.width.original);
-                    } else {
-                        scaled.height = this.opts.sizes[key];
-                        scaled.width = Math.floor((scaled.height * image.width.original) / image.height.original);
-                    }
-
-                    // compare the dims of the image to the space to which is has been scaled
-                    // if either of the image's dims are less than the container's dims - we'd be scaling up
-                    // scaling up is bad
-                    // keep looping until we scale the image down
-                    if (scaled.width < image.width.adjusted || scaled.height < image.height.adjusted) {
-                        continue;
-                    } else {
-                        size = key;
-                        break;
-                    }
-                }
-            };
-
-            // if none of the known sizes are big enough, go with the biggest we've got
-            if (!size) {
-                size = 'full';
-            }
-
-            return {
-                name : size,
-                px : this.opts.sizes[size]
-            };
-        },
-
-        swapImage: function (image, size) {
-            var self = this;
-            var $img = this.obj.find('#' + image.id);
-            var $a = $img.parent();
-            var $new_img = $('<img/>')
-                                .attr('src', image.sizes[size])
-                                .attr('class', size)
-                                .attr('style', $img.attr('style'))
-                                .opacity(0);
-
-            // the size classname + check is a hacky window.resize debounce
-            if (
-                $a.find('.' + size).length === 0 &&
-                $a.find('img[src="' + image.sizes[size] + '"]').length === 0
-            ) {
-                $a.append($new_img);
-
-                $new_img.imagesLoaded({
-                    fail: function ($images, $proper, $broken) {
-                        $images.remove();
-                    },
-                    done: function ($images) {
-                        var sibs = $images.siblings();
-                        var id = sibs.eq(0).attr('id');
-                        $images.attr('id', id);
-                        $images.opacity(100);
-                        sibs.remove();
-                        setTimeout(function () {
-                            $images.removeClass();
-                        }, 0);
-                    }
-                });
-            }
-
-            return image.sizes[size];
-        },
-
         hasDims: function () {
             var some = false; // set to true if any dims are found
             var all = true; // set to false if any dims aren't found
@@ -846,109 +402,33 @@
             return classes.join(' ');
         },
 
-        bindEvents: function () {
-            var self = this;
-
-            $(window).unbind('resize.photoMosaic' + this._id).bind('resize.photoMosaic' + this._id, function () {
-                self.refresh();
-            });
-        },
-
         refresh: function () {
             var self = this;
-            var image = null;
-            var $img = null;
-            var $a = null;
-            var json = null;
-            var size = null;
-
-            this.obj.addClass('resizing');
-
-            // get the container width
-            this.opts.width = (this._options.width !== 'auto') ? this.opts.width : this.obj.width();
-
-            // get new column count & math
-            this.opts.columns = this.autoCols();
-            this.col_width = Math.floor((this.opts.width - (this.opts.padding * (this.opts.columns - 1))) / this.opts.columns);
-
-            for (var i = 0; i < this.images.length; i++) {
-                image = this.images[i];
-
-                image.width.adjusted = this.col_width;
-                image.height.adjusted = Math.floor((image.height.original * image.width.adjusted) / image.width.original);
-
-                size = this.pickImageSize(image);
-
-                if (size) {
-                    for (key in image.sizes) {
-                        if (image.sizes.hasOwnProperty(key)) {
-                            if (image.sizes[key] === image.src) {
-                                // we get a new image if we need a bigger image
-                                if (size.px > this.opts.sizes[key]) {
-                                    image.src = this.swapImage(image, size.name);
-                                }
-                            }
-                        }
-                    };
-                }
-
-                this.images[i] = image;
+            var mosaic_data = {
+                id : this._id,
+                class_name : this.makeSpecialClasses(),
+                center : this.opts.center
             };
+            var layout_data = new PhotoMosaic.Layouts.columns( this );
+            var view_model = $.extend({}, mosaic_data, layout_data);
 
-            if (size) {
-                this._size = size;
-            }
+            // transitionend fires for each proprty being transitioned, we only care about when the last one ends
+            var checkLazyload = PhotoMosaic.Utils.debounce(function () {
+                $.waypoints('refresh');
+            }, 300);
 
-            var json = this.makeMosaicView(true);
-
-            this.obj.children().css({
-                width: json.width,
-                height: json.height
-            });
-
-            for (var i = 0; i < json.images.length; i++) {
-                image = json.images[i];
-                $img = this.obj.find('#' + image.id).parent().find('img');
-                $a = $img.parent();
-
-                $img.css({
-                    width : image.width.adjusted + 'px',
-                    height : image.height.adjusted + 'px',
-                    top : '0px',
-                    left : '0px'
-                });
-
-                $img.css(image.adjustment.type, (image.adjustment.value * -1) + 'px');
-
-                $a.css({
-                    width : image.width.constraint + 'px',
-                    height : image.height.constraint + 'px'
-                });
-
-                if ( !this.shouldAnimate() || !PhotoMosaic.Plugins.Modernizr.csstransitions ) {
-                    $a.css({
-                        top : image.position.top + 'px',
-                        left : image.position.left + 'px'
-                    });
-                } else {
-                    $a.tween({
-                        top: $.extend({}, this.opts.responsive_transition_settings, {
-                            stop: image.position.top
-                        }),
-                        left: $.extend({}, this.opts.responsive_transition_settings, {
-                            stop: image.position.left
-                        })
-                    });
+            self.react.setProps(
+                view_model,
+                function () {
+                    // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check
+                    if (PhotoMosaic.Plugins.Modernizr.csstransitions && self.opts.lazyload !== false) {
+                        self.obj.on(
+                            self._transition_end_event_name,
+                            checkLazyload
+                        );
+                    }
                 }
-            }
-
-            if (this.shouldAnimate()) {
-                $.play();
-            }
-
-            setTimeout(function () {
-                self.obj.removeClass('resizing');
-            }, 0);
+            );
         },
 
         modalCallback: function () {
@@ -971,13 +451,6 @@
             return opts;
         },
 
-        shouldAnimate: function () {
-            return (
-                this._auto_cols &&
-                this.opts.responsive_transition
-            );
-        },
-
         _name : pluginName,
 
         version : PhotoMosaic.version
@@ -989,7 +462,7 @@
         options = options || {};
         return this.each(function () {
             if (!$.data(this, pluginName)) {
-                $.data(this, pluginName, new Plugin(this, options));
+                $.data(this, pluginName, new photoMosaic(this, options));
 
                 // for debugging
                 window.PhotoMosaic.$ = $;

@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
     var plugin_name = 'photomosaic-for-wordpress';
     var plugin_path = '../wordpress/wp-content/plugins/' + plugin_name + '/';
+    var nonwp_path = 'app/non-WP/download/files/'
     var dist_path = 'app/dist/';
     var release_path = '../' + plugin_name + '/';
     var files = [
@@ -68,6 +69,27 @@ module.exports = function(grunt) {
                 cwd : dist_path,
                 src : '**/*',
                 dest : release_path
+            },
+            nonwp : {
+                files : [
+                    {
+                        expand : true,
+                        cwd : dist_path,
+                        src : [
+                            'js/**/*', 'css/**/*', 'images/**/*',
+                            '!**/admin-page-icon.gif', '!**/photomosaic.admin.css', '!**/photomosaic.admin.js', '!**/photomosaic.editor.js'
+                        ],
+                        dest : nonwp_path,
+                        filter : 'isFile'
+                    },
+                    {
+                        expand: true,
+                        cwd : dist_path + '/includes/vendor/',
+                        src : ['prettyphoto/**/*'],
+                        dest : nonwp_path + 'includes/',
+                        filter : 'isFile'
+                    }
+                ]
             },
             changelog : {
                 expand : true,
@@ -162,6 +184,18 @@ module.exports = function(grunt) {
                 replacements : [{
                     from : 'JQPM',
                     to : 'jQuery'
+                },
+                {
+                    from : 'var $sub = jQuery.sub();',
+                    to : ''
+                },
+                {
+                    from : "registerNamespace('jQuery', $sub || {});",
+                    to : ''
+                },
+                {
+                    from : "$sub",
+                    to : "jQuery"
                 }]
             }
         },
@@ -185,4 +219,5 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
     grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
+    grunt.registerTask('nonwp', [ 'concat', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'copy:nonwp', 'clean:dist' ]);
 };

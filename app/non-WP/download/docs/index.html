@@ -31,10 +31,9 @@
 </head>
 <body>
     <div id="container">
-        <h1>Welcome to PhotoMosaic <span>(v2.3.4)</span></h1>
+        <h1>Welcome to PhotoMosaic <span>(v2.7.5)</span></h1>
         <p>
-            Thanks for purchasing PhotoMosaic. This documentation should answer most questions you may have but you can always contact me by leaving a 
-            comment on the CodeCanyon item page or by emailing me from my <a href="http://codecanyon.net/user/makfak">author page</a>.
+            Thanks for purchasing PhotoMosaic. This documentation should answer most questions you may have but you can always contact me by leaving a comment on the CodeCanyon item page or by emailing me from my <a href="http://codecanyon.net/user/makfak">author page</a>.
         </p>
         
         <nav>
@@ -75,15 +74,15 @@
             </li>
             <li>
                 Include the PhotoMosaic JS
-                <pre class="prettyprint">&lt;script src="/photoMosaic/js/jquery.photoMosaic.js">&lt;/script></pre>
+                <pre class="prettyprint">&lt;script src="/photoMosaic/js/photomosaic.min.js">&lt;/script></pre>
             </li>
             <li>
                 Include your photos (assumes default JSON input - see <a href="#AddingContent">#AddingContent</a>)
-                <pre class="prettyprint">&lt;script src="/photoMosaic/js/photoMosaic.data.json">&lt;/script></pre>
+                <pre class="prettyprint">&lt;script src="/photoMosaic/js/photomosaic.data.json">&lt;/script></pre>
             </li>
             <li>
                 Include the PhotoMosaic CSS
-                <pre class="prettyprint">&lt;link rel="stylesheet" href="/photoMosaic/css/photoMosaic.screen.css" /></pre>
+                <pre class="prettyprint">&lt;link rel="stylesheet" href="/photoMosaic/css/photomosaic.css" /></pre>
             </li>
             <li>
                 Call PhotoMosaic in your jQuery Document.Ready function.
@@ -266,6 +265,7 @@ center                         : true                // centers the gallery to i
 prevent_crop                   : false               // prevents images from being cropped (bool)
 show_loading                   : false,              // (bool)
 loading_transition             : 'fade',             // none, fade, scale-up|down, slide-top|right|bottom|left, custom (str)
+lazyload                       : 0,                  // int || false
 responsive_transition          : true,               // images animate when changing positions (bool)
 responsive_transition_settings : {            
                                    time: 0,          // delay before animation begins in seconds (float)
@@ -421,6 +421,15 @@ rows   |  columns |  masonry
                 <h5>responsive_transition</h5>
                 <p>
                     As long as <b>width</b> is set to 'auto', PhotoMosaic will behave responsively.  If <b>columns</b> is also set to 'auto', PhotoMosaic is determine the best number of columns given the space available.  As a user resizes their browser the optimum number of columns can change.  When this happens, PhotoMosaic will recalculate each image's position in the mosaic.  Setting <b>responsive_transition</b> to 'true' means that images will animate between their old and new locations.  When set to 'false' images simply jump to the new location.
+                </p>
+            </div>
+            <div>
+                <h5>lazyload</h5>
+                <p>
+                    This number is the distance (in pixels) before the image is visible (the bottom of the viewport) to trigger loading.  A positive number sets the trigger point below the viewport (off screen) and a negative number sets the trigger point above the bottom of the viewport (on screen).
+                </p>
+                <p>
+                    Set to 'false' to bypass lazyloading and load the images normally.
                 </p>
             </div>
             <div>

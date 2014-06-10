@@ -1,11 +1,51 @@
 /* PhotoMosaic - Changelog */
-= 2.3.4 =
-* Bug Fix: corrects regression introduced in v2.3.3
-= 2.3.3 =
-* Enhancement: WP image "Alt Text" conveys to IMG 'alt' attribute
+= 2.7.5 =
+- Enhancement : increased the amount of the viewport the default lightbox (PrettyPhoto) uses
+- Bug Fix : corrects the bug that prevented items that should line up in a perfect grid from doing so
 
-= 2.3.2 =
-* No Change: version number update to coinside with PhotoMosaic (WP) release
+= 2.7.4 =
+- Enhancement: updates WaypointsJS to v2.0.5
+- Bug Fix : prevents conflicts with other versions of WaypointsJS
+
+= 2.7.2 =
+- Bug Fix: corrects bug that caused older IEs to throw window.console errors
+
+= 2.7 =
+- Enhancement: Adds lazyloading and sets images to be lazyloaded by default
+
+= 2.6 =
+- Enhancement: minified JS is now 60% smaller
+- Enhancement: updates ImagesLoaded to v3.1.4
+
+= 2.5.2 =
+- Bug Fix: cleans up some leaking JS vars
+
+= 2.4.8 =
+- Enhancement: improves animation support for older browsers
+- Bug Fix: guards against multiple instances of Modernizr introducing whitespace bugs in classnames
+
+= 2.4.7 =
+* Bug Fix: the image loading animation wasn't being shown in some cases if images's weren't links
+
+= 2.4.3 =
+- Bug Fix: loading spinner was disappearing early in certain conditions
+- Bug Fix: corrects image-scaling logic that caused extremely tall images to be scaled incorrectly
+
+= 2.4.2 =
+- Bug Fix: corrects AutoCols logic (comparing an int to a str)
+- Change: preloaded image matching is now based on the unique ID (rather than URL)
+
+= 2.3.7 =
+* Bug Fix: PrettyPhoto: all global jQuery references now point to the scoped reference
+
+= 2.3.5 =
+* Bug Fix: images that 404 get removed from the mosaic
+
+= 2.3.4 =
+* Bug Fix: corrects regression introduced in v2.3.3 - responsive stopped working
+
+= 2.3.3 =
+* Enhancement: JS has been concatenated in order to load fewer files
 
 = 2.3.1 =
 * Bug Fix: caption are no longer removed when opening non-image content in the lightbox
@@ -16,9 +56,6 @@
 * Enhancement: adds prevent_crop setting
 * Enhancement: updates jQuery to v1.9.1
 * Enhancement: updates prettyPhoto to v3.1.5
-
-= 2.2.5 =
-* No Change: version number update to coinside with PhotoMosaic (WP) release
 
 = 2.2 =
 * Refactor: major pattern overhaul

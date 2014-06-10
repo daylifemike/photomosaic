@@ -1,9 +1,19 @@
 /*
-    Version: 3.1.5b
+    Version: 3.1.5e
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
-     - new jQuery namespace (jQuery)
+    # b
+     - new jQuery namespace (JQPM)
      - _getFileType (#662) extended to autodetect image URLs (avoid the need for "iframe=true")
      - content type switch (#330) extended to support iframe URLs w/o "iframe=true"
+    # c
+     - normalized all jQuery references to '$'
+     - self-invoke arguments ref the window and test for availability (window.JQPM || jQuery)
+    # d
+     - new namespace on events
+    # e
+     - changed viewport buffer 200 >>> 100 (~#600)
+     - locked the overlay to the screen (CSS)
+     - removed the .ppt bumper (CSS)
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto
@@ -15,7 +25,7 @@
     $.prettyPhoto = {version: '3.1.5'};
     
     $.fn.prettyPhoto = function(pp_settings) {
-        pp_settings = jQuery.extend({
+        pp_settings = $.extend({
             hook: 'rel', /* the attribute tag to use for prettyPhoto hooks. default: 'rel'. For HTML5, use "data-rel" or similar. */
             animation_speed: 'fast', /* fast/slow/normal */
             ajaxcallback: function() {},
@@ -115,10 +125,10 @@
         doresize = true, scroll_pos = _get_scroll();
     
         // Window/Keyboard events
-        $(window).unbind('resize.prettyphoto').bind('resize.prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
+        $(window).unbind('resize.pm-prettyphoto').bind('resize.pm-prettyphoto',function(){ _center_overlay(); _resize_overlay(); });
         
         if(pp_settings.keyboard_shortcuts) {
-            $(document).unbind('keydown.prettyphoto').bind('keydown.prettyphoto',function(e){
+            $(document).unbind('keydown.pm-prettyphoto').bind('keydown.pm-prettyphoto',function(e){
                 if(typeof $pp_pic_holder != 'undefined'){
                     if($pp_pic_holder.is(':visible')){
                         switch(e.keyCode){
@@ -157,19 +167,19 @@
             isSet = (galleryRegExp.exec(theRel)) ? true : false;
             
             // Put the SRCs, TITLEs, ALTs into an array.
-            pp_images = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
-            pp_titles = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
-            pp_descriptions = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
+            pp_images = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
+            pp_titles = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
+            pp_descriptions = (isSet) ? $.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
             
             if(pp_images.length > settings.overlay_gallery_max) settings.overlay_gallery = false;
             
-            set_position = jQuery.inArray($(this).attr('href'), pp_images); // Define where in the array the clicked item is positionned
+            set_position = $.inArray($(this).attr('href'), pp_images); // Define where in the array the clicked item is positionned
             rel_index = (isSet) ? set_position : $("a["+settings.hook+"^='"+theRel+"']").index($(this));
             
             _build_overlay(this); // Build the overlay {this} being the caller
             
             if(settings.allow_resize)
-                $(window).bind('scroll.prettyphoto',function(){ _center_overlay(); });
+                $(window).bind('scroll.pm-prettyphoto',function(){ _center_overlay(); });
             
             
             $.prettyPhoto.open();
@@ -483,7 +493,7 @@
                 
                 $(this).remove(); // No more need for the prettyPhoto markup
                 
-                $(window).unbind('scroll.prettyphoto');
+                $(window).unbind('scroll.pm-prettyphoto');
                 
                 clearHashtag();
                 
@@ -515,12 +525,14 @@
                     height:pp_dimensions['contentHeight'],
                     width:pp_dimensions['contentWidth']
                 },settings.animation_speed);
-            
+
+            var halfWidth = (windowWidth/2) - (pp_dimensions['containerWidth']/2);
+
             // Resize picture the holder
             $pp_pic_holder.animate({
                 'top': projectedTop,
-                'left': ((windowWidth/2) - (pp_dimensions['containerWidth']/2) < 0) ? 0 : (windowWidth/2) - (pp_dimensions['containerWidth']/2),
-                width:pp_dimensions['containerWidth']
+                'left': (halfWidth < 0) ? 0 : halfWidth,
+                'width': pp_dimensions['containerWidth']
             },settings.animation_speed,function(){
                 $pp_pic_holder.find('.pp_hoverContainer,#fullResImage').height(pp_dimensions['height']).width(pp_dimensions['width']);
 
@@ -588,10 +600,10 @@
             
                 while (!fitting){
                     if((pp_containerWidth > windowWidth)){
-                        imageWidth = (windowWidth - 200);
+                        imageWidth = (windowWidth - 100);
                         imageHeight = (height/width) * imageWidth;
                     }else if((pp_containerHeight > windowHeight)){
-                        imageHeight = (windowHeight - 200);
+                        imageHeight = (windowHeight - 100);
                         imageWidth = (width/height) * imageHeight;
                     }else{
                         fitting = true;
@@ -894,7 +906,7 @@
             setTimeout(function(){ $("a["+pp_settings.hook+"^='"+hashRel+"']:eq("+hashIndex+")").trigger('click'); },50);
         }
         
-        return this.unbind('click.prettyphoto').bind('click.prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
+        return this.unbind('click.pm-prettyphoto').bind('click.pm-prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
     };
     
     function getHashtag(){
@@ -921,6 +933,6 @@
       return ( results == null ) ? "" : results[1];
     }
     
-})(jQuery);
+})(window.JQPM||jQuery);
 
 var pp_alreadyInitialized = false; // Used for the deep linking to make sure not to call the same function several times.

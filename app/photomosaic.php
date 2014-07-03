@@ -316,7 +316,7 @@ class PhotoMosaic {
                         var self = this;
 
                         jQuery("a", $photomosaic).each(function () {
-                            $a = $(this);
+                            $a = jQuery(this);
                             $img = $a.find("img");
                             id = $img.attr("id");
                             data = PhotoMosaic.Utils.deepSearch( self.images, "id", id );

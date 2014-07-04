@@ -60,7 +60,8 @@
                     var $parent = $(image.img).parents('span.loading, a.loading');
                     var toggleClasses = PhotoMosaic.Utils.debounce(function () {
                        $parent.addClass('loaded');
-                    }, 300);
+                       self.mosaic.obj.off(self.mosaic._transition_end_event_name);
+                    }, 250);
 
                     $parent.removeClass('loading');
 
@@ -116,8 +117,16 @@
                 var $images = $mosaic.children('a, span'); 
                 var $loading = $images.filter('.loading'); 
 
+                // transitionend fires for each proprty being transitioned, we only care about when the last one ends
+                var toggleClasses = PhotoMosaic.Utils.debounce(function () {
+                   $mosaic.removeClass('loading').addClass('loaded');
+                }, 250);
+
                 if ($loading.length == 0) {
-                    $mosaic.removeClass('loading');
+                    self.mosaic.obj.on(
+                        self.mosaic._transition_end_event_name,
+                        toggleClasses
+                    );
                 }
             }, 0);
         }

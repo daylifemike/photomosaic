@@ -57,12 +57,23 @@
             setTimeout(function () {
                 // if you don't want a loading transition OR it's handled by CSS
                 if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
-                    $(image.img).parents('span.loading, a.loading').removeClass('loading');
+                    var $parent = $(image.img).parents('span.loading, a.loading');
+                    var toggleClasses = PhotoMosaic.Utils.debounce(function () {
+                       $parent.addClass('loaded');
+                    }, 300);
+
+                    $parent.removeClass('loading');
+
+                    self.mosaic.obj.on(
+                        self.mosaic._transition_end_event_name,
+                        toggleClasses
+                    );
+
                 } else {
                     // you want a transition but the browser doesn't support CSS Transitions... fade (old IEs)
                     $(image.img).animate(
                         { 'opacity' : '1' },
-                        self.opts.responsive_transition_settings.duration * 1000,
+                        self.opts.resize_transition_settings.duration * 1000,
                         function(){
                             $(this).parents('span.loading, a.loading').removeClass('loading');
                         }

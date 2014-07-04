@@ -47,8 +47,8 @@
             prevent_crop : false,
             show_loading : false,
             loading_transition : 'fade', // none, fade, scale-up|down, slide-top|right|bottom|left, custom
-            responsive_transition : true,
-            responsive_transition_settings : {
+            resize_transition : true,
+            resize_transition_settings : {
                 time: 0,
                 duration: 0.3,
                 effect: 'easeOut'
@@ -379,13 +379,17 @@
             return this.hasSpecifiedDims;
         },
 
-        getTransition: function () {
+        getLoadingTransition: function () {
             var transition = 'none';
 
-            if (PhotoMosaic.Plugins.Modernizr.csstransitions && PhotoMosaic.Plugins.Modernizr.csstransforms) {
+            if (PhotoMosaic.Plugins.Modernizr.csstransitions && PhotoMosaic.Plugins.Modernizr.csstransforms && this.opts.loading_transition !== false) {
                 transition = this.opts.loading_transition
             }
-            return 'transition-' + transition;
+            return 'loading-transition-' + transition;
+        },
+
+        getResizeTransition : function () {
+            return (this.opts.resize_transition) ? '' : 'resize-transition-none';
         },
 
         getAvia: function () {
@@ -396,7 +400,8 @@
 
         makeSpecialClasses: function () {
             var classes = [
-                this.getTransition(),
+                this.getLoadingTransition(),
+                this.getResizeTransition(),
                 this.getAvia()
             ];
             return classes.join(' ');
@@ -443,9 +448,18 @@
             if (opts.random) {
                 opts.order = 'random';
             }
+
             // force_order : true | false
             if (opts.force_order) {
                 opts.order = 'columns';
+            }
+
+            // responsive_transition renamed to resize_transition
+            if (opts.hasOwnProperty('responsive_transition')) {
+                opts.resize_transition = opts.responsive_transition;
+            }
+            if (opts.hasOwnProperty('responsive_transition_settings')) {
+                opts.resize_transition_settings = opts.responsive_transition_settings;
             }
 
             return opts;

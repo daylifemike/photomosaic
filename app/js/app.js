@@ -33,7 +33,6 @@
         return jQuerySub;
     };
 
-    // var sub = jquerySub(window.jQuery);
     var $sub = jQuery.sub();
 
     registerNamespace('JQPM', $sub || {});

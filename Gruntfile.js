@@ -12,7 +12,6 @@ module.exports = function(grunt) {
         'app/includes/vendor/modernizr.js',
         'app/includes/vendor/react-with-addons.js',
         'app/includes/vendor/mustache.js',
-        'app/includes/vendor/jstween.js',
         'app/includes/vendor/imagesloaded.js',
         'app/includes/vendor/waypoints.js',
         'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',

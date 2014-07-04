@@ -1,6 +1,6 @@
 /*
     PhotoMosaic
-    requires: jQuery 1.7+, JSTween 1.1, Mustache, Modernizr, & ImagesLoaded
+    requires: jQuery 1.7+, Mustache, Modernizr, & ImagesLoaded
     optional: prettyPhoto
 */
 (function ($) {

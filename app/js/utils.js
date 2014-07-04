@@ -121,6 +121,46 @@ PhotoMosaic.Utils = (function(){
             return images;
         },
 
+        // taken from UnderscoreJS _.debounce()
+        debounce : function(func, wait, immediate) {
+            var timeout = null;
+            var args = null;
+            var context = null;
+            var timestamp = null;
+            var result = null;
+
+            var now = Date.now || function() { return new Date().getTime(); };
+
+            var later = function() {
+                var last = now() - timestamp;
+                if (last < wait) {
+                    timeout = setTimeout(later, wait - last);
+                } else {
+                    timeout = null;
+                    if (!immediate) {
+                        result = func.apply(context, args);
+                        context = args = null;
+                    }
+                }
+            };
+
+            return function() {
+                context = this;
+                args = arguments;
+                timestamp = now();
+                var callNow = immediate && !timeout;
+                if (!timeout) {
+                    timeout = setTimeout(later, wait);
+                }
+                if (callNow) {
+                    result = func.apply(context, args);
+                    context = args = null;
+                }
+
+                return result;
+            };
+        },
+
         logGalleryData : function (gallery) {
             var output = [];
             for (var i = 0; i < gallery.length; i++) {

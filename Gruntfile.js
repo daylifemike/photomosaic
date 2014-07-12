@@ -11,7 +11,6 @@ module.exports = function(grunt) {
         // dependencies
         'app/includes/vendor/modernizr.js',
         'app/includes/vendor/react-with-addons.js',
-        'app/includes/vendor/mustache.js',
         'app/includes/vendor/imagesloaded.js',
         'app/includes/vendor/waypoints.js',
         'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
@@ -21,9 +20,11 @@ module.exports = function(grunt) {
         'app/js/inputs.js',
         'app/js/loader.js',
         // view constructors
-        // 'app/js/layouts/columns.js',
+        'app/js/layouts/columns.js',
         // 'app/js/layouts/rows.js',
         // 'app/js/layouts/grid.js',
+        // react
+        'app/js/layouts/react.js',
         // photomosaic
         'app/js/core.js'
     ];
@@ -214,7 +215,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-text-replace');
-    grunt.loadNpmTasks('grunt-react');
+    // grunt.loadNpmTasks('grunt-react');
 
     grunt.registerTask('dist', [ 'concat', 'copy:dist', 'uglify:dist' ]);
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);

@@ -1,8 +1,3 @@
-/*
-    PhotoMosaic
-    requires: jQuery 1.7+, Mustache, Modernizr, & ImagesLoaded
-    optional: prettyPhoto
-*/
 (function ($) {
     'use strict';
 
@@ -61,46 +56,9 @@
             // random : false (deprecated: v2.2)
             // force_order : false (deprecated: v2.2)
             // auto_columns : false (deprecated: v2.2)
+            // responsive_transition --> resize_transition (deprecated: v2.8)
+            // responsive_transition_settings --> resize_transition_settings (deprecated: v2.8)
         },
-//-- ???
-        template: ' ' +
-            '<div id="photoMosaic_{{id}}" class="photoMosaic loading {{clazz}}" style="width:{{width}}px; height:{{height}}px; {{#center}}margin-left:auto; margin-right:auto;{{/center}}">' +
-                '{{#images}}' +
-                    '{{#link}}' +
-                        '<a class="photomosaic-item loading" href="{{path}}" {{#external}}target="_blank"{{/external}}' +
-                            ' {{#modal}}rel="{{modal}}"{{/modal}}' +
-                            ' {{#caption}}title="{{caption}}"{{/caption}}' +
-                            'style="' +
-                                ' width:{{#width}}{{container}}{{/width}}px;' +
-                                ' height:{{#height}}{{container}}{{/height}}px;' +
-                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
-                            '"' +
-                        '>' +
-                    '{{/link}}' +
-                    '{{^link}}' +
-                        '<span class="photomosaic-item loading"' +
-                            'style="' +
-                                ' width:{{#width}}{{container}}{{/width}}px;' +
-                                ' height:{{#height}}{{container}}{{/height}}px;' +
-                                ' position:absolute; {{#position}}top:{{top}}px; left:{{left}}px;{{/position}}' +
-                            '"' +
-                        '>' +
-                    '{{/link}}' +
-                        '<img id="{{id}}" data-src="{{src}}" style="' +
-                            'width:{{#width}}{{adjusted}}{{/width}}px; ' +
-                            'height:{{#height}}{{adjusted}}{{/height}}px; ' +
-                            '{{#adjustment}}{{type}}:-{{value}}px;{{/adjustment}}" ' +
-                            'title="{{caption}}"' +
-                            'alt="{{alt}}"/>' +
-                    '{{#link}}</a>{{/link}}' +
-                    '{{^link}}</span>{{/link}}' +
-                '{{/images}}' +
-            '</div>',
-//-- ???
-        loading_template: ' ' +
-            '<div id="photoMosaic_{{id}}" class="photoMosaic">' +
-                '<div class="photoMosaicLoading">loading gallery...</div>' +
-            '</div>',
 
         init: function () {
             var self = this;

@@ -5,13 +5,15 @@
         this.node = mosaic.obj;
         this.opts = mosaic.opts;
         this._options = mosaic._options;
+        this._options.gallery = mosaic.opts.gallery.slice(); // we want to be able to refer to the original gallery order
         this.images = mosaic.opts.gallery;
         this.imagesById = PhotoMosaic.Utils.arrayToObj( this.images, 'id' );
-        return this.constructView();
+        this.isRefreshing = false;
+        return this;
     };
 
     PhotoMosaic.Layouts.columns.prototype = {
-        constructView : function () {
+        getData : function () {
             var images = this.images;
             var columns = null;
             var column_width = null;
@@ -59,6 +61,8 @@
             this.positionImagesInMosaic( columns );
 
             images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
+
+            this.isRefreshing = false;
 
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),
@@ -142,9 +146,10 @@
 
         sortRandomly : function (images, columns) {
             // randomize and sort into rows
-            images.sort(function (a, b) {
-                return (0.5 - Math.random());
-            });
+            // don't re-randomize if we're refreshing
+            if (!this.isRefreshing) {
+                images = this.randomizeImages( images );
+            }
 
             columns = this.sortIntoRows( images, columns );
 
@@ -387,6 +392,30 @@
                     col_height = col_height + image.height.container + this.opts.padding;
                 };
             };
+        },
+
+        randomizeImages : function (images) {
+            return images.sort(function (a, b) {
+                return (0.5 - Math.random());
+            });
+        },
+
+        refresh : function () {
+            this.isRefreshing = true;
+            return this.getData();
+        },
+
+        update : function (props) {
+            this.opts = $.extend({}, this.opts, props);
+
+            // take care of any layout-specific change-logic
+            if (props.order) {
+                this.images = this._options.gallery.slice();
+
+                if (props.order == 'random') {
+                    this.images = this.randomizeImages( this.images );
+                }
+            }
         },
 
         errorChecks : {

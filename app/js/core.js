@@ -120,7 +120,8 @@
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) { return; }
 
             // TODO : add a switch for layout selection
-            layout_data = new PhotoMosaic.Layouts.columns( this );
+            this.layout = new PhotoMosaic.Layouts.columns( this );
+            layout_data = this.layout.getData();
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
@@ -295,7 +296,7 @@
 
         setImageIDs: function (gallery) {
             for (var i = 0; i < gallery.length; i++) {
-                gallery[i].id = PhotoMosaic.Utils.makeID(false, 'pm');
+                gallery[i].key = gallery[i].id = PhotoMosaic.Utils.makeID(false, 'pm');
             };
             return gallery;
         },
@@ -372,7 +373,8 @@
                 class_name : this.makeSpecialClasses(),
                 center : this.opts.center
             };
-            var layout_data = new PhotoMosaic.Layouts.columns( this );
+
+            var layout_data = this.layout.refresh();
             var view_model = $.extend({}, mosaic_data, layout_data);
 
             // transitionend fires for each proprty being transitioned, we only care about when the last one ends
@@ -392,6 +394,12 @@
                     }
                 }
             );
+        },
+
+        update: function (props) {
+            this.opts = $.extend({}, this.opts, props);
+            this.layout.update(props);
+            this.refresh();
         },
 
         modalCallback: function () {
@@ -433,14 +441,19 @@
     $.fn[pluginName] = function (options) {
         options = options || {};
         return this.each(function () {
-            if (!$.data(this, pluginName)) {
-                $.data(this, pluginName, new photoMosaic(this, options));
+            var instance = $.data(this, pluginName);
+            if ( instance ) {
+                instance.update(options);
+            } else {
+                instance = $.data(this, pluginName, new photoMosaic(this, options));
 
                 // for debugging
                 window.PhotoMosaic.$ = $;
                 window.PhotoMosaic.Mosaics.push({
                     'el' : this,
-                    'opts' : options
+                    '$el' : $(this),
+                    'opts' : options,
+                    'instance' : instance
                 });
             }
         });

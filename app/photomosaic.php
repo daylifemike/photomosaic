@@ -146,11 +146,9 @@ class PhotoMosaic {
 
         // 'resposive_transition' renamed to 'resize_transitiion' - v2.8
         if (array_key_exists('responsive_transition', $options)) {
-            $options['resize_transitiion'] = $options['responsive_transition']
+            $options['resize_transitiion'] = $options['responsive_transition'];
             unset($options['responsive_transition']);
         }
-
-
 
         update_option('photomosaic_options', $options);
 

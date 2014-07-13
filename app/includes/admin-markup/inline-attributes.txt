@@ -22,7 +22,7 @@ Any inline setting will override the default values set on the "Global Settings"
 - **external_links** : 1 = yes, 0 = no
 - **show_loading** : 1 = yes, 0 = no
 - **loading_transition** : none, fade, scale-up|down, slide-up|down|left|right, custom
-- **responsive_transition** :  1 = yes, 0 = no
+- **resize_transition** :  1 = yes, 0 = no
 - **lazyload** : any number *(in pixels)* or "false"
 - **lightbox** : 1 = yes, 0 = no
 - **lightbox_rel** : any alphanumeric string

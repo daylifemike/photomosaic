@@ -81,7 +81,7 @@ class PhotoMosaic {
             'prevent_crop' => false,
             'show_loading' => false,
             'loading_transition' => 'fade',
-            'responsive_transition' => true,
+            'resize_transition' => true,
             'lazyload' => 200,
             'lightbox' => true,
             'lightbox_rel' => 'pmlightbox',
@@ -144,6 +144,14 @@ class PhotoMosaic {
             unset($options['link_to_url']);
         }
 
+        // 'resposive_transition' renamed to 'resize_transitiion' - v2.8
+        if (array_key_exists('responsive_transition', $options)) {
+            $options['resize_transitiion'] = $options['responsive_transition']
+            unset($options['responsive_transition']);
+        }
+
+
+
         update_option('photomosaic_options', $options);
 
         return $options;
@@ -182,7 +190,7 @@ class PhotoMosaic {
         );
         $bool_settings = array(
             'center', 'prevent_crop', 'links', 'external_links', 'show_loading',
-            'responsive_transition', 'lightbox', 'custom_lightbox', 'lightbox_group'
+            'resize_transition', 'lightbox', 'custom_lightbox', 'lightbox_group'
         );
         $int_false_settings = array('lazyload');
 
@@ -269,7 +277,7 @@ class PhotoMosaic {
                         external_links: '. $settings['external_links'] .',
                         show_loading: '. $settings['show_loading'] .',
                         loading_transition: "'. $settings['loading_transition'] .'",
-                        responsive_transition: '. $settings['responsive_transition'] .',
+                        resize_transition: '. $settings['resize_transition'] .',
                         lazyload: '. $settings['lazyload'] .',
                         modal_name: "' . $settings['lightbox_rel'] . '",
                         modal_group: ' . $settings['lightbox_group'] . ',

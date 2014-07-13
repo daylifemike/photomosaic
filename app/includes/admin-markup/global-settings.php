@@ -149,7 +149,7 @@ rows   |  columns |  masonry
         </div>
         <div class="field">
             <p>
-                <label><input name="responsive_transition" type="checkbox" value="1" <?php if($options['responsive_transition']) echo "checked='checked'"; ?> /> Show Responsive Transition</label>
+                <label><input name="resize_transition" type="checkbox" value="1" <?php if($options['resize_transition']) echo "checked='checked'"; ?> /> Show Resize Transition</label>
             </p>
             <span class="info">animates image positions during browser resize</span>
             <span class="info">uses RequestAnimationFrame to prevent pop-in - browsers that don't support RequestAnimationFrame won't see the animation</span>

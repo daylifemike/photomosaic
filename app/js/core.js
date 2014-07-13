@@ -439,12 +439,15 @@
 
 
     $.fn[pluginName] = function (options) {
-        options = options || {};
         return this.each(function () {
             var instance = $.data(this, pluginName);
-            if ( instance ) {
+
+            if ( instance && options ) {
                 instance.update(options);
+            } else if ( instance ) {
+                instance.refresh();
             } else {
+                options = options || {};
                 instance = $.data(this, pluginName, new photoMosaic(this, options));
 
                 // for debugging

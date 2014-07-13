@@ -409,11 +409,19 @@
             this.opts = $.extend({}, this.opts, props);
 
             // take care of any layout-specific change-logic
-            if (props.order) {
+            if (props.hasOwnProperty('order')) {
                 this.images = this._options.gallery.slice();
 
                 if (props.order == 'random') {
                     this.images = this.randomizeImages( this.images );
+                }
+            }
+
+            if (props.hasOwnProperty('width')) {
+                this._options.width = props.width;
+
+                if (props.width === 'auto' || props.width == 0) {
+                    this.opts.width = this.node.width();
                 }
             }
         },

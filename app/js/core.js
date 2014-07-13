@@ -397,6 +397,11 @@
         },
 
         update: function (props) {
+            if ('object' != typeof(props)) {
+                PhotoMosaic.Utils.log.error("The 'update' method accepts an object of parameters to be updated.");
+                return false;
+            }
+
             this.opts = $.extend({}, this.opts, props);
             this.layout.update(props);
             this.refresh();

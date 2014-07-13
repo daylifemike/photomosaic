@@ -31,7 +31,7 @@
 </head>
 <body>
     <div id="container">
-        <h1>Welcome to PhotoMosaic <span>(v2.7.5)</span></h1>
+        <h1>Welcome to PhotoMosaic <span>(v2.8)</span></h1>
         <p>
             Thanks for purchasing PhotoMosaic. This documentation should answer most questions you may have but you can always contact me by leaving a comment on the CodeCanyon item page or by emailing me from my <a href="http://codecanyon.net/user/makfak">author page</a>.
         </p>
@@ -58,8 +58,16 @@
                     <ul>
                         <li><a href="#CustomizeAP">Available Parameters</a></li>
                         <li><a href="#CustomizeDP">Deprecated Parameters</a></li>
-                        <li><a href="#CustomizeUP">Understanding the Parameters</a></li>
-                        <li><a href="#CustomizeCP">Passing-in Parameters</a></li>
+                        <li><a href="#CustomizeUTP">Understanding the Parameters</a></li>
+                        <li><a href="#CustomizePP">Passing-in Parameters</a></li>   
+                    </ul>
+                </li>
+                <li>
+                    <a href="#ExistingMosaics">Working with Existing Mosaics</a>
+                    <ul>
+                        <li><a href="#ExistingFIND">Finding Your Mosaics</a></li>
+                        <li><a href="#ExistingUPDATE">Updating Parameters</a></li>
+                        <li><a href="#ExistingREFRESH">Triggering a Refresh</a></li>
                     </ul>
                 </li>
             </ul>
@@ -124,7 +132,7 @@
             PhotoMosaic's default <b>input</b> format is 'json', causing PhotoMosaic to look for a JSON object named "PMalbum". You can also pass in your own JSON object (or a reference to it).  This JSON object can contain any number of photos, each of which has a src and a caption. Each photo can also have an optional url for links to external sites/pages as well as that photo's specific width and height information (see the example below).
         </p>
         <p>
-            Multiple PhotoMosaic instances can exist on a page.  For more detail about passing a differently named JSON object to PhotoMosaic, take a look at <a href="#CustomizeUP">Understanding Parameters : gallery</a>.
+            Multiple PhotoMosaic instances can exist on a page.  For more detail about passing a differently named JSON object to PhotoMosaic, take a look at <a href="#CustomizeUTP">Understanding Parameters : gallery</a>.
         </p>
         <p>
             Your JSON object can be placed inline in your page (in a SCRIPT tag) or be included in an external file (as mentioned above). Take a look at the demo to see the external method in action.
@@ -252,41 +260,43 @@
             <h4>Available Parameters</h4>
             <p>Below is a list of PhotoMosaic's customizable parameters.  </p>
 <pre class="prettyprint">
-input                          : 'json',             // json, xml, html (str)
-gallery                        : PMalbum,            // a ref to a json object (var), a json object (arr), a xml path (str)
-padding                        : 2,                  // (int)
-columns                        : 'auto',             // 'auto' (str) or (int)
-width                          : 'auto',             // 'auto' (str) or (int)
-height                         : 'auto',             // 'auto' (str) or (int)
-links                          : true,               // (bool)
-external_links                 : false,              // (bool)
-order                          : 'rows'              // rows, columns, masonry, random
-center                         : true                // centers the gallery to it's parent (bool)
-prevent_crop                   : false               // prevents images from being cropped (bool)
-show_loading                   : false,              // (bool)
-loading_transition             : 'fade',             // none, fade, scale-up|down, slide-top|right|bottom|left, custom (str)
-lazyload                       : 0,                  // int || false
-responsive_transition          : true,               // images animate when changing positions (bool)
-responsive_transition_settings : {            
-                                   time: 0,          // delay before animation begins in seconds (float)
-                                   duration: 0.3,    // duration of animation in seconds (float)
-                                   effect: 'easeOut' // type of animation easing (str)
-                                 },
-modal_name                     : null,               // (str) or null
-modal_group                    : true,               // (bool)
-modal_ready_callback           : null,               // (function) or null
-log_gallery_data               : false               // helper method that print gallery data to the console
+input                      : 'json',             // json, xml, html (str)
+gallery                    : PMalbum,            // a ref to a json object (var), a json object (arr), a xml path (str)
+padding                    : 2,                  // (int)
+columns                    : 'auto',             // 'auto' (str) or (int)
+width                      : 'auto',             // 'auto' (str) or (int)
+height                     : 'auto',             // 'auto' (str) or (int)
+links                      : true,               // (bool)
+external_links             : false,              // (bool)
+order                      : 'rows'              // rows, columns, masonry, random
+center                     : true                // centers the gallery to it's parent (bool)
+prevent_crop               : false               // prevents images from being cropped (bool)
+show_loading               : false,              // (bool)
+loading_transition         : 'fade',             // none, fade, scale-up|down, slide-top|right|bottom|left, custom (str)
+lazyload                   : 0,                  // int || false
+resize_transition          : true,               // images animate when changing positions (bool)
+resize_transition_settings : {            
+                               time: 0,          // delay before animation begins in seconds (float)
+                               duration: 0.3,    // duration of animation in seconds (float)
+                               effect: 'easeOut' // type of animation easing (str)
+                             },
+modal_name                 : null,               // (str) or null
+modal_group                : true,               // (bool)
+modal_ready_callback       : null,               // (function) or null
+log_gallery_data           : false               // helper method that print gallery data to the console
 </pre>
 
             <a name="CustomizeDP"></a>
             <h4>Deprecated Parameters</h4>
             <p>Below is a list of parameters that have been removed from PhotoMosaic.</p>
 <pre class="prettyprint">
-random       : (bool)    // now part of "order"
-force_order  : (bool)    // made redundant by "order"
-auto_columns : (bool)    // now part of "columns"
+random                         : (bool)    // now part of "order"
+force_order                    : (bool)    // made redundant by "order"
+auto_columns                   : (bool)    // now part of "columns"
+responsive_transition          : (bool)    // renamed to 'resize_transition')
+responsive_transition_settings : (obj)     // renamed to 'resize_transition_settings')
 </pre>
-            <a name="CustomizeUP"></a>
+            <a name="CustomizeUTP"></a>
             <h4>Understanding the Parameters</h4>
             <p>While most of the parameters accepted by PhotoMosaic are self-explanitory a few require some more detail.</p>
             <div>
@@ -418,9 +428,9 @@ rows   |  columns |  masonry
                 </p>
             </div>
             <div>
-                <h5>responsive_transition</h5>
+                <h5>resize_transition</h5>
                 <p>
-                    As long as <b>width</b> is set to 'auto', PhotoMosaic will behave responsively.  If <b>columns</b> is also set to 'auto', PhotoMosaic is determine the best number of columns given the space available.  As a user resizes their browser the optimum number of columns can change.  When this happens, PhotoMosaic will recalculate each image's position in the mosaic.  Setting <b>responsive_transition</b> to 'true' means that images will animate between their old and new locations.  When set to 'false' images simply jump to the new location.
+                    As long as <b>width</b> is set to 'auto', PhotoMosaic will behave responsively.  If <b>columns</b> is also set to 'auto', PhotoMosaic will determine the best number of columns given the space available.  As a user resizes their browser the number of columns that "columns:'auto'" generates can change.  When this happens, PhotoMosaic will recalculate each image's position in the mosaic.  Setting <b>resize_transition</b> to 'true' means that images will animate between their old and new locations.  When set to 'false' images simply jump to the new location.
                 </p>
             </div>
             <div>
@@ -517,7 +527,7 @@ var PMalbum = [
                 </p>
             </div>
             
-            <a name="CustomizeCP"></a>
+            <a name="CustomizePP"></a>
             <h4>Passing-in Parameters</h4>
             <p>
                 If you're new to jQuery and jQuery Plugins I recommend you read this article to get you up-to-speed on the basics -- <a href="http://docs.jquery.com/How_jQuery_Works">How jQuery Works</a>.
@@ -544,6 +554,118 @@ var PMalbum = [
 
 $('#myElement').photoMosaic(params);</pre>
             
+
+
+
+
+
+        <a name="ExistingMosaics"></a>
+        <h3>Working with Existing Mosaics</h3>
+        <p>While PhotoMosaic doesn't have a formal API, it does offer some convienences to make working with it a little easier.</p>
+
+        <a name="ExistingFIND"></a>
+        <h4>Finding Your Mosaics</h4>
+        <p>
+            PhotoMosaic creates a namespace that can be found on the global <code>window</code> object -- <code>window.PhotoMosaic</code>.  The namespace includes, among other things, a list of all mosaics on the page.
+        </p>
+<pre class="prettyprint">-- assuming 3 mosaics on the page --
+PhotoMosaic.Mosaics = [
+    {...}, // mosaic 1
+    {...}, // mosaic 2
+    {...}, // mosaic 3
+]
+
+-- the information available in each mosaic in the list --
+{
+    el : &lt;div#myElement>     // the original DOM node target
+    $el : $('div#myElement') // a jQuery wrapped reference to the original DOM node target -- $(PhotoMosaic.Mosaics[0].el)
+    instance : photoMosaic   // a reference to the PhotoMosaic instance/object
+    opts : {...}             // a copy of the params passed to PhotoMosaic when originally created
+}
+</pre>
+        <p>
+            The instance of a given mosaic can also be accessed though jQuery data on the original DOM node target as well as in the list of mosaics available in the namespace (as seen above).
+        </p>
+<pre class="prettyprint">-- the following are equivalent --
+$('#myElement').data('photoMosaic');
+
+PhotoMosaic.Mosaics[0].instance;
+
+PhotoMosaic.Mosaics[0].$el.data('photoMosaic');
+
+$(PhotoMosaic.Mosaics[0].el).data('photoMosaic');
+</pre>
+        <p>
+            The namespace also includes a reference to the jQuery instance to which PhotoMosaic has been registered.  This can be useful for any number of reasons, like if you have more than one instance of jQuery on your page.  Under normal circumstances all four of the following methods are equivalent.  In the event of multiple jQuery instances, the 'convienence' and 'explicit' methods will always return the jQuery instance that contains PhotoMosaic.
+        </p>
+<pre class="prettyprint">-- convienence --
+PhotoMosaic('#myElement');
+
+-- explicit --
+PhotoMosaic.$('#myElement');
+
+-- traditional jQuery --
+jQuery('#myElement');
+
+-- traditional jQuery shortcut --
+$('#myElement');
+</pre>
+
+        <a name="ExistingUPDATE"></a>
+        <h4>Updating Parameters</h4>
+        <p>
+            Once a mosaic has been created (e.g. any time after the initial <code>$('#myElement').photomosaic();</code> call) you can update any of the mosaic's parameters (both, defaults and those passed in manually when the mosaic is created or updated) by calling PhotoMosaic again and passing an object containing any new values.
+        </p>
+<pre class="prettyprint">-- create a new PhotoMosaic --
+$('#myElement').photoMosaic({
+    input: 'json',
+    gallery: my_photos,
+    columns: 4,
+    padding: 5
+});
+
+-- update the existing PhotoMosaic to have 1 column --
+$('#myElement').photoMosaic({
+    columns: 1
+});
+
+-- update the existing PhotoMosaic again --
+$('#myElement').photoMosaic({
+    columns: 'auto',
+    width: 200 
+});
+
+-- the instance can be updated directly --
+PhotoMosaic.Mosaics[0].instance.update({
+    padding: 0
+});
+</pre>
+
+        <a name="ExistingREFRESH"></a>
+        <h4>Triggering a Refresh</h4>
+        <p>
+            Once a mosaic has been created (e.g. any time after the initial <code>$('#myElement').photoMosaic();</code> call) you can manually trigger a refresh by calling <code>.photoMosaic()</code> again.  Because PhotoMosaic watches the window's 'resize' event, you can manually refresh all mosaics on a page by triggering the window.resize event.
+        </p>
+<pre class="prettyprint">-- refresh a specific mosaic --
+$('#myElement').photoMosaic();
+
+-- another way to trigger a specific refresh --
+PhotoMosaic.Mosaics[0].instance.refresh();
+
+-- refresh all mosaics on the page --
+$(window).trigger('resize');
+
+-- another way to refresh all mosaics --
+$.each(PhotoMosaic.Mosaics, function(){
+    this.instance.refresh();
+});
+
+-- also --
+$.each(PhotoMosaic.Mosaics, function(){
+    this.$el.photoMosaic();
+});
+</pre>
+
 
 
 

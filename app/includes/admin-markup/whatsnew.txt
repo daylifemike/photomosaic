@@ -1,5 +1,16 @@
 ## What's New
 
+### 2.8
+- Bug Fix : corrects $ --> jQuery that broken Jetpack Carousel support
+- Bug Fix : loading spinner is no longer visible after the image has loaded
+- Bug Fix : corrects the bug that caused large galleries to, randomly, fail to render
+- Enhancement : events are now debounced
+- Enhancement : moves from static HTML manipulation to ReactJS
+- Enhancement : updates Moderizr 2.6.2 >>> 2.8.3
+- Change : removes JSTween dependency
+- Change : removes Mustache dependency
+- Change : 'Responsive Transition' has been renamed to 'Resize Transition' for clarity
+
 ### 2.7.5
 - Enhancement : increased the amount of the viewport the default lightbox (PrettyPhoto) uses
 - Bug Fix : corrects the bug that prevented items that should line up in a perfect grid from doing so

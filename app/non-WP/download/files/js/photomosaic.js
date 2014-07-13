@@ -44,7 +44,7 @@
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');
     registerNamespace('PhotoMosaic.Mosaics', []);
-    registerNamespace('PhotoMosaic.version', '2.7.5');
+    registerNamespace('PhotoMosaic.version', '2.8');
 
 }(jQuery, window));
 /*
@@ -21714,13 +21714,15 @@ PhotoMosaic.Inputs = (function ($){
         this.node = mosaic.obj;
         this.opts = mosaic.opts;
         this._options = mosaic._options;
+        this._options.gallery = mosaic.opts.gallery.slice(); // we want to be able to refer to the original gallery order
         this.images = mosaic.opts.gallery;
         this.imagesById = PhotoMosaic.Utils.arrayToObj( this.images, 'id' );
-        return this.constructView();
+        this.isRefreshing = false;
+        return this;
     };
 
     PhotoMosaic.Layouts.columns.prototype = {
-        constructView : function () {
+        getData : function () {
             var images = this.images;
             var columns = null;
             var column_width = null;
@@ -21768,6 +21770,8 @@ PhotoMosaic.Inputs = (function ($){
             this.positionImagesInMosaic( columns );
 
             images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
+
+            this.isRefreshing = false;
 
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),
@@ -21851,9 +21855,10 @@ PhotoMosaic.Inputs = (function ($){
 
         sortRandomly : function (images, columns) {
             // randomize and sort into rows
-            images.sort(function (a, b) {
-                return (0.5 - Math.random());
-            });
+            // don't re-randomize if we're refreshing
+            if (!this.isRefreshing) {
+                images = this.randomizeImages( images );
+            }
 
             columns = this.sortIntoRows( images, columns );
 
@@ -22096,6 +22101,38 @@ PhotoMosaic.Inputs = (function ($){
                     col_height = col_height + image.height.container + this.opts.padding;
                 };
             };
+        },
+
+        randomizeImages : function (images) {
+            return images.sort(function (a, b) {
+                return (0.5 - Math.random());
+            });
+        },
+
+        refresh : function () {
+            this.isRefreshing = true;
+            return this.getData();
+        },
+
+        update : function (props) {
+            this.opts = $.extend({}, this.opts, props);
+
+            // take care of any layout-specific change-logic
+            if (props.hasOwnProperty('order')) {
+                this.images = this._options.gallery.slice();
+
+                if (props.order == 'random') {
+                    this.images = this.randomizeImages( this.images );
+                }
+            }
+
+            if (props.hasOwnProperty('width')) {
+                this._options.width = props.width;
+
+                if (props.width === 'auto' || props.width == 0) {
+                    this.opts.width = this.node.width();
+                }
+            }
         },
 
         errorChecks : {
@@ -22350,7 +22387,8 @@ PhotoMosaic.Inputs = (function ($){
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) { return; }
 
             // TODO : add a switch for layout selection
-            layout_data = new PhotoMosaic.Layouts.columns( this );
+            this.layout = new PhotoMosaic.Layouts.columns( this );
+            layout_data = this.layout.getData();
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
@@ -22525,7 +22563,7 @@ PhotoMosaic.Inputs = (function ($){
 
         setImageIDs: function (gallery) {
             for (var i = 0; i < gallery.length; i++) {
-                gallery[i].id = PhotoMosaic.Utils.makeID(false, 'pm');
+                gallery[i].key = gallery[i].id = PhotoMosaic.Utils.makeID(false, 'pm');
             };
             return gallery;
         },
@@ -22602,7 +22640,8 @@ PhotoMosaic.Inputs = (function ($){
                 class_name : this.makeSpecialClasses(),
                 center : this.opts.center
             };
-            var layout_data = new PhotoMosaic.Layouts.columns( this );
+
+            var layout_data = this.layout.refresh();
             var view_model = $.extend({}, mosaic_data, layout_data);
 
             // transitionend fires for each proprty being transitioned, we only care about when the last one ends
@@ -22622,6 +22661,17 @@ PhotoMosaic.Inputs = (function ($){
                     }
                 }
             );
+        },
+
+        update: function (props) {
+            if ('object' != typeof(props)) {
+                PhotoMosaic.Utils.log.error("The 'update' method accepts an object of parameters to be updated.");
+                return false;
+            }
+
+            this.opts = $.extend({}, this.opts, props);
+            this.layout.update(props);
+            this.refresh();
         },
 
         modalCallback: function () {
@@ -22661,16 +22711,24 @@ PhotoMosaic.Inputs = (function ($){
 
 
     $.fn[pluginName] = function (options) {
-        options = options || {};
         return this.each(function () {
-            if (!$.data(this, pluginName)) {
-                $.data(this, pluginName, new photoMosaic(this, options));
+            var instance = $.data(this, pluginName);
+
+            if ( instance && options ) {
+                instance.update(options);
+            } else if ( instance ) {
+                instance.refresh();
+            } else {
+                options = options || {};
+                instance = $.data(this, pluginName, new photoMosaic(this, options));
 
                 // for debugging
                 window.PhotoMosaic.$ = $;
                 window.PhotoMosaic.Mosaics.push({
                     'el' : this,
-                    'opts' : options
+                    '$el' : $(this),
+                    'opts' : options,
+                    'instance' : instance
                 });
             }
         });

@@ -215,7 +215,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-text-replace');
-    // grunt.loadNpmTasks('grunt-react');
 
     grunt.registerTask('dist', [ 'concat', 'copy:dist', 'uglify:dist' ]);
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);

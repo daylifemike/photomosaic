@@ -279,6 +279,7 @@ class PhotoMosaic {
                         lazyload: '. $settings['lazyload'] .',
                         modal_name: "' . $settings['lightbox_rel'] . '",
                         modal_group: ' . $settings['lightbox_group'] . ',
+                        modal_hash: "' . hash('adler32', json_encode($atts)) . '",
             ';
 
         $required_atts = array('id', 'link_behavior', 'include', 'exclude', 'ids');

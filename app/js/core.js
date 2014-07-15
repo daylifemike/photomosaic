@@ -50,6 +50,7 @@
             },
             modal_name : null,
             modal_group : true,
+            modal_hash : null,
             modal_ready_callback : null,
             lazyload : 0, // int || false
             log_gallery_data : false
@@ -234,7 +235,11 @@
                 // modal hooks
                 if (self.opts.modal_name) {
                     if (self.opts.modal_group) {
-                        modal_text = self.opts.modal_name + '[' + self._id + ']';
+                        if (self.opts.modal_hash) {
+                            modal_text = self.opts.modal_name + '[' + self.opts.modal_hash + ']';
+                        } else {
+                            modal_text = self.opts.modal_name + '[' + self._id + ']';
+                        }
                     } else {
                         modal_text = self.opts.modal_name;
                     }

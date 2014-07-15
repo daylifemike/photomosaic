@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.8.1
+- Enchancement : "Group Images" now includes better deeplinking support
+
 ### 2.8
 - Bug Fix : corrects $ --> jQuery that broken Jetpack Carousel support
 - Bug Fix : loading spinner is no longer visible after the image has loaded

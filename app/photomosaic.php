@@ -211,7 +211,7 @@ class PhotoMosaic {
         }
 
        foreach ( $int_false_settings as $key ) {
-            if (empty($settings[$key]) || $settings[$key] == 'false') {
+            if ( trim($settings[$key]) == '' || $settings[$key] == 'false' ) {
                 $settings[$key] = "false";
             } else {
                 $settings[$key] = intval($settings[$key]);

@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.8.2
+- Bug Fix : corrects regression that prevented captions from appearing on the page
+- Bug Fix : Lazyloading now targets the bottom of the viewport when set to '0'
+
 ### 2.8.1
 - Enchancement : "Group Images" now includes better deeplinking support
 

@@ -998,6 +998,7 @@ class PhotoMosaic {
     }
 
     private static function esc_attr( $text ) {
+        $text = trim($text);
         // lifted from wp-includes/formatting.php # esc_attr
         $safe_text = wp_check_invalid_utf8( $text );
         $safe_text = _wp_specialchars( $safe_text, "double" );

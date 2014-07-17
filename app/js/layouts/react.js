@@ -11,14 +11,14 @@
                 var id = prefixId(this.props.id);
                 var class_name = 'photoMosaic loading ' + this.props.class_name;
                 var style = {
-                    width : this.props.width,
-                    height : this.props.height
-                };
+                        width : this.props.width,
+                        height : this.props.height
+                    };
                 var images = this.props.images.map(function (image) {
-                    return (
-                        PhotoMosaic.Layouts.React.image_wrapper(image)
-                    );
-                });
+                        return (
+                            PhotoMosaic.Layouts.React.image_wrapper(image)
+                        );
+                    });
 
                 if (this.props.center) {
                     style['margin-right'] = 'auto';
@@ -41,21 +41,21 @@
                 var data = this.props;
                 var node_type = (data.link) ? 'a' : 'span';
                 var params = {
-                    className : 'photomosaic-item loading',
-                    style : {
-                        position : 'absolute',
-                        top : data.position.top,
-                        left : data.position.left,
-                        width : data.width.container,
-                        height : data.height.container
-                    },
-                    children : PhotoMosaic.Layouts.React.image(data)
-                };
+                        className : 'photomosaic-item loading',
+                        style : {
+                            position : 'absolute',
+                            top : data.position.top,
+                            left : data.position.left,
+                            width : data.width.container,
+                            height : data.height.container
+                        },
+                        children : PhotoMosaic.Layouts.React.image(data)
+                    };
 
                 if (data.link) {
                     if (data.external) { params.target = '_blank'; }
                     if (data.modal) { params.rel = data.modal; }
-                    if (data.caption) { params.caption = data.caption; }
+                    if (data.caption) { params.title = data.caption; }
                     params.href = data.path;
                 }
 
@@ -69,9 +69,9 @@
             render : function () {
                 var data = this.props;
                 var style = {
-                    width : data.width.adjusted,
-                    height : data.height.adjusted,
-                };
+                        width : data.width.adjusted,
+                        height : data.height.adjusted,
+                    };
 
                 if (data.adjustment) {
                     style[data.adjustment.type] = data.adjustment.value * -1;
@@ -81,7 +81,7 @@
                     React.DOM.img({
                         id : data.id,
                         src : data.src,
-                        title : data.title,
+                        title : data.caption,
                         alt : data.alt,
                         style : style
                     })

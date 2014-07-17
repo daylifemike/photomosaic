@@ -18,23 +18,22 @@
             var columns = null;
             var column_width = null;
             var mosaic_height = 0;
-            var position_data = null;
 
             if (this._options.width === 'auto' || this._options.width == 0) {
                 this.opts.width = this.node.width();
             }
 
             // determine the number of columns
-            this.columns = columns = this.makeColumnBuckets();
+            this.columns = columns = PhotoMosaic.Layouts.Common.makeColumnBuckets( this.opts );
 
             // determine the column width (all columns have the same width)
-            this.column_width = column_width = this.getColumnWidth();
+            this.column_width = column_width = PhotoMosaic.Layouts.Common.getColumnWidth( columns, this.opts );
 
             // scale each image to the column width
             images = this.scaleToWidth( images, column_width );
 
             // sort the images (based on opts.order) and assign them to columns
-            columns = this.dealIntoColumns( images, columns );
+            columns = PhotoMosaic.Layouts.Common.dealIntoColumns( images, columns, this.opts, this.isRefreshing );
 
             // determine the target height for the entire mosaic
             mosaic_height = this.getMosaicHeight( columns );
@@ -49,7 +48,7 @@
                 columns = this.balanceColumnsToHeight( columns, mosaic_height );
             }
 
-            // bail if the user's settings craete a super-broken mosaic
+            // bail if the user's settings creates a super-broken mosaic
             if ( this.errorChecks.height(images) ) {
                 return false;
             }
@@ -58,7 +57,8 @@
             images = this.positionImagesInContainer( images );
 
             // convert all this knowledge into position data
-            this.positionImagesInMosaic( columns );
+            // TODO : stop being a side-effect
+            PhotoMosaic.Layouts.Common.positionImagesInMosaic( this.imagesById, columns, column_width, this.opts );
 
             images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
 
@@ -67,49 +67,8 @@
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),
                 height : mosaic_height,
-                images : this.images
+                images : images
             };
-        },
-
-        makeColumnBuckets : function () {
-            var columns = [];
-            var num_cols = 0;
-            var max_width = 0;
-            var num_images = 0
-            var maths = {};
-            var i = 0;
-
-            if (this.opts.columns && this.opts.columns !== 'auto') {
-                num_cols = this.opts.columns;
-            } else {
-                // TODO : make this less lame
-                max_width = this.opts.width;
-                num_images = this.opts.gallery.length;
-                maths = {
-                    plus : 425, // (300 + (150 / 1.2))
-                    minus : 175 // (300 - (150 / 1.2))
-                };
-
-                num_cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
-
-                if (num_images < num_cols) {
-                    num_cols = num_images;
-                }
-            }
-
-            for (i = 0; i < num_cols; i++) {
-                columns.push( [] );
-            };
-
-            return columns;
-        },
-
-        getColumnWidth : function () {
-            var num_cols = this.columns.length;
-            var total_padding = this.opts.padding * (num_cols - 1); // we only pad between columns
-            var usable_width = this.opts.width - total_padding;
-            var col_width = Math.floor(usable_width / num_cols);
-            return col_width;
         },
 
         scaleToWidth : function (images, width) {
@@ -121,121 +80,12 @@
             return images;
         },
 
-        dealIntoColumns : function (images, columns) {
-            switch ( this.opts.order ) {
-                case 'random' :
-                    columns = this.sortRandomly( images, columns );
-                    break;
-
-                case 'masonry' :
-                    columns = this.sortIntoMasonry( images, columns );
-                    break;
-
-                case 'columns' :
-                    columns = this.sortIntoColumns( images, columns );
-                    break;
-
-                case 'rows' :
-                default :
-                    columns = this.sortIntoRows( images, columns );
-                    break;
-            }
-
-            return columns;
-        },
-
-        sortRandomly : function (images, columns) {
-            // randomize and sort into rows
-            // don't re-randomize if we're refreshing
-            if (!this.isRefreshing) {
-                images = this.randomizeImages( images );
-            }
-
-            columns = this.sortIntoRows( images, columns );
-
-            return columns;
-        },
-
-        sortIntoRows : function (images, columns) {
-            var num_columns = columns.length;
-            var num_images = images.length;
-            var which = 0;
-            var i = 0;
-
-            for (i = 0; i < num_images; i++) {
-                which = i % num_columns;
-                columns[which].push(images[i].id);
-            }
-
-            return columns;
-        },
-
-        sortIntoColumns : function (images, columns) {
-            // columns --> rows => columns
-            var images = $.extend(true, [], images); // deep copy because we .shift()
-            var num_images = images.length;
-            var i = 0;
-            var j = 0;
-
-            columns = this.sortIntoRows( images, columns );
-
-            // Sorting into rows tells us how many images are in each column.
-            // The specific image in each slot is wrong but the slot-division is good.
-            // So we replace the image in each slot with the next one from the ordered list.
-            for (i = 0; i < columns.length; i++) {
-                for (j = 0; j < columns[i].length; j++) {
-                    columns[i][j] = images[0].id;
-                    images.shift();
-                }
-            }
-
-            return columns;
-        },
-
-        sortIntoMasonry : function (images, columns) {
-            var num_columns = columns.length;
-            var num_images = images.length;
-            var column_heights = [];
-            var which = 0;
-            var i = 0;
-
-            for (i = 0; i < num_columns; i++) {
-                column_heights[i] = 0;
-            } 
-
-            // always place the next image into the shortest column
-            for (i = 0; i < num_images; i++) {
-                which = $.inArray(
-                            Math.min.apply( Math, column_heights ),
-                            column_heights
-                        );
-                columns[which].push( images[i].id );
-                column_heights[which] = column_heights[which] + images[i].height.container;
-            }
-
-            return columns;
-        },
-
         getMosaicHeight : function (columns) {
             if (this.opts.height && this.opts.height !== 'auto') {
                 return this.opts.height;
             }
 
-            var column_heights = [];
-            var column_height = 0;
-            var image = null;
-
-            for (var i = 0; i < columns.length; i++) {
-                column_height = 0;
-
-                for (var j = 0; j < columns[i].length; j++) {
-                    image = this.imagesById[ columns[i][j] ];
-                    column_height += image.height.container;
-                }
-
-                column_height += (columns[i].length - 1) * this.opts.padding;
-                column_heights.push( column_height );
-            }
+            var column_heights = PhotoMosaic.Layouts.Common.getColumnHeights( this.imagesById, columns, this.opts );
 
             if (this.opts.prevent_crop) {
                 return Math.max.apply( Math, column_heights );
@@ -345,59 +195,26 @@
             for (var i = 0; i < images.length; i++) {
                 image = images[i];
 
-                if (this.opts.prevent_crop) {
-                    image.adjustment = {
-                        type : 'top',
-                        value : 0
-                    };
-                } else {
+                image.adjustments = {};
+
+                if (!this.opts.prevent_crop) {
                     // adjusted is still scaled to the column's width
                     if (image.height.adjusted > image.height.container) {
-                        image.adjustment = {
-                            type : 'top',
-                            value : Math.floor((image.height.adjusted - image.height.container) / 2)
-                        };
+                        image.adjustments.top = Math.floor((image.height.adjusted - image.height.container) / 2);
                     } else {
                         image.width.adjusted = Math.floor((image.width.adjusted * image.height.container) / image.height.adjusted);
                         image.height.adjusted = image.height.container;
 
-                        image.adjustment = {
-                            type : 'left',
-                            value : Math.floor((image.width.adjusted - image.width.container) / 2)
-                        };
+                        image.adjustments.left = Math.floor((image.width.adjusted - image.width.container) / 2);
                     }
                 }
+
+                image.adjustments = PhotoMosaic.Layouts.Common.normalizeAdjustments( image.adjustments );
 
                 images[i] = image;
             };
 
             return images;
-        },
-
-        positionImagesInMosaic : function (columns) {
-            var col_height = 0;
-            var image = null;
-
-            for (var i = 0; i < columns.length; i++) {
-                col_height = 0;
-
-                for (var j = 0; j < columns[i].length; j++) {
-                    image = this.imagesById[ columns[i][j] ];
-
-                    image.position = {
-                        top : col_height,
-                        left : (i * this.column_width) + (i * this.opts.padding)
-                    };
-
-                    col_height = col_height + image.height.container + this.opts.padding;
-                };
-            };
-        },
-
-        randomizeImages : function (images) {
-            return images.sort(function (a, b) {
-                return (0.5 - Math.random());
-            });
         },
 
         refresh : function () {
@@ -413,7 +230,7 @@
                 this.images = this._options.gallery.slice();
 
                 if (props.order == 'random') {
-                    this.images = this.randomizeImages( this.images );
+                    this.images = PhotoMosaic.Layouts.Common.randomizeImages( this.images );
                 }
             }
 

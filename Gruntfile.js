@@ -20,9 +20,10 @@ module.exports = function(grunt) {
         'app/js/inputs.js',
         'app/js/loader.js',
         // view constructors
+        'app/js/layouts/common.js',
         'app/js/layouts/columns.js',
-        // 'app/js/layouts/rows.js',
-        // 'app/js/layouts/grid.js',
+            // 'app/js/layouts/rows.js',
+        'app/js/layouts/grid.js',
         // react
         'app/js/layouts/react.js',
         // photomosaic

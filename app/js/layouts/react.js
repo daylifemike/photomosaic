@@ -9,16 +9,16 @@
         mosaic : React.createClass({
             render : function () {
                 var id = prefixId(this.props.id);
-                var class_name = 'photoMosaic loading ' + this.props.class_name;
+                var class_name = 'photoMosaic ' + this.props.class_name;
                 var style = {
-                        width : this.props.width,
-                        height : this.props.height
-                    };
+                    width : this.props.width,
+                    height : this.props.height
+                };
                 var images = this.props.images.map(function (image) {
-                        return (
-                            PhotoMosaic.Layouts.React.image_wrapper(image)
-                        );
-                    });
+                    return (
+                        PhotoMosaic.Layouts.React.image_wrapper(image)
+                    );
+                });
 
                 if (this.props.center) {
                     style['margin-right'] = 'auto';
@@ -37,20 +37,24 @@
         }),
 
         image_wrapper : React.createClass({
+            componentDidMount : function () {
+                $(this.getDOMNode()).addClass('loading');
+            },
             render : function () {
                 var data = this.props;
                 var node_type = (data.link) ? 'a' : 'span';
                 var params = {
-                        className : 'photomosaic-item loading',
-                        style : {
-                            position : 'absolute',
-                            top : data.position.top,
-                            left : data.position.left,
-                            width : data.width.container,
-                            height : data.height.container
-                        },
-                        children : PhotoMosaic.Layouts.React.image(data)
-                    };
+                    className : 'photomosaic-item loading',
+                    key : data.id,
+                    style : {
+                        position : 'absolute',
+                        top : data.position.top,
+                        left : data.position.left,
+                        width : data.width.container,
+                        height : data.height.container
+                    },
+                    children : PhotoMosaic.Layouts.React.image(data)
+                };
 
                 if (data.link) {
                     if (data.external) { params.target = '_blank'; }
@@ -69,12 +73,12 @@
             render : function () {
                 var data = this.props;
                 var style = {
-                        width : data.width.adjusted,
-                        height : data.height.adjusted
-                    };
+                    width : data.width.adjusted,
+                    height : data.height.adjusted,
+                };
 
-                if (data.adjustment) {
-                    style[data.adjustment.type] = data.adjustment.value * -1;
+                for (var key in data.adjustments) {
+                    style[key] = data.adjustments[key] * -1;
                 }
 
                 return (

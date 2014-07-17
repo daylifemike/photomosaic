@@ -53,6 +53,13 @@
             modal_hash : null,
             modal_ready_callback : null,
             lazyload : 0, // int || false
+
+            layout : 'columns', // rows, columns, grid
+            shape : '16:9', // aspect-ratio (16:9)
+            sizing : 'contain', // cover, contain
+            align : 'middle', // top, middle, bottom
+            orphans : 'left', // left, center, right
+
             log_gallery_data : false
             // random : false (deprecated: v2.2)
             // force_order : false (deprecated: v2.2)
@@ -120,8 +127,7 @@
             // bail if we don't have any images (e.g. they all failed to load)
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) { return; }
 
-            // TODO : add a switch for layout selection
-            this.layout = new PhotoMosaic.Layouts.columns( this );
+            this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
             layout_data = this.layout.getData();
 
             view_model = $.extend({}, mosaic_data, layout_data);
@@ -408,7 +414,13 @@
             }
 
             this.opts = $.extend({}, this.opts, props);
-            this.layout.update(props);
+
+            if (props.hasOwnProperty('layout')) {
+                this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
+            } else {
+                this.layout.update(props);
+            }
+
             this.refresh();
         },
 
@@ -444,7 +456,6 @@
         _name : pluginName,
 
         version : PhotoMosaic.version
-
     };
 
 

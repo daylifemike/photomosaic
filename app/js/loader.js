@@ -57,18 +57,19 @@
             setTimeout(function () {
                 // if you don't want a loading transition OR it's handled by CSS
                 if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
-                    var $parent = $(image.img).parents('span.loading, a.loading');
-                    var toggleClasses = PhotoMosaic.Utils.debounce(function () {
-                       $parent.addClass('loaded');
-                       self.mosaic.obj.off(self.mosaic._transition_end_event_name);
-                    }, 250);
+                    var $image = $(image.img);
+                    var $parent = $image.parents('span.loading, a.loading');
+                    var toggleClasses = function () {
+                        $parent.addClass('loaded');
+                        $image.off(self.mosaic._transition_end_event_name);
+                    };
 
-                    $parent.removeClass('loading');
-
-                    self.mosaic.obj.on(
+                    $image.on(
                         self.mosaic._transition_end_event_name,
                         toggleClasses
                     );
+
+                    $parent.removeClass('loading');
 
                 } else {
                     // you want a transition but the browser doesn't support CSS Transitions... fade (old IEs)
@@ -119,8 +120,8 @@
 
                 // transitionend fires for each proprty being transitioned, we only care about when the last one ends
                 var toggleClasses = PhotoMosaic.Utils.debounce(function () {
-                   $mosaic.removeClass('loading').addClass('loaded');
-                }, 250);
+                    $mosaic.removeClass('loading').addClass('loaded');
+                }, 1000);
 
                 if ($loading.length == 0) {
                     self.mosaic.obj.on(

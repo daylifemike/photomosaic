@@ -80,7 +80,7 @@
                 return (
                     React.DOM.img({
                         id : data.id,
-                        src : data.src,
+                        'data-src' : data.src,
                         title : data.caption,
                         alt : data.alt,
                         style : style

@@ -44,7 +44,7 @@
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');
     registerNamespace('PhotoMosaic.Mosaics', []);
-    registerNamespace('PhotoMosaic.version', '2.8');
+    registerNamespace('PhotoMosaic.version', '2.8.2');
 
 }(jQuery, window));
 /*
@@ -22170,14 +22170,14 @@ PhotoMosaic.Inputs = (function ($){
                 var id = prefixId(this.props.id);
                 var class_name = 'photoMosaic loading ' + this.props.class_name;
                 var style = {
-                    width : this.props.width,
-                    height : this.props.height
-                };
+                        width : this.props.width,
+                        height : this.props.height
+                    };
                 var images = this.props.images.map(function (image) {
-                    return (
-                        PhotoMosaic.Layouts.React.image_wrapper(image)
-                    );
-                });
+                        return (
+                            PhotoMosaic.Layouts.React.image_wrapper(image)
+                        );
+                    });
 
                 if (this.props.center) {
                     style['margin-right'] = 'auto';
@@ -22200,21 +22200,21 @@ PhotoMosaic.Inputs = (function ($){
                 var data = this.props;
                 var node_type = (data.link) ? 'a' : 'span';
                 var params = {
-                    className : 'photomosaic-item loading',
-                    style : {
-                        position : 'absolute',
-                        top : data.position.top,
-                        left : data.position.left,
-                        width : data.width.container,
-                        height : data.height.container
-                    },
-                    children : PhotoMosaic.Layouts.React.image(data)
-                };
+                        className : 'photomosaic-item loading',
+                        style : {
+                            position : 'absolute',
+                            top : data.position.top,
+                            left : data.position.left,
+                            width : data.width.container,
+                            height : data.height.container
+                        },
+                        children : PhotoMosaic.Layouts.React.image(data)
+                    };
 
                 if (data.link) {
                     if (data.external) { params.target = '_blank'; }
                     if (data.modal) { params.rel = data.modal; }
-                    if (data.caption) { params.caption = data.caption; }
+                    if (data.caption) { params.title = data.caption; }
                     params.href = data.path;
                 }
 
@@ -22228,9 +22228,9 @@ PhotoMosaic.Inputs = (function ($){
             render : function () {
                 var data = this.props;
                 var style = {
-                    width : data.width.adjusted,
-                    height : data.height.adjusted,
-                };
+                        width : data.width.adjusted,
+                        height : data.height.adjusted,
+                    };
 
                 if (data.adjustment) {
                     style[data.adjustment.type] = data.adjustment.value * -1;
@@ -22240,7 +22240,7 @@ PhotoMosaic.Inputs = (function ($){
                     React.DOM.img({
                         id : data.id,
                         src : data.src,
-                        title : data.title,
+                        title : data.caption,
                         alt : data.alt,
                         style : style
                     })
@@ -22317,6 +22317,7 @@ PhotoMosaic.Inputs = (function ($){
             },
             modal_name : null,
             modal_group : true,
+            modal_hash : null,
             modal_ready_callback : null,
             lazyload : 0, // int || false
             log_gallery_data : false
@@ -22501,7 +22502,11 @@ PhotoMosaic.Inputs = (function ($){
                 // modal hooks
                 if (self.opts.modal_name) {
                     if (self.opts.modal_group) {
-                        modal_text = self.opts.modal_name + '[' + self._id + ']';
+                        if (self.opts.modal_hash) {
+                            modal_text = self.opts.modal_name + '[' + self.opts.modal_hash + ']';
+                        } else {
+                            modal_text = self.opts.modal_name + '[' + self._id + ']';
+                        }
                     } else {
                         modal_text = self.opts.modal_name;
                     }

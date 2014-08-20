@@ -1,4 +1,11 @@
 /* PhotoMosaic - Changelog */
+
+= 2.8.2 =
+- Bug Fix : corrects regression that prevented captions from appearing on the page
+
+= 2.8.1 =
+- Enhancement : adds "modal_hash" param for better deeplinking support
+
 = 2.8 =
 - Bug Fix : loading spinner is no longer visible after the image has loaded
 - Bug Fix : corrects the bug that caused large galleries to, randomly, fail to render

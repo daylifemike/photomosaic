@@ -5,7 +5,7 @@
 - Bug Fix : Lazyloading now targets the bottom of the viewport when set to '0'
 
 ### 2.8.1
-- Enchancement : "Group Images" now includes better deeplinking support
+- Enhancement : "Group Images" now includes better deeplinking support
 
 ### 2.8
 - Bug Fix : corrects $ --> jQuery that broken Jetpack Carousel support

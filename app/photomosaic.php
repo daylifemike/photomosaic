@@ -372,7 +372,14 @@ class PhotoMosaic {
         );
 
         if ( !empty($category) ) {
-            $args['category'] = get_category_by_slug($category)->term_id;
+            if ( strpos($category, ',') === false ) {
+                $args['category'] = get_category_by_slug($category)->term_id;
+            } else {
+                function fetch_category_id($cat) {
+                    return get_category_by_slug($cat)->term_id;
+                };
+                $args['category'] = implode( ',', array_map( "fetch_category_id", explode( ',', $category ) ) );
+            }
         }
 
         $posts = wp_get_recent_posts( $args );

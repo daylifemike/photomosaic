@@ -69,6 +69,12 @@
         -ms-backface-visibility: hidden;
          -o-backface-visibility: hidden;
             backface-visibility: hidden;
+
+    -webkit-transform: scale(1);
+       -moz-transform: scale(1);
+        -ms-transform: scale(1);
+         -o-transform: scale(1);
+            transform: scale(1);
 }
 
 /* The .loaded is added after all of the images have loaded */

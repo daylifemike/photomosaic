@@ -184,6 +184,14 @@ module.exports = function(grunt) {
             }
         },
         replace : {
+            dev : {
+                src : dist_path + 'photomosaic.php',
+                overwrite : true,
+                replacements : [{
+                    from : 'photomosaic.min.js',
+                    to : 'photomosaic.js'
+                }]
+            },
             nonwp : {
                 src : dist_path + 'js/photomosaic.js',
                 overwrite : true,
@@ -206,9 +214,9 @@ module.exports = function(grunt) {
             }
         },
         watch : {
-            dev: {
-                files: [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
-                tasks: [ 'default' ]
+            dev : {
+                files : [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
+                tasks : [ 'concat', 'copy:dist', 'replace:dev', 'clean:plugin', 'copy:plugin', 'clean:dist' ]
             }
         }
     });

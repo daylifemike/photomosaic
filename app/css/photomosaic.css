@@ -34,8 +34,8 @@
 /* loading */
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/spinner-arrows.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }
 
-.photoMosaic.loading .photomosaic-item { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
-.photoMosaic.loading .photomosaic-item.loaded { background:none; }
+.photoMosaic.loading .photomosaic-spinner { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
+.photoMosaic.loading .photomosaic-item.loaded .photomosaic-spinner { display:none; }
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 

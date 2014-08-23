@@ -362,6 +362,10 @@
             return (this.opts.resize_transition) ? '' : 'resize-transition-none';
         },
 
+        getLayoutClass: function () {
+            return 'layout-' + this.opts.layout + ((this.opts.layout == 'grid') ? '-' + this.opts.sizing : '');
+        },
+
         getAvia: function () {
             // Kriesi's Avia framework overwrites the 'left' prop on my links
             // 'noLightbox' prevents that shit from happening
@@ -372,6 +376,7 @@
             var classes = [
                 this.getLoadingTransition(),
                 this.getResizeTransition(),
+                this.getLayoutClass(),
                 this.getAvia()
             ];
             return classes.join(' ');

@@ -121,6 +121,7 @@
                 // transitionend fires for each proprty being transitioned, we only care about when the last one ends
                 var toggleClasses = PhotoMosaic.Utils.debounce(function () {
                     $mosaic.removeClass('loading').addClass('loaded');
+                    self.mosaic.obj.off(self.mosaic._transition_end_event_name);
                 }, 1000);
 
                 if ($loading.length == 0) {

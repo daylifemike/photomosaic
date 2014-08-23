@@ -7,6 +7,9 @@
 
     PhotoMosaic.Layouts.React = {
         mosaic : React.createClass({
+            componentDidMount : function () {
+                $(this.getDOMNode()).addClass('loading');
+            },
             render : function () {
                 var id = prefixId(this.props.id);
                 var class_name = 'photoMosaic ' + this.props.class_name;
@@ -44,7 +47,7 @@
                 var data = this.props;
                 var node_type = (data.link) ? 'a' : 'span';
                 var params = {
-                    className : 'photomosaic-item loading',
+                    className : 'photomosaic-item',
                     key : data.id,
                     style : {
                         position : 'absolute',
@@ -53,7 +56,10 @@
                         width : data.width.container,
                         height : data.height.container
                     },
-                    children : PhotoMosaic.Layouts.React.image(data)
+                    children : [
+                        PhotoMosaic.Layouts.React.spinner( $.extend({}, data, {key : data.id + '_spinner'}) ),
+                        PhotoMosaic.Layouts.React.image(data)
+                    ]
                 };
 
                 if (data.link) {
@@ -87,6 +93,27 @@
                         'data-src' : data.src,
                         title : data.caption,
                         alt : data.alt,
+                        style : style
+                    })
+                );
+            }
+        }),
+
+        spinner : React.createClass({
+            render : function () {
+                var data = this.props;
+                var style = {
+                    width : data.width.adjusted,
+                    height : data.height.adjusted,
+                };
+
+                for (var key in data.adjustments) {
+                    style[key] = data.adjustments[key] * -1;
+                }
+
+                return (
+                    React.DOM.span({
+                        className : 'photomosaic-spinner',
                         style : style
                     })
                 );

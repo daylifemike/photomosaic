@@ -824,7 +824,9 @@ class PhotoMosaic {
 
     public static function wordpress_gallery_shortcode($attr) {
         // this function is taken directly from the WP (3.8.1) core (wp-includes/media.php#gallery_shortcode)
-        // with the exception of commenting-out the post_gallery filter call
+        // with 2 exceptions:
+        // - the post_gallery filter call has been commented-out
+        // - the entire output is wrapped in a noscript
         $post = get_post();
 
         static $instance = 0;
@@ -837,7 +839,7 @@ class PhotoMosaic {
             $attr['include'] = $attr['ids'];
         }
 
-        // !!! THIS IS THE ONLY CHANGE - COMMENTED OUT !!!
+        // !!! EDIT - COMMENTED OUT !!!
         // Allow plugins/themes to override the default gallery template.
         // $output = apply_filters('post_gallery', '', $attr);
         // if ( $output != '' )
@@ -967,6 +969,9 @@ class PhotoMosaic {
         $output .= "
                 <br style='clear: both;' />
             </div>\n";
+
+        // !!! EDIT - the following line has been added !!!
+        $output = "<noscript>" . $output . "</noscript>";
 
         return $output;
     }

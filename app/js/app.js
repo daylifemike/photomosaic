@@ -44,6 +44,6 @@
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');
     registerNamespace('PhotoMosaic.Mosaics', []);
-    registerNamespace('PhotoMosaic.version', '2.8.2');
+    registerNamespace('PhotoMosaic.version', '2.8.3');
 
 }(jQuery, window));

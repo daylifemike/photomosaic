@@ -19,7 +19,8 @@ When working with Wordpress galleries, there are three ways to specify the image
 A PhotoMosaic can also be used to show any recent posts or recent posts from a specific category:
 
 - `[phototmosaic category="recent" limit="20"]` : show the 20 most recent posts from all categories
-- `[phototmosaic category="uncategorized" limit="10"]` : show the 10 most recent posts from from the 'uncategorized' category
+- `[phototmosaic category="uncategorized" limit="10"]` : show the 10 most recent posts from the 'uncategorized' category
+- `[phototmosaic category="cats, dogs" limit="10"]` : show the 10 most recent posts from the 'cats' and 'dogs' categories
 
 NextGen users can specify a NextGen Gallery ID or a NextGen Album ID.  For albums, all of the images in all of the galleries in the album will be displayed. Images will appear ordered, first, by album and then by the order specified in each gallery.
 

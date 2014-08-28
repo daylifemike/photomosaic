@@ -1,7 +1,13 @@
 ## What's New
 
+### 2.8.3
+- Enhancement: "category" now accepts multiple slugs (separated by commas)
+- Bug Fix : corrects min-width/height on the CSS reset (should quiet some warnings)
+- Bug Fix : corrects an error that caused lazyloading to load images prematurely
+- Bug Fix : adds an initial transform to images (an attempt to fix the Chrome (Win) scroll/flicker issue)
+
 ### 2.8.2
-- Bug Fix : corrects regression that prevented captions from appearing on the page
+- Bug Fix : corrects a regression that prevented captions from appearing on the page
 - Bug Fix : Lazyloading now targets the bottom of the viewport when set to '0'
 
 ### 2.8.1

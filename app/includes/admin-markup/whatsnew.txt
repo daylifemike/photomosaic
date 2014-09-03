@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.8.5
+- Enhancement: updates ReactJS to v0.11.1 and removes unused addons
+- Bug Fix : refines transform settings (large galleries should see drastic performance improvements on mobile)
+
 ### 2.8.4
 - Bug Fix : corrects an error that caused lazyloading to load images prematurely
 

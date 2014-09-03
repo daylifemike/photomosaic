@@ -64,11 +64,11 @@
          -o-transform-style: preserve-3d;
             transform-style: preserve-3d;
 
-    -webkit-backface-visibility: hidden;
-       -moz-backface-visibility: hidden;
-        -ms-backface-visibility: hidden;
-         -o-backface-visibility: hidden;
-            backface-visibility: hidden;
+    -webkit-backface-visibility: visible;
+       -moz-backface-visibility: visible;
+        -ms-backface-visibility: visible;
+         -o-backface-visibility: visible;
+            backface-visibility: visible;
 
     -webkit-transform: scale(1);
        -moz-transform: scale(1);

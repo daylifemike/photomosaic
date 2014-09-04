@@ -174,6 +174,6 @@ PhotoMosaic.Utils = (function(){
             }
             PhotoMosaic.Utils.log.info("Generate Gallery Data...");
             PhotoMosaic.Utils.log.print( JSON.stringify(output) );
-        },
+        }
     };
 }(window.JQPM));

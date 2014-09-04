@@ -154,9 +154,13 @@ module.exports = function(grunt) {
                 src : dist_path + 'js/photomosaic.js',
                 dest : dist_path + 'js/photomosaic.min.js',
                 options : {
-                    mangle: false,
+                    mangle: true,
                     sourceMap : true,
-                    banner : '/*\n<%= pkg.name %> v<%= pkg.version %>\n<%= grunt.template.today("dddd, mmmm d, yyyy h:MM:ss TT Z") %>\n*/\n'
+                    banner : '' +
+                        '/*\n' +
+                            '<%= pkg.name %> v<%= pkg.version %>\n' +
+                            '<%= grunt.template.today("dddd, mmmm d, yyyy h:MM:ss TT Z") %>\n' +
+                        '*/\n'
                 }
             }
         },

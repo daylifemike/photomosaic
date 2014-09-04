@@ -70,7 +70,7 @@
                 var data = this.props;
                 var style = {
                         width : data.width.adjusted,
-                        height : data.height.adjusted,
+                        height : data.height.adjusted
                     };
 
                 if (data.adjustment) {

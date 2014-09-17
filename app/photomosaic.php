@@ -368,21 +368,41 @@ class PhotoMosaic {
         $response = array();
         $args = array(
             'numberposts' => $limit,
-            'post_status' => 'publish'
+            'post_status' => 'publish',
+            'post_type' => '*'
         );
 
-        if ( !empty($category) ) {
-            if ( strpos($category, ',') === false ) {
-                $args['category'] = get_category_by_slug($category)->term_id;
-            } else {
-                function fetch_category_id($cat) {
-                    return get_category_by_slug($cat)->term_id;
-                };
-                $args['category'] = implode( ',', array_map( "fetch_category_id", explode( ',', $category ) ) );
+        if ( empty($category) ) {
+            $posts = wp_get_recent_posts( $args );
+        } else {
+            $posts = array();
+            $cat_map = explode( ',', $category );
+            $cat_args = array_fill(0, count($cat_map), $args);
+
+            $cat_map = array_map(function($slug, $args){
+                $slug = trim($slug);
+                $taxonomies = explode(':', $slug);
+                $taxonomy = (count($taxonomies) > 1 ? $taxonomies[0] : 'category');
+                $slug = (count($taxonomies) > 1 ? $taxonomies[1] : $slug);
+                $taxonomy_args = array(
+                    'tax_query' => array(
+                        array(
+                            'taxonomy' => $taxonomy,
+                            'field' => 'slug',
+                            'terms' => $slug
+                        )
+                    )
+                );
+                return wp_get_recent_posts( $args + $taxonomy_args );
+            }, $cat_map, $cat_args);
+
+            // flatten one level
+            foreach ($cat_map as $cat_arr) {
+                foreach ($cat_arr as $arr) {
+                    array_push($posts, $arr);
+                }
             }
         }
-
-        $posts = wp_get_recent_posts( $args );
 
         foreach ($posts as $post) {
             $id = get_post_thumbnail_id( $post['ID'] );

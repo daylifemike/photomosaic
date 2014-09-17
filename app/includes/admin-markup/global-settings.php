@@ -217,9 +217,11 @@ rows   |  columns |  masonry
             <span class="info">capitalization matters</span>
             <span class="info">if you aren't familiar with JavaScript and jQuery, you may need to consult your lightbox plugin's documentation to find this function name</span>
         </div>
-        <div class="field">
+        <div class="field double-wide">
             <p><label>Custom Lightbox Params</label></p>
-            <p><textarea name="custom_lightbox_params"><?php echo($options['custom_lightbox_params']); ?></textarea></p>
+            <p class="codemirror">
+                <textarea name="custom_lightbox_params"><?php echo($options['custom_lightbox_params']); ?></textarea>
+            </p>
             <span class="info">this is a JS object that gets passed into your lightbox function call <br><i>(eg: {theme:'darkness'})</i></span>
             <span class="info">
                 if you aren't familiar with JavaScript and jQuery but have the lightbox enabled elsewhere on your site,
@@ -233,6 +235,40 @@ rows   |  columns |  masonry
                         <br>
                     });
                 </i>
+            </span>
+        </div>
+    </div>
+
+    <h3>Advanced Configuration</h3>
+    <div class="set">
+        <div class="field double-wide">
+            <p><label>Custom CSS</label></p>
+            <p class="codemirror css">
+                <textarea name="custom_css"><?php echo($options['custom_css']); ?></textarea>
+            </p>
+            <span class="info">
+                each mosaic has a unique class based on a hash of its settings (e.g. '<i>photomosaic-93d73dc6</i>')
+            </span>
+            <span class="info">
+                this class will remain the same until the mosaic's settings are updated
+            </span>
+        </div>
+        <div class="field double-wide">
+            <p><label>onReady Callback</label></p>
+            <p class="codemirror javascript">
+                <textarea name="onready_callback"><?php echo($options['onready_callback']); ?></textarea>
+            </p>
+            <span class="info">
+                this function will be called for each mosaic once it has been constructed and added to the page
+            </span>
+            <span class="info">
+                <i>$mosaic</i> is a jQuery reference to the 'ready' mosaic's root element
+            </span>
+            <span class="info">
+                <i>$items</i> is a jQuery collection of all of the links or spans (depenging on your settings)
+            </span>
+            <span class="info">
+                <i>this</i> is the PhotoMosaic instance
             </span>
         </div>
     </div>

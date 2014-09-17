@@ -1,5 +1,16 @@
 (function($) {
     $(document).ready(function(){
+        // CODEMIRROR
+        $('.codemirror textarea').each(function(){
+            var $this = $(this);
+            var codemirror = CodeMirror.fromTextArea(this, {
+                mode : ($this.parent().is('.css')) ? 'css' : 'javascript',
+                lineNumbers : true,
+                indentUnit : 4
+            });
+            $this.data('codemirror', codemirror);
+        });
+
         // ANCHOR SCROLL
         $(document).on('click', 'a', function (e) {
             var hash = this.hash;
@@ -223,6 +234,7 @@
             $external_links = $form.find('input[name="external_links"]');
             $height = $form.find('input[name="height"]');
             $prevent_crop = $form.find('input[name="prevent_crop"]');
+            $onready_callback = $form.find('textarea[name="onready_callback"]');
 
         $form.find('input[name="link_behavior"]').change(function () {
             $link_behavior = $(this);
@@ -351,7 +363,13 @@
                     returnState = false;
                 }
             }
-            
+
+            if ( $.trim($onready_callback.val()) == '' ) {
+                $onready_callback.val('function($mosaic, $items){\n' +
+                    '\t/* your code here */\n' +
+                '}');
+            }
+
             if( !returnState ) {
                 $errorContainer.css('display', 'block');
                 $errorList.prepend('<li class="header">Please fix the following errors</li>');

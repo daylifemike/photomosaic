@@ -366,6 +366,10 @@
             return 'layout-' + this.opts.layout + ((this.opts.layout == 'grid') ? '-' + this.opts.sizing : '');
         },
 
+        getUniqueClass: function () {
+            return 'photomosaic-' + this.opts.modal_hash;
+        },
+
         getAvia: function () {
             // Kriesi's Avia framework overwrites the 'left' prop on my links
             // 'noLightbox' prevents that shit from happening
@@ -374,6 +378,7 @@
 
         makeSpecialClasses: function () {
             var classes = [
+                this.getUniqueClass(),
                 this.getLoadingTransition(),
                 this.getResizeTransition(),
                 this.getLayoutClass(),

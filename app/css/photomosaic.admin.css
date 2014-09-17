@@ -99,3 +99,7 @@
     vertical-align: top;
     padding: 8px 10px;
 }
+
+.toplevel_page_photomosaic .codemirror {
+    margin-right: 1em;
+}

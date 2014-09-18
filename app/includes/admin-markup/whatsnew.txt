@@ -1,7 +1,14 @@
 ## What's New
 
+### 2.9
+- Enhancement : "category" now accepts taxonomic prefixes
+- Enhancement : adds custom_css and onready_callback buckets
+- Enhancement : adds unique class to each mosaic
+- Enhancement : reduced file size by 50% (offloading libs to a CDN, stronger minification)
+- Change : makes the loading spinner an element (allows more styling options)
+
 ### 2.8.5
-- Enhancement: updates ReactJS to v0.11.1 and removes unused addons
+- Enhancement : updates ReactJS to v0.11.2 and removes unused addons
 - Bug Fix : refines transform settings (large galleries should see drastic performance improvements on mobile)
 
 ### 2.8.4

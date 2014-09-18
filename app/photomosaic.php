@@ -39,7 +39,8 @@ class PhotoMosaic {
         add_action( 'admin_menu', array( __CLASS__, 'setup_admin_page') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajax_handler') );
 
-        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery'), PhotoMosaic::version());
+        wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.min.js', null, '0.11.2' );
+        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
         wp_enqueue_script('photomosaic_js');
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 

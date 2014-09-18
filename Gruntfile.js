@@ -10,7 +10,6 @@ module.exports = function(grunt) {
         'app/js/app.js',
         // dependencies
         'app/includes/vendor/modernizr.js',
-        'app/includes/vendor/react.js',
         'app/includes/vendor/imagesloaded.js',
         'app/includes/vendor/waypoints.js',
         'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
@@ -29,6 +28,7 @@ module.exports = function(grunt) {
         // photomosaic
         'app/js/core.js'
     ];
+    var files_w_react = files.slice().unshift('app/includes/vendor/react.js');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -53,8 +53,13 @@ module.exports = function(grunt) {
             }
         },
         concat : {
-            js : {
+            wp : {
                 src : files,
+                dest : dist_path + 'js/photomosaic.js',
+                nonull : true
+            },
+            js : {
+                src : files_w_react,
                 dest : dist_path + 'js/photomosaic.js',
                 nonull : true
             }
@@ -216,7 +221,7 @@ module.exports = function(grunt) {
         watch : {
             dev : {
                 files : [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
-                tasks : [ 'concat', 'copy:dist', 'replace:dev', 'clean:plugin', 'copy:plugin', 'clean:dist' ]
+                tasks : [ 'concat:wp', 'copy:dist', 'replace:dev', 'clean:plugin', 'copy:plugin', 'clean:dist' ]
             }
         }
     });
@@ -229,9 +234,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-text-replace');
 
-    grunt.registerTask('dist', [ 'concat', 'copy:dist', 'uglify:dist' ]);
+    grunt.registerTask('dist', [ 'concat:wp', 'copy:dist', 'uglify:dist' ]);
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
     grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
-    grunt.registerTask('nonwp', [ 'concat', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'copy:nonwp', 'clean:dist' ]);
+    grunt.registerTask('nonwp', [ 'concat:js', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'copy:nonwp', 'clean:dist' ]);
 };

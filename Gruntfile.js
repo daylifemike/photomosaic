@@ -28,7 +28,8 @@ module.exports = function(grunt) {
         // photomosaic
         'app/js/core.js'
     ];
-    var files_w_react = files.slice().unshift('app/includes/vendor/react.js');
+    var files_w_react = files.slice();
+    files_w_react.unshift('app/includes/vendor/react.js');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -58,9 +59,14 @@ module.exports = function(grunt) {
                 dest : dist_path + 'js/photomosaic.js',
                 nonull : true
             },
-            js : {
+            with_react : {
                 src : files_w_react,
                 dest : dist_path + 'js/photomosaic.js',
+                nonull : true
+            },
+            without_react : {
+                src : files,
+                dest : dist_path + 'js/photomosaic-wo-react.js',
                 nonull : true
             }
         },
@@ -168,6 +174,20 @@ module.exports = function(grunt) {
                             '<%= grunt.template.today("dddd, mmmm d, yyyy h:MM:ss TT Z") %>\n' +
                         '*/\n'
                 }
+            },
+            lite : {
+                src : dist_path + 'js/photomosaic-wo-react.js',
+                dest : dist_path + 'js/photomosaic-wo-react.min.js',
+                options : {
+                    mangle: true,
+                    sourceMap : true,
+                    banner : '' +
+                        '/*\n' +
+                            '<%= pkg.name %> v<%= pkg.version %>\n' +
+                            '<%= grunt.template.today("dddd, mmmm d, yyyy h:MM:ss TT Z") %>\n' +
+                            'ReactJS CDN : //cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.min.js\n' +
+                        '*/\n'
+                }
             }
         },
         compress : {
@@ -198,7 +218,10 @@ module.exports = function(grunt) {
                 }]
             },
             nonwp : {
-                src : dist_path + 'js/photomosaic.js',
+                src : [
+                    dist_path + 'js/photomosaic.js',
+                    dist_path + 'js/photomosaic-wo-react.js'
+                ],
                 overwrite : true,
                 replacements : [{
                     from : 'JQPM',
@@ -238,5 +261,5 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
     grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
-    grunt.registerTask('nonwp', [ 'concat:js', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'copy:nonwp', 'clean:dist' ]);
+    grunt.registerTask('nonwp', [ 'concat:with_react', 'concat:without_react', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'uglify:lite', 'copy:nonwp', 'clean:dist' ]);
 };

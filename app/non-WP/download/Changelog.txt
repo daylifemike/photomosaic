@@ -1,5 +1,21 @@
 /* PhotoMosaic - Changelog */
 
+= 2.9 =
+- Enhancement : uses the modal_hash (if present) to add unique class to each mosaic
+- Enhancement : adds the option to reduce file size by 70% by offloading ReactJS to a CDN
+- Change : makes the loading spinner an element (allows more styling options)
+
+= 2.8.5 =
+- Enhancement : updates ReactJS to v0.11.2 and removes unused addons
+- Bug Fix : refines transform settings (large galleries should see drastic performance improvements on mobile)
+
+= 2.8.4 =
+- Bug Fix : corrects an error that caused lazyloading to load images prematurely
+
+= 2.8.3 =
+- Bug Fix : corrects min-width/height on the CSS reset (should quiet some warnings)
+- Bug Fix : adds an initial transform to images (an attempt to fix the Chrome (Win) scroll/flicker issue)
+
 = 2.8.2 =
 - Bug Fix : corrects regression that prevented captions from appearing on the page
 

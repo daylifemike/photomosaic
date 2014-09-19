@@ -5,7 +5,7 @@
 .photoMosaic img, .photoMosaic div, .photoMosaic span,
 .photoMosaic a:link, .photoMosaic a:visited, .photoMosaic a:active, .photoMosaic a:hover {
     background:none; outline:none; border:0; height:auto; width:auto; max-height:none !important; max-width:none !important; 
-    min-height:none !important; min-width:none !important; font-style:normal; font-variant:normal; font-weight:normal;
+    min-height:0 !important; min-width:0 !important; font-style:normal; font-variant:normal; font-weight:normal;
     list-style:none; margin:0; padding:0; position:static; float:none; visibility:visible;
     overflow:visible; color:#000000; letter-spacing:normal; line-height:120%; text-align:left; text-decoration:none; 
     text-indent:0; text-transform:none; vertical-align:baseline; white-space:normal; word-spacing:normal;
@@ -34,8 +34,8 @@
 /* loading */
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/spinner-arrows.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }
 
-.photoMosaic.loading .photomosaic-item { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
-.photoMosaic.loading .photomosaic-item.loaded { background:none; }
+.photoMosaic.loading .photomosaic-spinner { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; }
+.photoMosaic.loading .photomosaic-item.loaded .photomosaic-spinner { display:none; }
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 
@@ -64,11 +64,17 @@
          -o-transform-style: preserve-3d;
             transform-style: preserve-3d;
 
-    -webkit-backface-visibility: hidden;
-       -moz-backface-visibility: hidden;
-        -ms-backface-visibility: hidden;
-         -o-backface-visibility: hidden;
-            backface-visibility: hidden;
+    -webkit-backface-visibility: visible;
+       -moz-backface-visibility: visible;
+        -ms-backface-visibility: visible;
+         -o-backface-visibility: visible;
+            backface-visibility: visible;
+
+    -webkit-transform: scale(1);
+       -moz-transform: scale(1);
+        -ms-transform: scale(1);
+         -o-transform: scale(1);
+            transform: scale(1);
 }
 
 /* The .loaded is added after all of the images have loaded */

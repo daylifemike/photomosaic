@@ -40,7 +40,7 @@
             <h3>Table of Contents</h3>
             <ul>
                 <li>
-                    <a href="#SettingUp">Setting up your PhotoMosaic</a>
+                    <a href="#SettingUp">Setting up your PhotoMosaic</a> (<a href="#SettingUpAddendum">Addendum</a>)
                 </li>
                 <li>
                     <a href="#AddingContent">Adding Content</a>
@@ -111,10 +111,27 @@
         <p>
             You will also, likely, need to change the paths in the above snippets to reflect the reality of your site's setup.
         </p>
-        
-        
-        
-        
+
+
+
+        <a name="SettingUpAddendum"></a>
+        <h3>Setting up your PhotoMosaic: Addendum</h3>
+        <p>
+            PhotoMosaic relies on the ReactJS framework.  When uncompressed, React increases the PhotoMosaic payload from 160k to 750k.  When minified, the payload is increased from 65k to 210k.  Understanding that this may be a deterent for some people, PhotoMosaic offers two versions of the JS; with React (<i>photomosaic.js</i>) and without React (<i>photomosaic-wo-react.js</i>).  As React is required for PhotoMosaic to work, the without-React version needs to be suplimented with an external copy of React, loaded from a CDN. The CDN is configured to gzip and cache, drasticly reducing the React payload and load time.
+        </p>
+        <p>
+            This allows you to decide which you'd prefer, loading a single large file (210k) or two small files (30k + 60k = 90k).  The instructions above are for loading the larger single file.  Assuming you've already stepped-through the above steps, make the following changes to use the two smaller files.
+        </p>
+        <ol>
+            <li>
+                Add React to your site (in addition to your site's jQuery)
+                <pre class="prettyprint">&lt;script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.min.js">&lt;/script></pre>
+            </li>
+            <li>
+                Replace the PhotoMosaic JS you included earlier with the version that doesn't include React
+                <pre class="prettyprint">&lt;script src="/photoMosaic/js/photomosaic-wo-react.min.js">&lt;/script></pre>
+            </li>
+        </ol>
         
         
         

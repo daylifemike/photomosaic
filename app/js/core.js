@@ -367,7 +367,7 @@
         },
 
         getUniqueClass: function () {
-            return 'photomosaic-' + this.opts.modal_hash;
+            return (this.opts.modal_hash) ? 'photomosaic-' + this.opts.modal_hash : '';
         },
 
         getAvia: function () {

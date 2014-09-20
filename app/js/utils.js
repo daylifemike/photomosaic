@@ -74,7 +74,7 @@ PhotoMosaic.Utils = (function(){
             return response;
         },
 
-        pickImageSize: function (images, sizes) {
+        pickImageSize : function (images, sizes) {
             // currently only supported in PM4WP
             if (!sizes || !images[0].sizes) { return images; }
 
@@ -119,6 +119,12 @@ PhotoMosaic.Utils = (function(){
             }
 
             return images;
+        },
+
+        decodeHTML : function (str) {
+            var e = document.createElement('div');
+            e.innerHTML = str;
+            return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
         },
 
         // taken from UnderscoreJS _.debounce()

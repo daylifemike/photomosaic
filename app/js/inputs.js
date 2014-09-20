@@ -8,7 +8,7 @@ PhotoMosaic.Inputs = (function ($){
             var $images = $node.find('img');
 
             for (var i = 0; i < $images.length; i++) {
-                var $image = $images.eq(i)
+                var $image = $images.eq(i);
                 var image = {
                     caption : $image.attr('title'),
                     alt : $image.attr('alt'),

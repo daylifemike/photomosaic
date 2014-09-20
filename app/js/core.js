@@ -238,6 +238,8 @@
                 image.src = image_url;
                 image.padding = self.opts.padding;
 
+                image.caption = PhotoMosaic.Utils.decodeHTML( image.caption );
+
                 // modal hooks
                 if (self.opts.modal_name) {
                     if (self.opts.modal_group) {

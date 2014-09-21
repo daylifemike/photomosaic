@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.9.1
+- Enhancement : adds support for HTML in captions
+
 ### 2.9
 - Enhancement : "category" now accepts taxonomic prefixes
 - Enhancement : adds custom_css and onready_callback buckets

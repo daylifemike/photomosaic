@@ -394,7 +394,7 @@ class PhotoMosaic {
             $cat_map = explode( ',', $category );
             $cat_args = array_fill(0, count($cat_map), $args);
 
-            $cat_map = array_map(function($slug, $args){
+            function fetch_taxonomy_categories($slug, $args){
                 $slug = trim($slug);
                 $taxonomies = explode(':', $slug);
                 $taxonomy = (count($taxonomies) > 1 ? $taxonomies[0] : 'category');
@@ -409,7 +409,9 @@ class PhotoMosaic {
                     )
                 );
                 return wp_get_recent_posts( $args + $taxonomy_args );
-            }, $cat_map, $cat_args);
+            };
+
+            $cat_map = array_map("fetch_taxonomy_categories", $cat_map, $cat_args);
 
             // flatten one level
             foreach ($cat_map as $cat_arr) {

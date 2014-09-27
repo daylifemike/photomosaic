@@ -32,12 +32,10 @@
             input : 'json', // json, html, xml
             gallery : 'PMalbum', // json object, xml file path
             padding : 2,
-            columns : 'auto', // auto (str) or (int)
             width : 'auto', // auto (str) or (int)
             height : 'auto', // auto (str) or (int)
             links : true,
             external_links: false,
-            order : 'rows', // rows, columns, masonry, random
             center : true,
             prevent_crop : false,
             show_loading : false,
@@ -55,6 +53,18 @@
             lazyload : 0, // int || false
 
             layout : 'columns', // rows, columns, grid
+
+            // columns opts
+            columns : 'auto', // auto (str) or (int)
+            order : 'rows', // rows, columns, masonry, random
+
+            // rows opts
+            rows : 'auto', // auto (str) or (int)
+            allow_orphans : false,
+            max_row_height : 325,
+
+            // grid opts
+            // TODO: honors width but not height
             shape : '16:9', // aspect-ratio (16:9)
             sizing : 'contain', // cover, contain
             align : 'middle', // top, middle, bottom
@@ -488,7 +498,7 @@
                 window.PhotoMosaic.Mosaics.push({
                     'el' : this,
                     '$el' : $(this),
-                    'opts' : options,
+                    'opts' : instance.opts,
                     'instance' : instance
                 });
             }

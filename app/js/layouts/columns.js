@@ -38,8 +38,6 @@
             // determine the target height for the entire mosaic
             mosaic_height = this.getMosaicHeight( columns );
 
-            //-- ??? mark last column -- is this still necessary?
-
             // adjust the images in each column to the new height (for a flat bottom edge)
             columns = this.adjustColumnsToHeight( columns, mosaic_height );
 
@@ -54,7 +52,7 @@
             }
 
             // create crop position info
-            images = this.positionImagesInContainer( images );
+            images = PhotoMosaic.Layouts.Common.positionImagesInContainer( images, this.opts.prevent_crop );
 
             // convert all this knowledge into position data
             // TODO : stop being a side-effect
@@ -140,8 +138,6 @@
 
             column_height += (ids.length - 1) * this.opts.padding;
 
-            // ??? mark last image in column
-
             // how much do we need to grow or shrink the column
             var diff = target_height - column_height // (plus = grow, minus = shrink)
             var direction = (diff > 0) ? 'grow' : 'shrink';
@@ -187,34 +183,6 @@
             }
 
             return ids;
-        },
-
-        positionImagesInContainer : function (images) {
-            var image = null;
-
-            for (var i = 0; i < images.length; i++) {
-                image = images[i];
-
-                image.adjustments = {};
-
-                if (!this.opts.prevent_crop) {
-                    // adjusted is still scaled to the column's width
-                    if (image.height.adjusted > image.height.container) {
-                        image.adjustments.top = Math.floor((image.height.adjusted - image.height.container) / 2);
-                    } else {
-                        image.width.adjusted = Math.floor((image.width.adjusted * image.height.container) / image.height.adjusted);
-                        image.height.adjusted = image.height.container;
-
-                        image.adjustments.left = Math.floor((image.width.adjusted - image.width.container) / 2);
-                    }
-                }
-
-                image.adjustments = PhotoMosaic.Layouts.Common.normalizeAdjustments( image.adjustments );
-
-                images[i] = image;
-            };
-
-            return images;
         },
 
         refresh : function () {

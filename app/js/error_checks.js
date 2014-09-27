@@ -30,7 +30,7 @@ PhotoMosaic.ErrorChecks = (function($){
                 }
             }
 
-            if (opts.prevent_crop && opts.height !== 'auto') {
+            if (opts.layout == 'columns' && opts.prevent_crop && opts.height !== 'auto') {
                 PhotoMosaic.Utils.log.info("Height must be set to 'auto' to Prevent Cropping. The value for height (" + opts.height + ") is being ignored so as to prevent cropping.");
                 opts.height = "auto";
             }

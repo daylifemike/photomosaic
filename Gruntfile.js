@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         // view constructors
         'app/js/layouts/common.js',
         'app/js/layouts/columns.js',
-            // 'app/js/layouts/rows.js',
+        'app/js/layouts/rows.js',
         'app/js/layouts/grid.js',
         // react
         'app/js/layouts/react.js',

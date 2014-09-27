@@ -1,11 +1,3 @@
-/*
-    columns - int / auto
-    padding - int
-    shape - natural / x:y
-    alignment - top / middle / bottom
-
-    orphans - left / right / center
-*/
 (function ($) {
     PhotoMosaic.Layouts.grid = function (mosaic) {
         this.node = mosaic.obj;

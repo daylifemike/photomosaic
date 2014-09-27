@@ -162,6 +162,34 @@
             });
         },
 
+        positionImagesInContainer : function (images, prevent_crop) {
+            var image = null;
+
+            for (var i = 0; i < images.length; i++) {
+                image = images[i];
+
+                image.adjustments = {};
+
+                if (!prevent_crop) {
+                    // adjusted is still scaled to the column's width
+                    if (image.height.adjusted > image.height.container) {
+                        image.adjustments.top = Math.floor((image.height.adjusted - image.height.container) / 2);
+                    } else {
+                        image.width.adjusted = Math.floor((image.width.adjusted * image.height.container) / image.height.adjusted);
+                        image.height.adjusted = image.height.container;
+
+                        image.adjustments.left = Math.floor((image.width.adjusted - image.width.container) / 2);
+                    }
+                }
+
+                image.adjustments = PhotoMosaic.Layouts.Common.normalizeAdjustments( image.adjustments );
+
+                images[i] = image;
+            };
+
+            return images;
+        },
+
         positionImagesInMosaic : function (imagesById, columns, column_width, opts) {
             var col_height = 0;
             var image = null;

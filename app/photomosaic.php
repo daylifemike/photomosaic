@@ -166,6 +166,11 @@ class PhotoMosaic {
 
     public static function shortcode( $atts ) {
         global $post;
+
+        if ((!empty($atts['nggid']) || !empty($atts['ngaid'])) && !class_exists('nggdb')) {
+            return "<p><strong>PhotoMosaic Error:</strong> Can't find NextGen Gallery.<br/>Please make sure NextGen has been installed and activated.</p>";
+        }
+
         $post_id = intval($post->ID);
         $base = array(
             'id'        => $post_id,

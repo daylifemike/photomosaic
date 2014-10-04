@@ -41,7 +41,7 @@
 
         handler : function () {
             var $this = $(this);
-            var $image = $this.children('img');
+            var $image = $this.find('img');
             var image_loaded = null;
 
             $image.attr('src', $image.attr('data-src'));

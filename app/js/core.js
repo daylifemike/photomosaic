@@ -435,6 +435,13 @@
                 return false;
             }
 
+            // make sure numbers are numbers
+            for (var k in props) {
+                if (!isNaN(parseFloat(props[k]))) {
+                    props[k] = parseFloat(props[k]);
+                }
+            };
+
             this.opts = $.extend({}, this.opts, props);
 
             if (props.hasOwnProperty('layout')) {

@@ -299,6 +299,15 @@ class PhotoMosaic {
                         modal_hash: "' . hash('adler32', json_encode($atts)) . '",
             ';
 
+        // these are "preview" features only available as inline atts on the shortcode
+        // this is not permanent
+        $temp_atts = array('layout', 'rows', 'allow_orphans', 'max_row_height', 'shape', 'sizing', 'align', 'orphans');
+        foreach ($temp_atts as $key) {
+            if ( !empty( $settings[$key] ) ) {
+                $output_buffer .= $key .': "'. $settings[$key] .'",';
+            }
+        }
+
         $required_atts = array('id', 'link_behavior', 'include', 'exclude', 'ids');
         foreach ( $required_atts as $key ) {
             if( empty( $atts[$key] ) ){

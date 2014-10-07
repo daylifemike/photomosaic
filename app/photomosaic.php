@@ -407,25 +407,7 @@ class PhotoMosaic {
             $posts = array();
             $cat_map = explode( ',', $category );
             $cat_args = array_fill(0, count($cat_map), $args);
-
-            function fetch_taxonomy_categories($slug, $args){
-                $slug = trim($slug);
-                $taxonomies = explode(':', $slug);
-                $taxonomy = (count($taxonomies) > 1 ? $taxonomies[0] : 'category');
-                $slug = (count($taxonomies) > 1 ? $taxonomies[1] : $slug);
-                $taxonomy_args = array(
-                    'tax_query' => array(
-                        array(
-                            'taxonomy' => $taxonomy,
-                            'field' => 'slug',
-                            'terms' => $slug
-                        )
-                    )
-                );
-                return wp_get_recent_posts( $args + $taxonomy_args );
-            };
-
-            $cat_map = array_map("fetch_taxonomy_categories", $cat_map, $cat_args);
+            $cat_map = array_map("PhotoMosaic::fetch_taxonomy_categories", $cat_map, $cat_args);
 
             // flatten one level
             foreach ($cat_map as $cat_arr) {
@@ -1066,6 +1048,23 @@ class PhotoMosaic {
         $safe_text = wp_check_invalid_utf8( $text );
         $safe_text = _wp_specialchars( $safe_text, "double" );
         return apply_filters( 'attribute_escape', $safe_text, $text );
+    }
+
+    private static function fetch_taxonomy_categories($slug, $args){
+        $slug = trim($slug);
+        $taxonomies = explode(':', $slug);
+        $taxonomy = (count($taxonomies) > 1 ? $taxonomies[0] : 'category');
+        $slug = (count($taxonomies) > 1 ? $taxonomies[1] : $slug);
+        $taxonomy_args = array(
+            'tax_query' => array(
+                array(
+                    'taxonomy' => $taxonomy,
+                    'field' => 'slug',
+                    'terms' => $slug
+                )
+            )
+        );
+        return wp_get_recent_posts( $args + $taxonomy_args );
     }
 
     private static function makeID() {

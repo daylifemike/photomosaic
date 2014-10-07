@@ -21,6 +21,9 @@
                 this.opts.width = this.node.width();
             }
 
+            // look for conflicting settings
+            this.opts = this.errorChecks.initial( this.opts );
+
             // determine the number of columns
             this.columns = columns = PhotoMosaic.Layouts.Common.makeColumnBuckets( this.opts );
 
@@ -35,6 +38,9 @@
 
             // sort the images (based on opts.order) and assign them to columns
             columns = PhotoMosaic.Layouts.Common.dealIntoColumns( images, columns, this.opts, this.isRefreshing );
+
+            // adjust for height
+            columns = this.scaleColumnsToHeight(columns, this.opts.height);
 
             // determine the target height for the entire mosaic
             mosaic_height = this.getMosaicHeight( this.imagesById, columns, this.opts );
@@ -79,7 +85,7 @@
             var scaled_height = null;
 
             for (var i = 0; i < images.length; i++) {
-                image = images[i];
+                image = (typeof images[i] == 'string') ? this.imagesById[ images[i] ] : images[i];
                 scaled_height = Math.floor( (image.height.original * image.width.container) / image.width.original );
 
                 if ( this.shouldScaleWidth( image ) ) {
@@ -92,6 +98,51 @@
             }
 
             return images;
+        },
+
+        scaleColumnsToHeight : function (columns, height) {
+            if (height == 'auto' || height == 0) {
+                return columns;
+            } else {
+                for (var i = 0; i < columns.length; i++) {
+                    columns[i] = this.scaleColumnToHeight(columns[i], height);
+                };
+                return columns;
+            }
+        },
+
+        scaleColumnToHeight : function (ids, target_height) {
+            var column_height = 0;
+            var i = 0;
+
+            // get the height of each column
+            for (i = 0; i < ids.length; i++) {
+                column_height += this.imagesById[ ids[i] ].height.container;
+            }
+
+            column_height += (ids.length - 1) * this.opts.padding;
+
+            // how much do we need to grow or shrink the column
+            var diff = target_height - column_height // (plus = grow, minus = shrink)
+            var direction = (diff > 0) ? 'grow' : 'shrink';
+            diff = Math.abs(diff);
+
+            // spread the diff between the image
+            i = 0;
+            while (diff > 0) {
+                i = (i >= ids.length) ? 0 : i;
+                if (direction === 'grow') {
+                    this.imagesById[ ids[i] ].height.container++;
+                } else {
+                    this.imagesById[ ids[i] ].height.container--;
+                }
+                i++;
+                diff--;
+            }
+
+            ids = this.scaleToContainer(ids);
+
+            return ids;
         },
 
         getMosaicHeight : function (imagesById, columns, opts) {
@@ -149,6 +200,8 @@
         },
 
         shouldScaleWidth : function (image) {
+            // cover = shortest image side == longest container side
+            // contain = longest image side == shortest container side
             var scaled_height = Math.floor( (image.height.original * image.width.container) / image.width.original );
             return (
                 ((this.opts.sizing == 'cover') && (scaled_height > image.height.container)) ||
@@ -183,9 +236,26 @@
         },
 
         errorChecks : {
+            initial : function (opts) {
+                if (this.coverCropMismatch(opts)) {
+                    PhotoMosaic.Utils.log.error("Setting 'Sizing' to 'Cover' requires that images be cropped. Setting 'Prevent Cropping' to 'false'.");
+                    opts.prevent_crop = false;
+                }
+                if (this.heightShapeMismatch(opts)) {
+                    PhotoMosaic.Utils.log.info("A fixed 'Height' requires changing the grid item's 'Shape'. The 'Shape' setting ("+ opts.shape +") will not be honored.");
+                    opts.allow_orphans = true;
+                }
+                return opts;
+            },
+            coverCropMismatch : function (opts) {
+                return (opts.sizing == 'cover' && opts.prevent_crop);
+            },
+            heightShapeMismatch : function (opts) {
+                return (opts.height !== 'auto' && opts.height !== 0);
+            },
             shape : function (shape) {
                 if ( (shape != 'natural') && (shape.indexOf(':') <= 0) ) {
-                    PhotoMosaic.Utils.log.error("'shape' must be 'natural' or an aspect ratio in the form 'x:y'. ")
+                    PhotoMosaic.Utils.log.error("'Shape' must be 'natural' or an aspect ratio in the form 'x:y'. ")
                     return true;
                 }
                 return false;

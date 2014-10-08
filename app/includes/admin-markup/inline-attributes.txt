@@ -1,8 +1,8 @@
 ## Inline Attributes {.subhead}
 
-The PhotoMosaic shortcode & template tag have full support for inline attributes (eg. `[photomosaic width="600" height="400" random="1"]`). 
-Any inline setting will override the default values set on the "Global Settings" page.  Available settings:
+The PhotoMosaic shortcode & template tag have full support for inline attributes (eg. `[photomosaic width="600" height="400" random="1"]`).  Any inline setting will override the default values set on the "Global Settings" page.
 
+### Available Settings:
 - **id** : the post/page id for the desired gallery
 - **ids** : the list of image ids to be displayed *(requires WP v3.5+)*
 - **include** : the list of image ids to be displayed in addition to the image in the attached gallery *(only works with 'id')*
@@ -11,14 +11,14 @@ Any inline setting will override the default values set on the "Global Settings"
 - **ngaid** : the ID for the desired NextGen album
 - **category** : 'recent' or the category slug (name) for which each post's featured image will be used (if found) (requires *limit* be set)
 - **limit** : the number of post for which the featured image will be used (if found) (only works with *category*)
+- **columns** : any number *(0 for auto)*
+- **order** : rows, columns, masonry, random
 - **padding** : any number *(in pixels)*
-- **columns** : any number
 - **width** : any number *(in pixels)*
 - **height** : any number *(in pixels)*
 - **center** : 1 = yes, 0 = no
 - **prevent_crop** : 1 = yes, 0 = no
 - **link_behavior** : image, attachment, custom, none
-- **order** : rows, columns, masonry, random
 - **external_links** : 1 = yes, 0 = no
 - **show_loading** : 1 = yes, 0 = no
 - **loading_transition** : none, fade, scale-up|down, slide-up|down|left|right, custom
@@ -27,6 +27,35 @@ Any inline setting will override the default values set on the "Global Settings"
 - **lightbox** : 1 = yes, 0 = no
 - **lightbox_rel** : any alphanumeric string
 - **lightbox_group** : 1 = yes, 0 = no
+- **lightbox_rendition** : full, large, medium, thumbnail
 - **custom_lightbox** : 1 = yes, 0 = no
 - **custom_lightbox_name** : js function name *(eg: prettyPhoto)*
 - **custom_lightbox_params** : js object passed to the above function *(eg: {theme:'darkness'})*
+
+
+### Works-In-Progress:
+
+The settings in this section are works-in-progress and should be considered experimental.  **Layout:Columns** and its related settings are the only battle-hardened options in this set.  If you choose to use **Layout:Rows** or **Layout:Grid** (and their related settings) you may encounter bugs.  Please report them via [the contact form on my CodeCanyon Author page](http://codecanyon.net/user/makfak#contact).
+
+These settings will become available as Global Settings in a future release.  The settings that exist now will be honored (to the best of my ability) once these features are ready for prime time.  There's no need to worry that galleries made with these settings will someday stop working.
+
+If you want to [drop me a note](http://codecanyon.net/user/makfak#contact) and let me know that you're using (and loving) these features, it would be great to hear from you and to see them in action!
+
+- **layout** : columns, rows, grid
+
+#### Layout : Columns
+- **columns** : any number *(0 for auto)*
+- **order** : rows, columns, masonry, random
+
+#### Layout : Rows
+- **rows** : any number *(0 for auto)*
+- **allow_orphans** : 1 = yes, 0 = no
+- **max_row_height** : any number *(in pixels)*
+
+#### Layout : Grid
+- **columns** : any number *(0 for auto)*
+- **order** : rows, columns, masonry, random
+- **shape** : aspect-ratio *(16:9)*
+- **sizing** : contain, cover
+- **align** : top, middle, bottom
+- **orphans** : left, center, right

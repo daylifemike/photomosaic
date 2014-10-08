@@ -39,12 +39,14 @@
         </div>
     </div>
     <div class="set margin">
-        <div class="field">
+        <div class="field double-wide">
             <p><label>Columns</label></p>
             <p><input type="text" name="columns" value="<?php echo($options['columns']); ?>" /></p>
             <span class="info">set to <b>0</b> for auto-columns</span>
-            <span class="info">auto-columns has PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
-            <span class="info">auto-columns is fully responsive</span>
+            <span class="info">use a '-' to set a minimum and maximum number of columns <b>2-5</b></span>
+            <span class="info">use '0' to set just a minimum (<b>2-0</b>) or just a maximum (<b>0-5</b>) number of columns</span>
+            <span class="info">both setting a range and auto-columns have PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
+            <span class="info">both setting a range and auto-columns are fully responsive</span>
         </div>
     </div>
 

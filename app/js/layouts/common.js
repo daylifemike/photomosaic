@@ -24,6 +24,14 @@
                 if (num_images < num_cols) {
                     num_cols = num_images;
                 }
+
+                if ((opts.max_columns !== 'auto') && (num_cols > opts.max_columns)) {
+                    num_cols = opts.max_columns;
+                }
+
+                if ((opts.min_columns !== 'auto') && (num_cols < opts.min_columns)) {
+                    num_cols = opts.min_columns;
+                }
             }
 
             for (i = 0; i < num_cols; i++) {

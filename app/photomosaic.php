@@ -75,6 +75,8 @@ class PhotoMosaic {
         $defaults = array(
             'padding' => 2,
             'columns' => 0,
+            'min_columns' => 0,
+            'max_columns' => 0,
             'width' => 0,
             'height' => 0,
             'order' => 'rows',
@@ -197,8 +199,15 @@ class PhotoMosaic {
             }
         }
 
+        if ( strpos($settings['columns'], '-') !== false ) {
+            $range = explode('-', $settings['columns']);
+            $settings['min_columns'] = $range[0];
+            $settings['max_columns'] = $range[1];
+            $settings['columns'] = 'auto';
+        }
+
         $auto_settings = array(
-            'height', 'width', 'columns'
+            'height', 'width', 'columns', 'min_columns', 'max_columns'
         );
         $bool_settings = array(
             'center', 'prevent_crop', 'links', 'external_links', 'show_loading',
@@ -284,6 +293,8 @@ class PhotoMosaic {
                         gallery: PMalbum'.$unique.',
                         padding: '. intval($settings['padding']) .',
                         columns: '. $settings['columns'] .',
+                        min_columns: '. $settings['min_columns'] .',
+                        max_columns: '. $settings['max_columns'] .',
                         width: '. $settings['width'] .',
                         height: '. $settings['height'] .',
                         center: '. $settings['center'] .',

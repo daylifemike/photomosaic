@@ -48,6 +48,27 @@
             <span class="info">both setting a range and auto-columns have PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
             <span class="info">both setting a range and auto-columns are fully responsive</span>
         </div>
+        <div class="field">
+            <p><label>Order</label></p>
+            <p>
+                <select name="order">
+                  <option value="rows" <?php if($options['order'] == 'rows') echo "selected"; ?> >Rows</option>
+                  <option value="columns" <?php if($options['order'] == 'columns') echo "selected"; ?> >Columns</option>
+                  <option value="masonry" <?php if($options['order'] == 'masonry') echo "selected"; ?> >Masonry</option>
+                  <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
+                </select>
+            </p>
+            <span class="info">only applies to image sequence direction, not layout (format will still be in columns)</span>
+            <span class="info">Masonry places the 'next' image in the first empty position moving down the page</span>
+            <span class="info">
+<pre>
+rows   |  columns |  masonry
+1 2 3  |  1 4 7   |  1 2 3
+4 5 6  |  2 5 8   |  6 4 5
+7 8 9  |  3 6 9   |  7 9 8
+</pre>
+            </span>
+        </div>
     </div>
 
 
@@ -101,25 +122,17 @@
             <span class="info">causes links to open in a new window/tab</span>
         </div>
         <div class="field">
-            <p><label>Order</label></p>
+            <p><label>Image Size to Open In Lightbox</label></p>
             <p>
-                <select name="order">
-                  <option value="rows" <?php if($options['order'] == 'rows') echo "selected"; ?> >Rows</option>
-                  <option value="columns" <?php if($options['order'] == 'columns') echo "selected"; ?> >Columns</option>
-                  <option value="masonry" <?php if($options['order'] == 'masonry') echo "selected"; ?> >Masonry</option>
-                  <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
+                <select name="lightbox_rendition">
+                  <option value="full" <?php if($options['lightbox_rendition'] == 'full') echo "selected"; ?> >Full</option>
+                  <option value="large" <?php if($options['lightbox_rendition'] == 'large') echo "selected"; ?> >Large</option>
+                  <option value="medium" <?php if($options['lightbox_rendition'] == 'medium') echo "selected"; ?> >Medium</option>
+                  <option value="thumbnail" <?php if($options['lightbox_rendition'] == 'thumbnail') echo "selected"; ?> >Thumbnail</option>
                 </select>
             </p>
-            <span class="info">only applies to image sequence direction, not layout (format will still be in columns)</span>
-            <span class="info">Masonry places the 'next' image in the first empty position moving down the page</span>
-            <span class="info">
-<pre>
-rows   |  columns |  masonry
-1 2 3  |  1 4 7   |  1 2 3
-4 5 6  |  2 5 8   |  6 4 5
-7 8 9  |  3 6 9   |  7 9 8
-</pre>
-            </span>
+            <span class="info">NextGen only offers two sizes (full and thumbnail)</span>
+            <span class="info">Falls back to <strong>Full</strong> if selected size is unavailable</span>
         </div>
     </div>
     <div class="set margin">

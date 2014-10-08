@@ -51,6 +51,7 @@
             modal_hash : null,
             modal_ready_callback : null,
             lazyload : 0, // int || false
+            lightbox_rendition : 'full',
 
             layout : 'columns', // rows, columns, grid
 
@@ -64,7 +65,6 @@
             max_row_height : 325,
 
             // grid opts
-            // TODO: honors width but not height
             shape : '16:9', // aspect-ratio (16:9)
             sizing : 'contain', // cover, contain
             align : 'middle', // top, middle, bottom
@@ -272,8 +272,13 @@
                     // delete image.modal;
                 } else if (self.opts.links) {
                     image.link = true;
-                    image.path = image.full;
                     image.external = self.opts.external_links;
+
+                    if (image.sizes && image.sizes.hasOwnProperty(self.opts.lightbox_rendition)) {
+                        image.path = image.sizes[self.opts.lightbox_rendition];
+                    } else {
+                        image.path = image.full;
+                    }
                 } else {
                     image.link = false;
                 }
@@ -436,8 +441,9 @@
             }
 
             // make sure numbers are numbers
+            var exclusions = ['shape', 'modal_hash'];
             for (var k in props) {
-                if (!isNaN(parseFloat(props[k]))) {
+                if (($.inArray(k, exclusions) == -1) && !isNaN(parseFloat(props[k]))) {
                     props[k] = parseFloat(props[k]);
                 }
             };

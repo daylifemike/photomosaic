@@ -402,7 +402,7 @@ class PhotoMosaic {
 
     public static function recent_posts_images($limit = null, $category = null) {
         if ( empty($limit) ) {
-            return '';
+            $limit = 10;
         }
 
         $response = array();

@@ -239,11 +239,6 @@
                     diff--;
                 }
             } else {
-                console.log(
-                    Math.abs(diff),
-                    (container_width / 10),
-                    Math.abs(diff) < (container_width / 10)
-                );
                 if (Math.abs(diff) < (container_width / 10)) {
                     // scale up
                     while(diff < 0) {

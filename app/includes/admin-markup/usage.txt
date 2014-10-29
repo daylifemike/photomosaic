@@ -18,24 +18,24 @@ When working with Wordpress galleries, there are three ways to specify the image
 
 A PhotoMosaic can also be used to show any recent posts or recent posts from a specific category/taxonomy:
 
-- `[phototmosaic category="recent" limit="20"]` : show the 20 most recent posts from all non-custom-taxonomy categories
-- `[phototmosaic category="uncategorized" limit="10"]` : show the 10 most recent posts from the 'uncategorized' category
-- `[phototmosaic category="cats, dogs" limit="10"]` : show the 10 most recent posts from the 'cats' and 'dogs' categories
+- `[photomosaic category="recent" limit="20"]` : show the 20 most recent posts from all non-custom-taxonomy categories
+- `[photomosaic category="uncategorized" limit="10"]` : show the 10 most recent posts from the 'uncategorized' category
+- `[photomosaic category="cats, dogs" limit="10"]` : show the 10 most recent posts from the 'cats' and 'dogs' categories
 
 A category in a custom taxonomy can also be used:
 
-- `[phototmosaic category="portfolio:weddings"]` - recent posts from the 'weddings' categeory in the 'portfolio' taxonomy
-- `[phototmosaic category="portfolio:weddings, portfolio:portraits"]` - recent posts from the 'weddings' and 'portraits' categeories in the 'portfolio' taxonomy
-- `[phototmosaic category="portfolio:weddings, kittens"]` - recent posts from the 'weddings' categeory in the 'portfolio' taxonomy and the 'kittens' category in the default taxonomy
+- `[photomosaic category="portfolio:weddings"]` - recent posts from the 'weddings' categeory in the 'portfolio' taxonomy
+- `[photomosaic category="portfolio:weddings, portfolio:portraits"]` - recent posts from the 'weddings' and 'portraits' categeories in the 'portfolio' taxonomy
+- `[photomosaic category="portfolio:weddings, kittens"]` - recent posts from the 'weddings' categeory in the 'portfolio' taxonomy and the 'kittens' category in the default taxonomy
 
 Because categories and tags are just built-in taxonomies the following two examples are identical:
 
-- `[phototmosaic category="puppies"]`
-- `[phototmosaic category="category:puppies"]`
+- `[photomosaic category="puppies"]`
+- `[photomosaic category="category:puppies"]`
 
 This means that a gallery can be created from tags:
 
-- `[phototmosaic category="post_tag:pets"]` - recent posts tagged 'pets' in the default taxonomy
+- `[photomosaic category="post_tag:pets"]` - recent posts tagged 'pets' in the default taxonomy
 
 NextGen users can specify a NextGen Gallery ID or a NextGen Album ID.  For albums, all of the images in all of the galleries in the album will be displayed. Images will appear ordered, first, by album and then by the order specified in each gallery.
 

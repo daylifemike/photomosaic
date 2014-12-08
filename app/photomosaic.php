@@ -25,6 +25,12 @@ class PhotoMosaic {
         return '2.10';
     }
 
+    private static function in_debug_mode () {
+        $key = 'photomosaic_debug';
+        parse_str( $_SERVER['QUERY_STRING'], $query );
+        return (array_key_exists($key, $query) && ($query[$key] === 'true'));
+    }
+
     public static function init() {
         global $pagenow;
 
@@ -40,7 +46,13 @@ class PhotoMosaic {
         add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajax_handler') );
 
         wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.11.2/react.min.js', null, '0.11.2' );
-        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
+
+        if ( PhotoMosaic::in_debug_mode() ) {
+            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
+        } else {
+            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
+        }
+
         wp_enqueue_script('photomosaic_js');
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 

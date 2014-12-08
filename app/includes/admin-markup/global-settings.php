@@ -18,18 +18,24 @@
     <h3>Layout</h3>
     <div class="set">
         <div class="field">
-            <p><label>Width <i>(in pixels)</i></label></p>
+            <p><label>Width</label></p>
             <p><input type="text" name="width" value="<?php echo($options['width']); ?>" /></p>
-            <span class="info">set to <b>0</b> for auto-sizing</span>
+            <span class="info">can be a <b>px</b> value (e.g. 500px or 500)</span>
+            <span class="info">can be a <b>%</b> of the container (e.g. 100%)</span>
+            <span class="info"><b>0</b> and <b>auto</b> are equivalent to <b>100%</b></span>
+            <span class="info">to insure a responsive mosaic, use a <b>%</b> value</span>
         </div>
         <div class="field">
-            <p><label>Height <i>(in pixels)</label></i></p>
+            <p><label>Height</label></p>
             <p><input type="text" name="height" value="<?php echo($options['height']); ?>" /></p>
-            <span class="info">set to <b>0</b> for auto-sizing</span>
+            <span class="info">can be a <b>px</b> value (e.g. 500px or 500)</span>
+            <span class="info">can be a <b>%</b> of the container (e.g. 100%)</span>
+            <span class="info">set to <b>0</b> or <b>auto</b> to let PhotoMosaic determine the best height</span>
         </div>
         <div class="field">
-            <p><label>Padding <i>(in pixels)</i></label></p>
+            <p><label>Padding</label></p>
             <p><input type="text" name="padding" value="<?php echo($options['padding']); ?>" /></p>
+            <span class="info">only accepts <b>px</b> values (e.g. 5px or 5)</span>
         </div>
         <div class="field">
             <p>
@@ -44,18 +50,18 @@
             <p><input type="text" name="columns" value="<?php echo($options['columns']); ?>" /></p>
             <span class="info">set to <b>0</b> for auto-columns</span>
             <span class="info">use a '-' to set a minimum and maximum number of columns <b>2-5</b></span>
-            <span class="info">use '0' to set just a minimum (<b>2-0</b>) or just a maximum (<b>0-5</b>) number of columns</span>
-            <span class="info">both setting a range and auto-columns have PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
-            <span class="info">both setting a range and auto-columns are fully responsive</span>
+            <span class="info">use '0' to set just a minimum (<b>2-0</b>) or maximum (<b>0-5</b>) number of columns</span>
+            <span class="info">setting a fixed number of columns (e.g. <b>4</b>) means mosaics will always have that many columns (even at different widths)</span>
+            <span class="info">using auto-columns, alone or in a range, has PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
         </div>
         <div class="field">
             <p><label>Order</label></p>
             <p>
                 <select name="order">
-                  <option value="rows" <?php if($options['order'] == 'rows') echo "selected"; ?> >Rows</option>
-                  <option value="columns" <?php if($options['order'] == 'columns') echo "selected"; ?> >Columns</option>
-                  <option value="masonry" <?php if($options['order'] == 'masonry') echo "selected"; ?> >Masonry</option>
-                  <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
+                    <option value="rows" <?php if($options['order'] == 'rows') echo "selected"; ?> >Rows</option>
+                    <option value="columns" <?php if($options['order'] == 'columns') echo "selected"; ?> >Columns</option>
+                    <option value="masonry" <?php if($options['order'] == 'masonry') echo "selected"; ?> >Masonry</option>
+                    <option value="random" <?php if($options['order'] == 'random') echo "selected"; ?> >Random</option>
                 </select>
             </p>
             <span class="info">only applies to image sequence direction, not layout (format will still be in columns)</span>

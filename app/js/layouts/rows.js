@@ -17,12 +17,11 @@
             var images = this.images;
             var rows = null;
 
-            if (this._options.width === 'auto' || this._options.width == 0) {
-                this.opts.width = this.node.width();
-            }
+            this.opts.width = PhotoMosaic.Layouts.Common.getRelativeWidth( this._options, this.opts, this.node );
+            this.opts.height = PhotoMosaic.Layouts.Common.getRelativeDimenion( this._options, this.opts, this.node, 'height', this.node.height());
 
             // look for conflicting settings
-            this.opts = this.errorChecks.initial( this.opts );
+            this.opts = this.errorChecks.initial( this._options, this.opts );
 
             // scale images to the tallest height
             images = this.scaleImagesToHeight( images, this.opts.max_row_height );
@@ -33,7 +32,7 @@
             // adjust the groups to get the desired number of rows
             if (
                 (this.opts.rows === 'auto' || this.opts.rows === 0)
-                && (this.opts.height !== 'auto' && this.opts.height !== 0)
+                && (this._options.height !== 'auto' && this._options.height !== 0)
             ) {
                 rows = this.adjustNumberOfRowsByHeight( images, rows, this.opts.height );
             } else {
@@ -52,7 +51,7 @@
                 rows = this.normalizeOrphanRowHeight( rows, this.opts.width );
             }
 
-            if (this.opts.height !== 'auto' && this.opts.height !== 0) {
+            if (this._options.height !== 'auto' && this._options.height !== 0) {
                 rows = this.setMosaicHeight( images, rows, this.opts.height );
             }
 
@@ -380,36 +379,36 @@
         },
 
         errorChecks : {
-            initial : function (opts) {
-                if (this.heightRowMismatch(opts)) {
+            initial : function (_options, opts) {
+                if (this.heightRowMismatch(_options, opts)) {
                     PhotoMosaic.Utils.log.info("Rows must be set to 'auto' to set a fixed Height");
                     opts.rows = 'auto';
                 }
-                if (this.heightOrphanMismatch(opts)) {
+                if (this.heightOrphanMismatch(_options, opts)) {
                     PhotoMosaic.Utils.log.info("Allow Orphans must be 'true' to set a fixed Height");
                     opts.allow_orphans = true;
                 }
-                if (this.heightCropMismatch(opts)) {
+                if (this.heightCropMismatch(_options, opts)) {
                     PhotoMosaic.Utils.log.info("Prevent Cropping must be 'false' to set a fixed Height");
                     opts.prevent_crop = false;
                 }
                 return opts;
             },
-            heightRowMismatch : function (opts) {
+            heightRowMismatch : function (_options, opts) {
                 return (
-                    (opts.height !== 'auto' && opts.height !== 0)
+                    (_options.height !== 'auto' && _options.height !== 0)
                     && (opts.rows !== 'auto' && opts.rows !== 0)
                 );
             },
-            heightOrphanMismatch : function (opts) {
+            heightOrphanMismatch : function (_options, opts) {
                 return (
-                    (opts.height !== 'auto' && opts.height !== 0)
+                    (_options.height !== 'auto' && _options.height !== 0)
                     && !opts.allow_orphans
                 );
             },
-            heightCropMismatch : function (opts) {
+            heightCropMismatch : function (_options, opts) {
                 return (
-                    (opts.height !== 'auto' && opts.height !== 0)
+                    (_options.height !== 'auto' && _options.height !== 0)
                     && opts.prevent_crop
                 );
             },

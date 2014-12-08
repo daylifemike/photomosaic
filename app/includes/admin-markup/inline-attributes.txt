@@ -14,8 +14,8 @@ The PhotoMosaic shortcode & template tag have full support for inline attributes
 - **columns** : any number *(0 for auto)*
 - **order** : rows, columns, masonry, random
 - **padding** : any number *(in pixels)*
-- **width** : any number *(in pixels)*
-- **height** : any number *(in pixels)*
+- **width** : any number *(px or %)*
+- **height** : any number *(px or %)*
 - **center** : 1 = yes, 0 = no
 - **prevent_crop** : 1 = yes, 0 = no
 - **link_behavior** : image, attachment, custom, none

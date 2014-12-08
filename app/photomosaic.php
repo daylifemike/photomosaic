@@ -229,8 +229,10 @@ class PhotoMosaic {
         $int_false_settings = array('lazyload');
 
         foreach ( $auto_settings as $key ) {
-            if(intval($settings[$key]) == 0){
+            if( intval($settings[$key]) == 0 ){
                 $settings[$key] = "'auto'";
+            } elseif ( strpos($settings[$key], '%') !== false ) {
+                $settings[$key] = "'" . $settings[$key] . "'";
             } else {
                 $settings[$key] = intval($settings[$key]);
             }

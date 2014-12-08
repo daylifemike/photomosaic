@@ -19,9 +19,7 @@
             var column_width = null;
             var mosaic_height = 0;
 
-            if (this._options.width === 'auto' || this._options.width == 0) {
-                this.opts.width = this.node.width();
-            }
+            this.opts.width = PhotoMosaic.Layouts.Common.getRelativeWidth( this._options, this.opts, this.node );
 
             // determine the number of columns
             this.columns = columns = PhotoMosaic.Layouts.Common.makeColumnBuckets( this.opts );
@@ -79,8 +77,10 @@
         },
 
         getMosaicHeight : function (columns) {
-            if (this.opts.height && this.opts.height !== 'auto') {
-                return this.opts.height;
+            var auto_height = PhotoMosaic.Layouts.Common.getRelativeHeight( this._options, this.opts, this.node );
+
+            if (auto_height) {
+                return auto_height;
             }
 
             var column_heights = PhotoMosaic.Layouts.Common.getColumnHeights( this.imagesById, columns, this.opts );

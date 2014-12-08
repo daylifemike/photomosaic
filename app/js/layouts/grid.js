@@ -17,9 +17,7 @@
             var column_width = null;
             var mosaic_height = 0;
 
-            if (this._options.width === 'auto' || this._options.width == 0) {
-                this.opts.width = this.node.width();
-            }
+            this.opts.width = PhotoMosaic.Layouts.Common.getRelativeWidth( this._options, this.opts, this.node );
 
             // look for conflicting settings
             this.opts = this.errorChecks.initial( this.opts );
@@ -104,9 +102,14 @@
             if (height == 'auto' || height == 0) {
                 return columns;
             } else {
+                if ( (typeof(height) == 'string') && (height.indexOf('%') > -1) ) {
+                    height = (this.node.height() * (parseInt(height, 10) / 100));
+                }
+
                 for (var i = 0; i < columns.length; i++) {
                     columns[i] = this.scaleColumnToHeight(columns[i], height);
-                };
+                }
+
                 return columns;
             }
         },

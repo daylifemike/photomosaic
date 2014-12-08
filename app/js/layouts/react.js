@@ -5,6 +5,13 @@
         return 'photoMosaic_' + id;
     }
 
+    function vendorPrefix(str) {
+        var prop = PhotoMosaic.Plugins.Modernizr.prefixed(str);
+        return prop.replace(/([A-Z])/g, function(str,m1){
+                return '-' + m1.toLowerCase();
+            }).replace(/^ms-/,'-ms-');
+    }
+
     PhotoMosaic.Layouts.React = {
         mosaic : React.createClass({
             componentDidMount : function () {
@@ -19,7 +26,7 @@
                 };
                 var images = this.props.images.map(function (image) {
                     return (
-                        PhotoMosaic.Layouts.React.image_wrapper(image)
+                        PhotoMosaic.Layouts.React.item(image)
                     );
                 });
 
@@ -39,7 +46,7 @@
             }
         }),
 
-        image_wrapper : React.createClass({
+        item : React.createClass({
             componentDidMount : function () {
                 $(this.getDOMNode()).addClass('loading');
             },
@@ -50,17 +57,16 @@
                     className : 'photomosaic-item',
                     key : data.id,
                     style : {
-                        position : 'absolute',
-                        top : data.position.top,
-                        left : data.position.left,
                         width : data.width.container,
                         height : data.height.container
                     },
                     children : [
                         PhotoMosaic.Layouts.React.spinner( $.extend({}, data, {key : data.id + '_spinner'}) ),
-                        PhotoMosaic.Layouts.React.image(data)
+                        PhotoMosaic.Layouts.React.animation_wrapper(data)
                     ]
                 };
+
+                params.style[vendorPrefix('transform')] = 'translate(' + data.position.left + 'px, ' + data.position.top + 'px)';
 
                 if (data.link) {
                     if (data.external) { params.target = '_blank'; }
@@ -75,17 +81,39 @@
             }
         }),
 
+        animation_wrapper : React.createClass({
+            render : function () {
+                var data = this.props;
+                var params = {
+                    className : 'photomosaic-animation-wrap',
+                    children : [
+                        PhotoMosaic.Layouts.React.image(data)
+                    ]
+                };
+
+                return (
+                    React.DOM.div(params)
+                );
+            }
+        }),
+
         image : React.createClass({
+            componentDidUpdate : function (prev_props, prev_state) {
+                var $image = $(this.getDOMNode());
+                var next_src = $image.attr('data-src');
+
+                if (prev_props.src && (prev_props.src != next_src)) {
+                    $image.attr('src', next_src);
+                }
+            },
             render : function () {
                 var data = this.props;
                 var style = {
                     width : data.width.adjusted,
-                    height : data.height.adjusted,
+                    height : data.height.adjusted
                 };
 
-                for (var key in data.adjustments) {
-                    style[key] = data.adjustments[key] * -1;
-                }
+                style[vendorPrefix('transform')] = 'translate(' + (data.adjustments.left * -1) + 'px, ' + (data.adjustments.top * -1) + 'px)';
 
                 return (
                     React.DOM.img({
@@ -107,14 +135,17 @@
                     height : data.height.adjusted,
                 };
 
-                for (var key in data.adjustments) {
-                    style[key] = data.adjustments[key] * -1;
-                }
+                style[vendorPrefix('transform')] = 'translate(' + (data.adjustments.left * -1) + 'px, ' + (data.adjustments.top * -1) + 'px)';
 
                 return (
-                    React.DOM.span({
-                        className : 'photomosaic-spinner',
-                        style : style
+                    React.DOM.div({
+                        className : 'photomosaic-spinner-wrap',
+                        children : [
+                            React.DOM.span({
+                                className : 'photomosaic-spinner',
+                                style : style
+                            })
+                        ]
                     })
                 );
             }

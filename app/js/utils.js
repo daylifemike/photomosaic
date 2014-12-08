@@ -121,6 +121,33 @@ PhotoMosaic.Utils = (function(){
             return images;
         },
 
+        // setImageConstraint : function (images, layout, sizing) {
+        //     var prefix = "photomosaic-constrain-";
+        //     var image = null;
+        //     var container_is_larger = null;
+        //     var sizing = sizing || 'cover';
+
+        //     function constrainWhichDimension (container_is_larger) {
+        //         var dim = "width";
+        //         if ((container_is_larger && (sizing === 'contain')) ||
+        //             (!container_is_larger && (sizing === 'cover'))) {
+        //             dim = "height";
+        //         }
+        //         return dim;
+        //     }
+
+        //     for (var i = 0; i < images.length; i++) {
+        //         image = images[i];
+        //         container_is_larger = (image.width.container / image.height.container) > (image.width.original / image.height.original);
+
+        //         image.constraint = prefix + constrainWhichDimension(container_is_larger);
+        //     }
+
+        //     images[i] = image;
+
+        //     return images;
+        // },
+
         decodeHTML : function (str) {
             var e = document.createElement('div');
             e.innerHTML = str;

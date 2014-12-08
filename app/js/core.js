@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, window) {
     'use strict';
 
     var pluginName = 'photoMosaic';
@@ -23,6 +23,17 @@
             };
             return event_names[ PhotoMosaic.Plugins.Modernizr.prefixed( 'transition' ) ];
         })();
+
+        // for onReady Callback / modal_ready_callback
+        $.data(this.el, pluginName, this);
+
+        // for debugging
+        window.PhotoMosaic.Mosaics.push({
+            'el' : this.el,
+            '$el' : this.obj,
+            'opts' : this.opts,
+            'instance' : this
+        });
 
         this.init();
     };
@@ -504,18 +515,9 @@
                 instance.refresh();
             } else {
                 options = options || {};
-                instance = $.data(this, pluginName, new photoMosaic(this, options));
-
-                // for debugging
-                window.PhotoMosaic.$ = $;
-                window.PhotoMosaic.Mosaics.push({
-                    'el' : this,
-                    '$el' : $(this),
-                    'opts' : instance.opts,
-                    'instance' : instance
-                });
+                instance = new photoMosaic(this, options);
             }
         });
     };
 
-}(window.JQPM));
+}(window.JQPM, window));

@@ -36,7 +36,9 @@
     var $sub = jQuery.sub();
 
     registerNamespace('JQPM', $sub || {});
+    registerNamespace('PhotoMosaic');
     registerNamespace('PhotoMosaic.$', $sub || {});
+    registerNamespace('PhotoMosaic.version', '2.10');
     registerNamespace('PhotoMosaic.Utils');
     registerNamespace('PhotoMosaic.Inputs');
     registerNamespace('PhotoMosaic.Loader');
@@ -44,6 +46,22 @@
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');
     registerNamespace('PhotoMosaic.Mosaics', []);
-    registerNamespace('PhotoMosaic.version', '2.10');
+    registerNamespace('PhotoMosaic.each', function (callback) {
+        PhotoMosaic.$.each( PhotoMosaic.Mosaics, function (i, mosaic) {
+            // this = the raw target element
+            // arg[0] = the JQPM instance
+            // arg[1] = $( this )
+            // arg[2] = direct access to $(this).photoMosaic() w/o all the typing
+            // arg[3] = index of mosaic in list of mosaics
+            callback.apply(mosaic.el, [
+                PhotoMosaic.$,
+                mosaic.$el,
+                function (args) {
+                    mosaic.$el.photoMosaic.apply(mosaic.$el, [args]);
+                },
+                i
+            ]);
+        });
+    });
 
 }(jQuery, window));

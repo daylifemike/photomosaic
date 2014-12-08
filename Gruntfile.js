@@ -2,7 +2,8 @@ module.exports = function(grunt) {
 
     var plugin_name = 'photomosaic-for-wordpress';
     var plugin_path = '../wordpress/wp-content/plugins/' + plugin_name + '/';
-    var nonwp_path = 'app/non-WP/download/files/'
+    var nonwp_path = 'app/non-WP/download/files/';
+    var demo_path = 'app/non-WP/demo3/';
     var dist_path = 'app/dist/';
     var release_path = '../' + plugin_name + '/';
     var files = [
@@ -100,6 +101,27 @@ module.exports = function(grunt) {
                         cwd : dist_path + '/includes/vendor/',
                         src : ['prettyphoto/**/*'],
                         dest : nonwp_path + 'includes/',
+                        filter : 'isFile'
+                    }
+                ]
+            },
+            demo : {
+                files : [
+                    {
+                        expand : true,
+                        cwd : dist_path,
+                        src : [
+                            'js/**/*', 'css/**/*', 'images/**/*',
+                            '!**/admin-page-icon.gif', '!**/photomosaic.admin.css', '!**/photomosaic.admin.js', '!**/photomosaic.editor.js'
+                        ],
+                        dest : demo_path,
+                        filter : 'isFile'
+                    },
+                    {
+                        expand: true,
+                        cwd : dist_path + '/includes/vendor/',
+                        src : ['prettyphoto/**/*'],
+                        dest : demo_path + 'includes/',
                         filter : 'isFile'
                     }
                 ]
@@ -245,7 +267,11 @@ module.exports = function(grunt) {
             dev : {
                 files : [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
                 tasks : [ 'concat:wp', 'copy:dist', 'replace:dev', 'clean:plugin', 'copy:plugin', 'clean:dist' ]
-            }
+            },
+            // demo : {
+            //     files : [ 'app/js/**/*', 'app/css/*', 'Gruntfile.js' ],
+            //     tasks : [ 'demo' ]
+            // }
         }
     });
 
@@ -262,4 +288,5 @@ module.exports = function(grunt) {
     grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
     grunt.registerTask('nonwp', [ 'concat:with_react', 'concat:without_react', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'uglify:lite', 'copy:nonwp', 'clean:dist' ]);
+    grunt.registerTask('demo', [ 'concat:with_react', 'copy:dist', 'replace:nonwp', /*'uglify:dist',*/ 'copy:demo', 'clean:dist' ]);
 };

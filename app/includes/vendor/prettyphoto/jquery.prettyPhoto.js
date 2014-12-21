@@ -1,5 +1,5 @@
 /*
-    Version: 3.1.5e
+    Version: 3.1.5f
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
     # b
      - new jQuery namespace (JQPM)
@@ -14,6 +14,8 @@
      - changed viewport buffer 200 >>> 100 (~#600)
      - locked the overlay to the screen (CSS)
      - removed the .ppt bumper (CSS)
+    #f
+     - changed default 'horizontal_padding' value to match the default theme (what's with the check ~#164)
 */
 /* ------------------------------------------------------------------------
     Class: prettyPhoto
@@ -39,7 +41,7 @@
             default_height: 344,
             counter_separator_label: '/', /* The separator for the gallery counter 1 "of" 2 */
             theme: 'pp_default', /* light_rounded / dark_rounded / light_square / dark_square / facebook */
-            horizontal_padding: 20, /* The padding on each side of the picture */
+            horizontal_padding: 16, /* The padding on each side of the picture */
             hideflash: false, /* Hides all the flash object on a page, set to TRUE if flash appears over prettyPhoto */
             wmode: 'opaque', /* Set the flash wmode attribute */
             autoplay: true, /* Automatically start videos: True/False */

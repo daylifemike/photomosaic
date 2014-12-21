@@ -753,6 +753,7 @@ class PhotoMosaic {
                 $isPhotoMosaic = true;
             }
         } else if ( isset($atts['theme']) ) {
+            // deprecated in 3.0.0
             if ( $atts['theme'] === 'photomosaic' ) {
                 $isPhotoMosaic = true;
             }

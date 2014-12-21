@@ -15,7 +15,7 @@
     PhotoMosaic.Layouts.React = {
         mosaic : React.createClass({
             componentDidMount : function () {
-                $(this.getDOMNode()).addClass('loading');
+                $(this.getDOMNode()).addClass('photomosaic-loading');
             },
             render : function () {
                 var id = prefixId(this.props.id);
@@ -48,7 +48,7 @@
 
         item : React.createClass({
             componentDidMount : function () {
-                $(this.getDOMNode()).addClass('loading');
+                $(this.getDOMNode()).addClass('photomosaic-loading');
             },
             render : function () {
                 var data = this.props;

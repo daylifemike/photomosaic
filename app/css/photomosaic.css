@@ -32,8 +32,8 @@
 /* loading */
 .photoMosaic .photoMosaicLoading { background:transparent url('../images/spinner-arrows.gif') 0px 0px no-repeat; padding:0 0 0 20px; line-height:20px; }
 
-.photoMosaic.loading .photomosaic-spinner { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; opacity:1; }
-.photoMosaic.loading .photomosaic-item.loaded .photomosaic-spinner { opacity:0; }
+.photoMosaic.photomosaic-loading .photomosaic-spinner { background:#efefef url('../images/spinner-snake.gif') 50% 50% no-repeat; opacity:1; }
+.photoMosaic.photomosaic-loading .photomosaic-item.photomosaic-loaded .photomosaic-spinner { opacity:0; }
 
 .PM_preloadify { visibility:hidden; position:absolute; bottom:5px; right:10px; }
 
@@ -96,10 +96,10 @@
             transform-origin: top left;
 }
 
-/* The .loaded is added after all of the images have loaded */
+/* The .photomosaic-loaded is added after all of the images have loaded */
 .PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-item,
 .PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-animation-wrap,
-.PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .loaded img,
+.PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-loaded img,
 .PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none img, {
     -webkit-transition: none;
        -moz-transition: none;
@@ -108,9 +108,9 @@
             transition: none;
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none .loading .photomosaic-animation-wrap { }
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none .photomosaic-loading .photomosaic-animation-wrap { }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-custom .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-custom .photomosaic-loading .photomosaic-animation-wrap {
     /* good for example*/
         opacity:0;
         -webkit-transform: rotate( -5deg ) scale( 0.95 );
@@ -121,11 +121,11 @@
     /**/
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-fade .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-fade .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-scale-up .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-scale-up .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: scale( 0.95 );
        -moz-transform: scale( 0.95 );
@@ -134,7 +134,7 @@
             transform: scale( 0.95 );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-scale-down .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-scale-down .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: scale( 1.15 );
        -moz-transform: scale( 1.15 );
@@ -143,7 +143,7 @@
             transform: scale( 1.15 );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-up .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-up .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: translateY( 5% );
        -moz-transform: translateY( 5% );
@@ -152,7 +152,7 @@
             transform: translateY( 5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-down .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-down .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: translateY( -5% );
        -moz-transform: translateY( -5% );
@@ -161,7 +161,7 @@
             transform: translateY( -5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-left .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-left .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: translateX( 5% );
        -moz-transform: translateX( 5% );
@@ -170,7 +170,7 @@
             transform: translateX( 5% );
 }
 
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-right .loading .photomosaic-animation-wrap {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-slide-right .photomosaic-loading .photomosaic-animation-wrap {
     opacity: 0;
     -webkit-transform: translateX( -5% );
        -moz-transform: translateX( -5% );

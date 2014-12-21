@@ -1,5 +1,7 @@
 (function ($) {
     var self = null;
+    var loading_class = "photomosaic-loading";
+    var loaded_class = "photomosaic-loaded";
 
     PhotoMosaic.Loader = function ($container, mosaic) {
         self = this;
@@ -58,9 +60,9 @@
                 // if you don't want a loading transition OR it's handled by CSS
                 if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                     var $image = $(image.img);
-                    var $parent = $image.parents('span.loading, a.loading');
+                    var $parent = $image.parents('.' + loading_class);
                     var toggleClasses = function () {
-                        $parent.addClass('loaded');
+                        $parent.addClass(loaded_class);
                         $image.off(self.mosaic._transition_end_event_name);
                     };
 
@@ -69,7 +71,7 @@
                         toggleClasses
                     );
 
-                    $parent.removeClass('loading');
+                    $parent.removeClass(loading_class);
 
                 } else {
                     // you want a transition but the browser doesn't support CSS Transitions... fade (old IEs)
@@ -77,7 +79,7 @@
                         { 'opacity' : '1' },
                         self.opts.resize_transition_settings.duration * 1000,
                         function(){
-                            $(this).parents('span.loading, a.loading').removeClass('loading');
+                            $(this).parents('.' + loading_class).removeClass(loading_class);
                         }
                     );
                 }
@@ -116,11 +118,11 @@
             setTimeout(function () {
                 var $mosaic = self.mosaic.obj.find('.photoMosaic')
                 var $images = $mosaic.children('a, span'); 
-                var $loading = $images.filter('.loading'); 
+                var $loading = $images.filter('.' + loading_class);
 
                 // transitionend fires for each proprty being transitioned, we only care about when the last one ends
                 var toggleClasses = PhotoMosaic.Utils.debounce(function () {
-                    $mosaic.removeClass('loading').addClass('loaded');
+                    $mosaic.removeClass(loading_class).addClass(loaded_class);
                     self.mosaic.obj.off(self.mosaic._transition_end_event_name);
                 }, 1000);
 

@@ -18,7 +18,7 @@
 
 /* base */
 .photoMosaic { position:relative; margin-bottom:2em; }
-    .photoMosaic .photomosaic-item { display:block; position:absolute !important; top:0 !important; left:0 !important; }
+    .photoMosaic .photomosaic-item { display:block !important; position:absolute !important; top:0 !important; left:0 !important; }
     .photoMosaic .photomosaic-spinner-wrap,
     .photoMosaic .photomosaic-animation-wrap { position:absolute; top:0; right:0; bottom:0; left:0; overflow:hidden; }
     .photoMosaic .photomosaic-spinner { position:relative; display:block; }

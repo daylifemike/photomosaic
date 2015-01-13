@@ -31,7 +31,7 @@
         window.PhotoMosaic.Mosaics.push({
             'el' : this.el,
             '$el' : this.obj,
-            'opts' : this.opts,
+            'opts' : this._options,
             'instance' : this
         });
 

@@ -256,6 +256,10 @@ class PhotoMosaic {
             }
         }
 
+        if ( empty($atts['limit']) ) {
+            $atts['limit'] = null;
+        }
+
         $unique = PhotoMosaic::makeID();
 
         $output_buffer = '
@@ -271,7 +275,7 @@ class PhotoMosaic {
         } else if ( !empty($atts['ngaid']) ) {
             $output_buffer .= PhotoMosaic::gallery_from_nextgen($atts['ngaid'], $settings['link_behavior'], 'album');
         } else if ( !empty($atts['category']) ) {
-            if ( $atts['category'] == 'recent' ) {
+            if ( $atts['category'] == 'recent' || $atts['category'] == 'latest' ) {
                 $recent_images = PhotoMosaic::recent_posts_images($atts['limit']);
             } else {
                 $recent_images = PhotoMosaic::recent_posts_images($atts['limit'], $atts['category']);
@@ -443,11 +447,17 @@ class PhotoMosaic {
                 }
             }
         }
-
         foreach ($posts as $post) {
             $id = get_post_thumbnail_id( $post['ID'] );
+            $title = $post['post_title'];
+
             if ( !empty( $id ) ) {
-                $response[ $id ] = get_permalink( $post['ID'] );
+                $response[ $id ] = array(
+                    'url' => get_permalink( $post['ID'] ),
+                    'title' => $title
+                );
+            } else {
+                $response[ $id ] = "";
             }
         }
 
@@ -536,7 +546,9 @@ class PhotoMosaic {
                 } else if ( $link_behavior === 'attachment' ) {
                     $url_data = ',"url": "' . $image_attachment_page . '"';
                 } else if ( is_array( $link_behavior ) ) {
-                    $url_data = ',"url": "' . $link_behavior[ $_post->ID ] . '"';
+                    // this is a category gallery - link to the post and set the post_title as the caption
+                    $url_data = ',"url": "' . $link_behavior[ $_post->ID ]['url'] . '"';
+                    $image_caption = $link_behavior[ $_post->ID ]['title'];
                 } else {
                     $url_data = '';
                 }

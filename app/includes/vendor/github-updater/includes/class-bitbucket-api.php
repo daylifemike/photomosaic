@@ -9,33 +9,34 @@
  */
 
 /**
- * Get remote data from a GitHub repo.
+ * Get remote data from a Bitbucket repo.
  *
- * @package GitHub_Updater_API
+ * @package GitHub_Updater_Bitbucket_API
  * @author  Andy Fragen
  */
-class GitHub_Updater_BitBucket_API extends GitHub_Updater {
+class GitHub_Updater_Bitbucket_API extends GitHub_Updater {
 
 	/**
 	 * Constructor.
-	 *
-	 * @since 2.1.0
 	 *
 	 * @param string $type
 	 */
 	public function __construct( $type ) {
 		$this->type  = $type;
-		self::$hours = 12;
+		parent::$hours = 12;
 
+		if ( ! isset( self::$options['bitbucket_username'] ) ) {
+			self::$options['bitbucket_username'] = null;
+		}
+		if ( ! isset( self::$options['bitbucket_password'] ) ) {
+			self::$options['bitbucket_password'] = null;
+		}
+		add_site_option( 'github_updater', self::$options );
 		add_filter( 'http_request_args', array( $this, 'maybe_authenticate_http' ), 10, 2 );
 	}
 
 	/**
 	 * Call the API and return a json decoded body.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @see http://developer.github.com/v3/
 	 *
 	 * @param string $url
 	 *
@@ -46,16 +47,18 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 		$code          = wp_remote_retrieve_response_code( $response );
 		$allowed_codes = array( 200, 404 );
 
-		if ( is_wp_error( $response ) ) { return false; }
-		if ( ! in_array( $code, $allowed_codes, true ) ) { return false; }
+		if ( is_wp_error( $response ) ) {
+			return false;
+		}
+		if ( ! in_array( $code, $allowed_codes, false ) ) {
+			return false;
+		}
 
 		return json_decode( wp_remote_retrieve_body( $response ) );
 	}
 
 	/**
 	 * Return API url.
-	 *
-	 * @since 1.0.0
 	 *
 	 * @param string $endpoint
 	 *
@@ -70,8 +73,6 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 		/**
 		 * Add or filter the available segments that are used to replace placeholders.
 		 *
-		 * @since 1.5.0
-		 *
 		 * @param array $segments List of segments.
 		 */
 		$segments = apply_filters( 'github_updater_api_segments', $segments );
@@ -80,84 +81,52 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			$endpoint = str_replace( '/:' . $segment, '/' . $value, $endpoint );
 		}
 
-		/*
-		if ( ! empty( $this->type->access_token ) ) {
-			$endpoint = add_query_arg( 'access_token', $this->type->access_token, $endpoint );
-		}
-
-		// If a branch has been given, only check that for the remote info.
-		// If it's not been given, GitHub will use the Default branch.
-		if ( ! empty( $this->type->branch ) ) {
-			$endpoint = add_query_arg( 'ref', $this->type->branch, $endpoint );
-		}
-		*/
-
 		return 'https://bitbucket.org/api/' . $endpoint;
 	}
 
 	/**
-	 * Read the remote file.
+	 * Read the remote file and parse headers.
+	 * Saves headers to transient.
 	 *
 	 * Uses a transient to limit the calls to the API.
-	 *
-	 * @since 1.0.0
 	 */
 	public function get_remote_info( $file ) {
 		$response = $this->get_transient( $file );
 
 		if ( ! $response ) {
 			if ( ! isset( $this->type->branch ) ) {
-				$this->type->branch = $this->get_default_branch( $response );
+				$this->type->branch = 'master';
 			}
-			$response = $this->api( '1.0/repositories/:owner/:repo/src/' . trailingslashit($this->type->branch) . $file );
+			$response = $this->api( '1.0/repositories/:owner/:repo/src/' . trailingslashit( $this->type->branch ) . $file );
 
 			if ( $response ) {
+				$contents = $response->data;
+				$response = $this->get_file_headers( $contents, $this->type->type );
 				$this->set_transient( $file, $response );
 			}
 		}
 
-		$this->type->branch = $this->get_default_branch( $response );
-
-		if ( ! $response ) { return false; }
-		if ( isset( $response->message ) ) { return false; }
-
-		$this->type->transient = $response;
-		preg_match( '/^[ \t\/*#@]*Version\:\s*(.*)$/im', $response->data, $matches );
-
-		if ( ! empty( $matches[1] ) ) {
-			$this->type->remote_version = trim( $matches[1] );
+		if ( ! $response || isset( $response->message ) ) {
+			return false;
 		}
+
+		if ( ! is_array( $response ) ) {
+			return false;
+		}
+		$this->type->transient            = $response;
+		$this->type->remote_version       = strtolower( $response['Version'] );
+		$this->type->branch               = ! empty( $response['Bitbucket Branch'] ) ? $response['Bitbucket Branch'] : 'master';
+		$this->type->requires_php_version = ! empty( $response['Requires PHP'] ) ? $response['Requires PHP'] : $this->type->requires_php_version;
+		$this->type->requires_wp_version  = ! empty( $response['Requires WP'] ) ? $response['Requires WP'] : $this->type->requires_wp_version;
+		$this->type->requires             = ! empty( $response['Requires WP'] ) ? $response['Requires WP'] : null;
 
 		return true;
-	}
-
-	/**
-	 * Parse the remote info to find what the default branch is.
-	 *
-	 * If we've had to call this method, we know that a branch header has not been provided.
-	 * As such the remote info was retrieved with a ?ref=... query argument.
-	 *
-	 * @since 1.5.0
-	 * @param array API object
-	 *
-	 * @return string Default branch name.
-	 */
-	protected function get_default_branch( $response ) {
-		if ( ! empty( $this->type->branch ) ) {
-			return $this->type->branch;
-		}
-
-		// If we can't contact BitBucket API, then assume a sensible default in case the non-API part of BitBucket is working.
-		if ( ! $response ) { return 'master'; }
-
 	}
 
 	/**
 	 * Parse the remote info to find most recent tag if tags exist
 	 *
 	 * Uses a transient to limit the calls to the API.
-	 *
-	 * @since 1.7.0
 	 *
 	 * @return string latest tag.
 	 */
@@ -178,8 +147,9 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			}
 		}
 
-		if ( ! $response ) { return false; }
-		if ( isset( $response->message ) ) { return false; }
+		if ( ! $response || isset( $response->message ) ) {
+			return false;
+		}
 
 		// Sort and get newest tag
 		$tags     = array();
@@ -193,7 +163,10 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			}
 		}
 
-		if ( empty( $tags ) ) { return false; }  // no tags are present, exit early
+		// no tags are present, exit early
+		if ( empty( $tags ) ) {
+			return false;
+		}
 
 		usort( $tags, 'version_compare' );
 		krsort( $rollback );
@@ -210,8 +183,6 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 	/**
 	 * Construct $download_link
 	 *
-	 * @since 1.9.0
-	 *
 	 * @param boolean $rollback for theme rollback
 	 * 
 	 * @return URI
@@ -225,7 +196,7 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			$endpoint .= $rollback . '.zip';
 		
 		// for users wanting to update against branch other than master or not using tags, else use newest_tag
-		} else if ( ( 'master' != $this->type->branch && ( -1 != version_compare( $this->type->remote_version, $this->type->local_version ) ) || ( '0.0.0' === $this->type->newest_tag ) ) ) {
+		} elseif ( 'master' != $this->type->branch || empty( $this->type->tags ) ) {
 			$endpoint .= $this->type->branch . '.zip';
 		} else {
 			$endpoint .= $this->type->newest_tag . '.zip';
@@ -239,23 +210,21 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 	 *
 	 * Uses a transient to limit calls to the API.
 	 *
-	 * @since 1.9.0
 	 * @param $changes
 	 *
 	 * @return bool
 	 */
 	public function get_remote_changes( $changes ) {
-		if ( ! class_exists( 'MarkdownExtra_Parser' ) && ! function_exists( 'Markdown' ) ) {
-			require_once 'markdown.php';
-		}
-
 		$response = $this->get_transient( 'changes' );
 
 		if ( ! $response ) {
-			$response = $this->api( '1.0/repositories/:owner/:repo/src/' . trailingslashit($this->type->branch) . $changes  );
+			if ( ! isset( $this->type->branch ) ) {
+				$this->type->branch = 'master';
+			}
+			$response = $this->api( '1.0/repositories/:owner/:repo/src/' . trailingslashit( $this->type->branch ) . $changes );
 
 			if ( ! $response ) {
-				$response['message'] = 'No CHANGES.md found';
+				$response['message'] = 'No changelog found';
 				$response = (object) $response;
 			}
 
@@ -264,17 +233,15 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			}
 		}
 
-		if ( ! $response ) { return false; }
-		if ( isset( $response->message ) ) { return false; }
+		if ( ! $response || isset( $response->message ) ) {
+			return false;
+		}
 
 		$changelog = $this->get_transient( 'changelog' );
 
 		if ( ! $changelog ) {
-			if ( function_exists( 'Markdown' ) ) {
-				$changelog = Markdown( $response->data );
-			} else {
-				$changelog = '<pre>' . $response->data . '</pre>';
-			}
+			$parser    = new Parsedown();
+			$changelog = $parser->text( $response->data );
 			$this->set_transient( 'changelog', $changelog );
 		}
 
@@ -285,7 +252,7 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 	 * Read the repository meta from API
 	 *
 	 * Uses a transient to limit calls to the API
-	 * @since 2.2.0
+	 *
 	 * @return base64 decoded repository meta data
 	 */
 	public function get_repo_meta() {
@@ -299,22 +266,45 @@ class GitHub_Updater_BitBucket_API extends GitHub_Updater {
 			}
 		}
 
-		if ( ! $response ) { return false; }
-		if ( isset( $response->message ) ) { return false; }
+		if ( ! $response || isset( $response->message ) ) {
+			return false;
+		}
 
 		$this->type->repo_meta = $response;
-		$this->add_meta_repo_object();
+		$this->_add_meta_repo_object();
 	}
 
 	/**
 	 * Add remote data to type object
-	 *
-	 * @since 2.2.0
 	 */
-	private function add_meta_repo_object() {
+	private function _add_meta_repo_object() {
 		$this->type->rating       = $this->make_rating( $this->type->repo_meta );
 		$this->type->last_updated = $this->type->repo_meta->updated_on;
 		$this->type->num_ratings  = $this->type->watchers;
+		$this->type->private      = $this->type->repo_meta->is_private;
+	}
+
+	/**
+	 * Add Basic Authentication $args to http_request_args filter hook
+	 * for private Bitbucket repositories only.
+	 *
+	 * @param  $args
+	 * @param  $url
+	 *
+	 * @return mixed
+	 */
+	public function maybe_authenticate_http( $args, $url ) {
+		if ( ! isset( $this->type ) ) {
+			return $args;
+		}
+
+		if ( ! empty( parent::$options[ $this->type->repo ] ) && false !== strpos( $url, $this->type->repo ) ) {
+			$username = parent::$options['bitbucket_username'];
+			$password = parent::$options['bitbucket_password'];
+			$args['headers']['Authorization'] = 'Basic ' . base64_encode( "$username:$password" );
+		}
+
+		return $args;
 	}
 
 }

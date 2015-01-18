@@ -20,10 +20,11 @@
 .photoMosaic { position:relative; margin-bottom:2em; }
     .photoMosaic .photomosaic-item { display:block !important; position:absolute !important; top:0 !important; left:0 !important; }
     .photoMosaic .photomosaic-spinner-wrap,
-    .photoMosaic .photomosaic-animation-wrap { position:absolute; top:0; right:0; bottom:0; left:0; overflow:hidden; }
+    .photoMosaic .photomosaic-animation-wrap,
+    .photoMosaic .photomosaic-caption-wrap { position:absolute; top:0; right:0; bottom:0; left:0; overflow:hidden; }
     .photoMosaic .photomosaic-spinner { position:relative; display:block; }
     .photoMosaic img { display:block; position:relative; top:0px; opacity:1; border:0 !important; }
-        .photoMosaic a:hover img { opacity:0.8; }
+        /*.photoMosaic a:hover img { opacity:0.8; }*/
 
         .photoMosaic img.thumbnail,
         .photoMosaic img.medium,
@@ -48,7 +49,11 @@
 
 .PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-item,
 .PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-animation-wrap,
-.PM_csstransforms.PM_csstransitions .photoMosaic img {
+.PM_csstransforms.PM_csstransitions .photoMosaic img,
+.PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-caption-wrap,
+.PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-caption-wrap:before,
+.PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-caption-wrap:after,
+.PM_csstransforms.PM_csstransitions .photoMosaic .photomosaic-caption-text {
     -webkit-transform-origin: center center;
        -moz-transform-origin: center center;
         -ms-transform-origin: center center;
@@ -178,3 +183,63 @@
          -o-transform: translateX( -5% );
             transform: translateX( -5% );
 }
+
+
+
+
+.photoMosaic a.no-caption:hover { opacity:0.8; }
+
+.photoMosaic.test-caption .photomosaic-item:hover { opacity:1; }
+.photoMosaic.test-caption .photomosaic-item .photomosaic-caption-wrap {
+    background: linear-gradient(45deg, #22682a 0%, #9b4a1b 40%, #3a342a 100%);
+}
+
+
+
+.photoMosaic.caption-scale-box {}
+.photoMosaic.caption-scale-box .photomosaic-item {
+    /*background: -webkit-linear-gradient(45deg, #22682a 0%, #9b4a1b 40%, #3a342a 100%);*/
+    /*background: linear-gradient(45deg, #22682a 0%, #9b4a1b 40%, #3a342a 100%);*/
+}
+.photoMosaic.caption-scale-box .photomosaic-item:hover { opacity:1; }
+/*.photoMosaic.caption-scale-box .photomosaic-item:hover .photomosaic-animation-wrap { opacity:0.5; }*/
+.photoMosaic.caption-scale-box .photomosaic-item .photomosaic-caption-wrap {
+    background: linear-gradient(
+        45deg,
+        rgba(34,104,42,0.5) 0%,
+        rgba(155,74,27,0.5) 40%,
+        rgba(58,52,42,0.5) 100%
+    );
+    opacity: 0;
+}
+.photoMosaic.caption-scale-box .photomosaic-item:hover .photomosaic-caption-wrap {
+    opacity: 1;
+}
+.photoMosaic.caption-scale-box .photomosaic-item.has-caption .photomosaic-caption-wrap:before {
+    content:''; position:absolute; top:1em; right:1em; bottom:1em; left:1em; border:1px solid #ffffff;
+    transform: scale( 0 );
+}
+.photoMosaic.caption-scale-box .photomosaic-item.has-caption:hover .photomosaic-caption-wrap:before {
+    transform: scale( 1 );
+}
+.photoMosaic.caption-scale-box .photomosaic-item.has-caption .photomosaic-caption-text {
+    position:absolute; top:50%; left:50%; text-align:center; color:#ffffff;
+    transform: translate( -50%, -50% ) scale( 0 );
+}
+.photoMosaic.caption-scale-box .photomosaic-item.has-caption:hover .photomosaic-caption-text {
+    transform: translate( -50%, -50% ) scale( 1 );
+}
+
+
+
+.photoMosaic.caption-squish {}
+.photoMosaic.caption-squish .photomosaic-item.has-caption { overflow:hidden; }
+.photoMosaic.caption-squish .photomosaic-item.has-caption .photomosaic-animation-wrap { transform:translateY(0); }
+.photoMosaic.caption-squish .photomosaic-item.has-caption:hover .photomosaic-animation-wrap { transform:translateY(-10%); }
+.photoMosaic.caption-squish .photomosaic-item.has-caption .photomosaic-caption-text {
+    position:absolute; bottom:0; padding:1em; background:pink; width:100%; min-height:11% !important;
+    transform:translateY(100%);
+}
+.photoMosaic.caption-squish .photomosaic-item.has-caption:hover .photomosaic-caption-text { transform:translateY(0); }
+
+

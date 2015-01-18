@@ -54,7 +54,10 @@
                 var data = this.props;
                 var node_type = (data.link) ? 'a' : 'span';
                 var params = {
-                    className : 'photomosaic-item',
+                    className : [
+                        'photomosaic-item',
+                        ((data.caption) ? 'has-caption' : 'no-caption')
+                    ].join(' '),
                     key : data.id,
                     style : {
                         width : data.width.container,
@@ -62,7 +65,8 @@
                     },
                     children : [
                         PhotoMosaic.Layouts.React.spinner( $.extend({}, data, {key : data.id + '_spinner'}) ),
-                        PhotoMosaic.Layouts.React.animation_wrapper(data)
+                        PhotoMosaic.Layouts.React.animation_wrapper(data),
+                         PhotoMosaic.Layouts.React.caption(data)
                     ]
                 };
 
@@ -71,7 +75,7 @@
                 if (data.link) {
                     if (data.external) { params.target = '_blank'; }
                     if (data.modal) { params.rel = data.modal; }
-                    if (data.caption) { params.title = data.caption; }
+                    // if (data.caption) { params.title = data.caption; }
                     params.href = data.path;
                 }
 
@@ -119,9 +123,27 @@
                     React.DOM.img({
                         id : data.id,
                         'data-src' : data.src,
-                        title : data.caption,
+                        // title : data.caption,
                         alt : data.alt,
                         style : style
+                    })
+                );
+            }
+        }),
+
+        caption : React.createClass({
+            render : function () {
+                var data = this.props;
+
+                return (
+                    React.DOM.div({
+                        className : 'photomosaic-caption-wrap',
+                        children : [
+                            React.DOM.div({
+                                className : 'photomosaic-caption-text',
+                                children : data.caption
+                            })
+                        ]
                     })
                 );
             }

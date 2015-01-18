@@ -64,6 +64,16 @@
             lazyload : 0, // int || false
             lightbox_rendition : 'full',
 
+            // font-size
+            // font-family
+            // background-color
+
+            caption : 'squish-bottom', // squish-direction, cover-direction, scale-direction, overlay-scale-up|down|fade, polaroid (16)
+            caption_embellishment : null, // scale-up|down, slide-direction, hash, wipe, diamond, frame (10 - only works with overlay)
+            caption_image : null, // scale-up|down (only works with overlay)
+            caption_behavior : null, // show-on-hover, hide-on-hover
+            // mobile_caption : null, //
+
             layout : 'columns', // rows, columns, grid
 
             // columns opts
@@ -115,7 +125,7 @@
             var self = this;
 
             if (this.opts.show_loading) {
-                this.react = React.renderComponent(
+                this.react = React.render(
                     PhotoMosaic.Layouts.React.loading({ id : this._id }),
                     this.obj.get(0)
                 );
@@ -153,7 +163,7 @@
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
-            this.react = React.renderComponent(
+            this.react = React.render(
                 PhotoMosaic.Layouts.React.mosaic(view_model), // the component to render
                 this.obj.get(0), // the dom node container
                 function () {  // the callback
@@ -410,7 +420,10 @@
                 this.getLoadingTransition(),
                 this.getResizeTransition(),
                 this.getLayoutClass(),
-                this.getAvia()
+                this.getAvia(),
+                'caption-scale-box'
+                // 'caption-squish'
+                // 'test-caption'
             ];
             return classes.join(' ');
         },

@@ -656,8 +656,12 @@ class PhotoMosaic {
 
             foreach ( $images as $_post ) {
                 $image_thumbnail = wp_get_attachment_image_src($_post->ID , 'thumbnail');
-                array_push( $widths, $image_thumbnail[1] );
-                array_push( $heights, $image_thumbnail[2] );
+                if ( !empty( $image_thumbnail[1] ) ) {
+                    array_push( $widths, $image_thumbnail[1] );
+                }
+                if ( !empty( $image_thumbnail[2] ) ) {
+                    array_push( $heights, $image_thumbnail[2] );
+                }
             }
 
         } else {
@@ -671,7 +675,6 @@ class PhotoMosaic {
                 foreach ($galleryIDs as $key => $galleryID) {
                     $images = array_merge( $images, nggdb::get_gallery($galleryID) );
                 }
-
             }
 
             foreach ($images as $key => $image) {
@@ -681,18 +684,24 @@ class PhotoMosaic {
         }
 
         if ( !empty($images) ) {
-            $width_count = array_count_values($widths);
-            $width_val = array_search( max($width_count), $width_count );
+            $val = '0';
 
-            $height_count = array_count_values($heights);
-            $height_val = array_search( max($height_count), $height_count );
+            // People modify things to wp_get_attachment_image_src doesn't return width/height data.
+            // There's nothing we can do to protect these people from themselves.
+            if ( !empty($widths) && !empty($heights) ) {
+                $width_count = array_count_values($widths);
+                $width_val = array_search( max($width_count), $width_count );
 
-            if ( count($width_count) === 1 && count($height_count) === 1 ) {
-                // fixed dimensions
-                $val = '1';
-            } else {
-                // proportional
-                $val = (count($width_count) === 1 ? $width_val : $height_val);
+                $height_count = array_count_values($heights);
+                $height_val = array_search( max($height_count), $height_count );
+
+                if ( count($width_count) === 1 && count($height_count) === 1 ) {
+                    // fixed dimensions
+                    $val = '1';
+                } else {
+                    // proportional
+                    $val = (count($width_count) === 1 ? $width_val : $height_val);
+                }
             }
 
             if ( empty($atts['nggid']) && empty($atts['ngaid']) ) {

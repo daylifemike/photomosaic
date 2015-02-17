@@ -364,18 +364,18 @@ class PhotoMosaic {
                             var $a;
                             var self = this;
 
-                            jQuery("a", mosaic).each(function () {
+                            $items.each(function () {
                                 $a = jQuery(this);
                                 $img = $a.find("img");
                                 id = $img.attr("id");
-                                data = PhotoMosaic.Utils.deepSearch( self.images, "id", id );
+                                data = PhotoMosaic.Utils.deepSearch( self.opts.gallery, "id", id );
 
                                 $img.attr( data.jetpack );
 
                                 $a.addClass("gallery-item");
                             });
 
-                            jQuery(mosaic).parent().addClass("gallery");
+                            $mosaic.parent().addClass("gallery");
             ';
         }
 

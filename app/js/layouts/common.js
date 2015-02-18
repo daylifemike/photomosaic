@@ -9,7 +9,8 @@
             var i = 0;
 
             if (opts.columns && opts.columns !== 'auto') {
-                num_cols = opts.columns;
+                num_images = opts.gallery.length;
+                num_cols = (num_images < opts.columns) ? num_images : opts.columns;
             } else {
                 // TODO : make this less lame
                 max_width = opts.width;

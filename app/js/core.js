@@ -452,7 +452,7 @@
             }
 
             // make sure numbers are numbers
-            var exclusions = ['shape', 'modal_hash'];
+            var exclusions = ['width', 'height', 'shape', 'modal_hash'];
             for (var k in props) {
                 if (($.inArray(k, exclusions) == -1) && !isNaN(parseFloat(props[k]))) {
                     props[k] = parseFloat(props[k]);

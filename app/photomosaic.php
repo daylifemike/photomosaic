@@ -25,6 +25,10 @@ class PhotoMosaic {
         return '2.10';
     }
 
+    public static function oldest_supported_wp () {
+        return '3.5';
+    }
+
     private static function in_debug_mode () {
         $key = 'photomosaic_debug';
         parse_str( $_SERVER['QUERY_STRING'], $query );
@@ -181,6 +185,15 @@ class PhotoMosaic {
 
     public static function shortcode( $atts ) {
         global $post;
+
+        $current = get_bloginfo( 'version' );
+
+        if ( $current && ( PhotoMosaic::comparable_version( $current ) < PhotoMosaic::comparable_version( PhotoMosaic::oldest_supported_wp() ) ) ) {
+            return "<p><strong>PhotoMosaic Error:</strong>
+                    This site is running WordPress v" . $current . ".
+                    As indicated on the <a href=\"http://codecanyon.net/item/photomosaic-for-wordpress/243422\">CodeCanyon Product Page</a>,
+                    PhotoMosaic only supports WordPress v" . PhotoMosaic::oldest_supported_wp() . " and newer.</p>";
+        }
 
         if ((!empty($atts['nggid']) || !empty($atts['ngaid'])) && !class_exists('nggdb')) {
             return "<p><strong>PhotoMosaic Error:</strong> Can't find NextGen Gallery.<br/>Please make sure NextGen has been installed and activated.</p>";

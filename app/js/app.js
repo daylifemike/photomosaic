@@ -46,6 +46,7 @@
     registerNamespace('PhotoMosaic.Plugins');
     registerNamespace('PhotoMosaic.ErrorChecks');
     registerNamespace('PhotoMosaic.Mosaics', []);
+    registerNamespace('PhotoMosaic.Fallbacks');
     registerNamespace('PhotoMosaic.each', function (callback) {
         PhotoMosaic.$.each( PhotoMosaic.Mosaics, function (i, mosaic) {
             // this = the raw target element

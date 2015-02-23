@@ -439,7 +439,7 @@ class PhotoMosaic {
             $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
         } else {
             $output_buffer .= $gallery_div;
-            $output_buffer .= PhotoMosaic::wordpress_gallery_shortcode($atts);
+            $output_buffer .= PhotoMosaic::wordpress_gallery_shortcode( $atts, $unique );
         }
 
         $output_buffer .='</div>';
@@ -931,10 +931,11 @@ class PhotoMosaic {
         }
     }
 
-    public static function wordpress_gallery_shortcode($attr) {
+    public static function wordpress_gallery_shortcode($attr, $unique) {
         // this function is taken directly from the WP (3.8.1) core (wp-includes/media.php#gallery_shortcode)
-        // with 2 exceptions:
+        // with 3 exceptions:
         // - the post_gallery filter call has been commented-out
+        // - a call to PhotoMosaic::localize has been added
         // - the entire output is wrapped in a noscript
         $post = get_post();
 
@@ -1079,7 +1080,8 @@ class PhotoMosaic {
                 <br style='clear: both;' />
             </div>\n";
 
-        // !!! EDIT - the following line has been added !!!
+        PhotoMosaic::localize( 'photomosaic_fallbacks', 'PhotoMosaic["Fallbacks"]["'. $unique .'"]', $output );
+
         $output = "<noscript>" . $output . "</noscript>";
 
         return $output;
@@ -1147,6 +1149,39 @@ class PhotoMosaic {
         // a modification of the GUID function in the Phunction framework
         // http://sourceforge.net/projects/phunction/
         return sprintf('%04X%04X%04X', mt_rand(0, 65535), mt_rand(0, 65535), mt_rand(0, 65535));
+    }
+
+    private static function localize( $handle, $object_name, $l10n ) {
+        // identical to WP's wp-includes/class.wp-scripts::localize
+        // except $this-> became $wp_scripts->
+        global $wp_scripts;
+
+        if ( $handle === 'jquery' )
+            $handle = 'jquery-core';
+
+        if ( is_array($l10n) && isset($l10n['l10n_print_after']) ) { // back compat, preserve the code in 'l10n_print_after' if present
+            $after = $l10n['l10n_print_after'];
+            unset($l10n['l10n_print_after']);
+        }
+
+        foreach ( (array) $l10n as $key => $value ) {
+            if ( !is_scalar($value) )
+                continue;
+
+            $l10n[$key] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8');
+        }
+
+        $script = "$object_name = " . wp_json_encode( $l10n ) . ';';
+
+        if ( !empty($after) )
+            $script .= "\n$after;";
+
+        $data = $wp_scripts->get_data( $handle, 'data' );
+
+        if ( !empty( $data ) )
+            $script = "$data\n$script";
+
+        return $wp_scripts->add_data( $handle, 'data', $script );
     }
 
 } // end PhotoMosaic

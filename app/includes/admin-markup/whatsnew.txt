@@ -1,5 +1,21 @@
 ## What's New
 
+### 2.11
+- Breaking Change : (could break custom CSS) prefixes '.loading' and '.loaded' classes with 'photomosaic-' to prevent collisions.
+- Breaking Change : (could break custom CSS) separates the image and the loading-spinner into unique containers
+- Enhancement : moves from absolute positioning to translations (performance improvements)
+- Enhancement : unsupported browsers (e.g. IE 8 & Safari 5.5) now fallback to the default WP or NextGen gallery
+- Enhancement : "width" and "height" now accept %
+- Enhancement : "category" mosaics now use post_title as the caption
+- Enhancement : updates React 0.11.2 >>> 0.12.2
+- Enhancement : updates Github Updater 2.7.0 >>> 3.2.6
+- Bulletproofing : css bulletproofing to prevent problems caused by themes with crazy-specific selectors
+- Bulletproofing : prevents array_count_values from getting an empty array because of plugins that nuke image metadata
+- Bug Fix : escaped characters no longer appear in the Gallery Settings select inputs
+- Bug Fix : corrects a bug that threw an error when the number of images was less than the number of hardcoded columns
+- Bug Fix : corrects a regressions that broke automatic Jetpack support
+- Bug Fix : removes a debug statement
+
 ### 2.10
 - Enhancement : 'Columns' now accepts a range (for responsive min/max values)
 - Enhancement : adds option to set which image size opens in the lightbox
@@ -18,7 +34,7 @@
 - Change : makes the loading spinner an element (allows more styling options)
 
 ### 2.8.5
-- Enhancement : updates ReactJS to v0.11.2 and removes unused addons
+- Enhancement : updates ReactJS 0.10.0 >>> 0.11.1 and removes unused addons
 - Bug Fix : refines transform settings (large galleries should see drastic performance improvements on mobile)
 
 ### 2.8.4

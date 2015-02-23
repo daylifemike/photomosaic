@@ -111,14 +111,14 @@
 .PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none .photomosaic-loading .photomosaic-animation-wrap { }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-custom .photomosaic-loading .photomosaic-animation-wrap {
-    /* good for example*/
+    /* good for example
         opacity:0;
         -webkit-transform: rotate( -5deg ) scale( 0.95 );
            -moz-transform: rotate( -5deg ) scale( 0.95 );
             -ms-transform: rotate( -5deg ) scale( 0.95 );
              -o-transform: rotate( -5deg ) scale( 0.95 );
                 transform: rotate( -5deg ) scale( 0.95 );
-    /**/
+    */
 }
 
 .PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-fade .photomosaic-loading .photomosaic-animation-wrap {

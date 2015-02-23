@@ -36,54 +36,68 @@ class PhotoMosaic {
     }
 
     public static function init() {
-        global $pagenow;
-
-        $options = get_option('photomosaic_options');
-
         add_filter( 'widget_text', 'do_shortcode' ); // Widget
         // add_filter( 'the_posts', array( __CLASS__, 'the_posts' ) ); // :: conditionally enqueue JS & CSS
         add_filter( 'post_gallery', array( __CLASS__, 'post_gallery' ), 1337, 2 ); // [gallery photomosaic="true" theme="photomosaic"]
         add_filter( 'content_edit_pre', array( __CLASS__, 'scrub_post_shortcodes' ), 1337, 2 ); // template="pm" --> theme="pm"
         add_filter( 'plugin_action_links', array( __CLASS__, 'plugin_action_links' ), 10, 2);
-
+        add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+        add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_enqueue_scripts' ) );
         add_action( 'admin_menu', array( __CLASS__, 'setup_admin_page') );
         add_action( 'wp_ajax_photomosaic_whatsnew', array( __CLASS__, 'ajax_handler') );
+    }
 
+    public static function enqueue_scripts () {
         wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js', null, '0.12.2' );
 
         if ( PhotoMosaic::in_debug_mode() ) {
-            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
+            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version() );
         } else {
-            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version());
+            wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version() );
         }
 
-        wp_enqueue_script('photomosaic_js');
+        // this sucks
+        // they could be attached to _js if _js could be run in the footer
+        // that would require that each shortcode not immediately self-invoke
+        // which would require localized scripts
+        wp_enqueue_script( 'photomosaic_fallbacks', plugins_url('/includes/vendor/noop.js', __FILE__ ), null, null, true );
+        wp_enqueue_script( 'photomosaic_js' );
         wp_enqueue_style( 'photomosaic_base_css', plugins_url('/css/photomosaic.css', __FILE__ ));
 
         if (!is_admin()) {
+            $options = get_option('photomosaic_options');
+
             if($options['lightbox']) {
                 wp_enqueue_style( 'photomosaic_prettyphoto_css', plugins_url('/includes/vendor/prettyphoto/prettyphoto.css', __FILE__ ));
             }
 
             add_shortcode( 'photoMosaic', array( __CLASS__, 'shortcode' ) );
             add_shortcode( 'photomosaic', array( __CLASS__, 'shortcode' ) );
+        }
+    }
 
-        } else {
-            if ( isset($_GET['page']) ) {
-                if ( $_GET['page'] == "photoMosaic.php" || $_GET['page'] == "photomosaic.php"  || $_GET['page'] == "photomosaic" ) {
-                    wp_register_script( 'photomosaic_codemirror_js', plugins_url('/includes/vendor/codemirror/codemirror.js', __FILE__ ));
-                    wp_enqueue_script( 'photomosaic_codemirror_jsmode_js', plugins_url('/includes/vendor/codemirror/javascript.js', __FILE__ ), array('photomosaic_codemirror_js'));
-                    wp_enqueue_script( 'photomosaic_codemirror_cssmode_js', plugins_url('/includes/vendor/codemirror/css.js', __FILE__ ), array('photomosaic_codemirror_js'));
-                    wp_enqueue_style( 'photomosaic_codemirror_css', plugins_url('/includes/vendor/codemirror/codemirror.css', __FILE__ ));
+    public static function admin_enqueue_scripts () {
+        global $pagenow;
 
-                    wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/photomosaic.admin.js', __FILE__ ), array('photomosaic_js', 'photomosaic_codemirror_js'), PhotoMosaic::version());
-                    wp_enqueue_style( 'photomosaic_admin_css', plugins_url('/css/photomosaic.admin.css', __FILE__ ));
-                }
+        wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js', null, '0.12.2' );
+        wp_register_script( 'photomosaic_js', plugins_url('/js/photomosaic.min.js', __FILE__ ), array('jquery','react'), PhotoMosaic::version() );
+
+        wp_enqueue_script( 'photomosaic_js' );
+
+        if ( isset($_GET['page']) ) {
+            if ( $_GET['page'] == "photoMosaic.php" || $_GET['page'] == "photomosaic.php"  || $_GET['page'] == "photomosaic" ) {
+                wp_register_script( 'photomosaic_codemirror_js', plugins_url('/includes/vendor/codemirror/codemirror.js', __FILE__ ));
+                wp_enqueue_script( 'photomosaic_codemirror_jsmode_js', plugins_url('/includes/vendor/codemirror/javascript.js', __FILE__ ), array('photomosaic_codemirror_js'));
+                wp_enqueue_script( 'photomosaic_codemirror_cssmode_js', plugins_url('/includes/vendor/codemirror/css.js', __FILE__ ), array('photomosaic_codemirror_js'));
+                wp_enqueue_style( 'photomosaic_codemirror_css', plugins_url('/includes/vendor/codemirror/codemirror.css', __FILE__ ));
+
+                wp_enqueue_script( 'photomosaic_admin_js', plugins_url('/js/photomosaic.admin.js', __FILE__ ), array('photomosaic_js', 'photomosaic_codemirror_js'), PhotoMosaic::version());
+                wp_enqueue_style( 'photomosaic_admin_css', plugins_url('/css/photomosaic.admin.css', __FILE__ ));
             }
+        }
 
-            if ( isset( $_GET['post'] ) || in_array( $pagenow, array( 'post-new.php' ) ) ) {
-                wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/photomosaic.editor.js', __FILE__ ), array('photomosaic_js'));
-            }
+        if ( isset( $_GET['post'] ) || in_array( $pagenow, array( 'post-new.php' ) ) ) {
+            wp_enqueue_script( 'photomosaic_editor_js', plugins_url('/js/photomosaic.editor.js', __FILE__ ), array('photomosaic_js'));
         }
     }
 

@@ -386,7 +386,7 @@ class PhotoMosaic {
         if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
             if( $settings['lightbox'] == 'true' ) {
                 $output_buffer .='
-                            $mosaic.find("a").prettyPhoto({
+                            $mosaic.find("a.photomosaic-item, .gallery-item a").prettyPhoto({
                                 overlay_gallery: false,
                                 slideshow: false,
                                 theme: "pp_default",
@@ -933,14 +933,8 @@ class PhotoMosaic {
     }
 
     public static function wordpress_gallery_shortcode($attr, $unique) {
-        // this function is taken directly from the WP (3.8.1) core (wp-includes/media.php#gallery_shortcode)
-        // with except where noted "// !!! EDIT":
-        $post = get_post();
+        // this function is taken directly from the WP (4.1.1) core (wp-includes/media.php#gallery_shortcode)
 
-        static $instance = 0;
-        $instance++;
-
-        // !!! EDIT - ADDED
         if ( empty( $attr['link'] ) ) {
             if ( $attr['link_behavior'] == 'image' ) {
                 $attr['link'] = 'file';
@@ -951,148 +945,180 @@ class PhotoMosaic {
             }
         }
 
-        if ( ! empty( $attr['ids'] ) ) {
-            // 'ids' is explicitly ordered, unless you specify otherwise.
-            if ( empty( $attr['orderby'] ) )
-                $attr['orderby'] = 'post__in';
-            $attr['include'] = $attr['ids'];
-        }
+        // === BEGIN gallery_shortcode === //
+            $post = get_post();
 
-        // !!! EDIT - COMMENTED OUT !!!
-        // Allow plugins/themes to override the default gallery template.
-        // $output = apply_filters('post_gallery', '', $attr);
-        // if ( $output != '' )
-        //     return $output;
+            static $instance = 0;
+            $instance++;
 
-        // We're trusting author input, so let's at least make sure it looks like a valid orderby statement
-        if ( isset( $attr['orderby'] ) ) {
-            $attr['orderby'] = sanitize_sql_orderby( $attr['orderby'] );
-            if ( !$attr['orderby'] )
-                unset( $attr['orderby'] );
-        }
-
-        extract(shortcode_atts(array(
-            'order'      => 'ASC',
-            'orderby'    => 'menu_order ID',
-            'id'         => $post ? $post->ID : 0,
-            'itemtag'    => 'dl',
-            'icontag'    => 'dt',
-            'captiontag' => 'dd',
-            'columns'    => 3,
-            'size'       => 'thumbnail',
-            'include'    => '',
-            'exclude'    => '',
-            'link'       => ''
-        ), $attr, 'gallery'));
-
-        $id = intval($id);
-        if ( 'RAND' == $order )
-            $orderby = 'none';
-
-        if ( !empty($include) ) {
-            $_attachments = get_posts( array('include' => $include, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $order, 'orderby' => $orderby) );
-
-            $attachments = array();
-            foreach ( $_attachments as $key => $val ) {
-                $attachments[$val->ID] = $_attachments[$key];
+            if ( ! empty( $attr['ids'] ) ) {
+                // 'ids' is explicitly ordered, unless you specify otherwise.
+                if ( empty( $attr['orderby'] ) ) {
+                    $attr['orderby'] = 'post__in';
+                }
+                $attr['include'] = $attr['ids'];
             }
-        } elseif ( !empty($exclude) ) {
-            $attachments = get_children( array('post_parent' => $id, 'exclude' => $exclude, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $order, 'orderby' => $orderby) );
-        } else {
-            $attachments = get_children( array('post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $order, 'orderby' => $orderby) );
-        }
 
-        if ( empty($attachments) )
-            return '';
+            // !!! EDIT - Commented-Out
+            // $output = apply_filters( 'post_gallery', '', $attr );
+            // if ( $output != '' ) {
+            //     return $output;
+            // }
 
-        if ( is_feed() ) {
-            $output = "\n";
-            foreach ( $attachments as $att_id => $attachment )
-                $output .= wp_get_attachment_link($att_id, $size, true) . "\n";
-            return $output;
-        }
+            $html5 = current_theme_supports( 'html5', 'gallery' );
+            $atts = shortcode_atts( array(
+                'order'      => 'ASC',
+                'orderby'    => 'menu_order ID',
+                'id'         => $post ? $post->ID : 0,
+                'itemtag'    => $html5 ? 'figure'     : 'dl',
+                'icontag'    => $html5 ? 'div'        : 'dt',
+                'captiontag' => $html5 ? 'figcaption' : 'dd',
+                'columns'    => 3,
+                'size'       => 'thumbnail',
+                'include'    => '',
+                'exclude'    => '',
+                'link'       => ''
+            ), $attr, 'gallery' );
 
-        $itemtag = tag_escape($itemtag);
-        $captiontag = tag_escape($captiontag);
-        $icontag = tag_escape($icontag);
-        $valid_tags = wp_kses_allowed_html( 'post' );
-        if ( ! isset( $valid_tags[ $itemtag ] ) )
-            $itemtag = 'dl';
-        if ( ! isset( $valid_tags[ $captiontag ] ) )
-            $captiontag = 'dd';
-        if ( ! isset( $valid_tags[ $icontag ] ) )
-            $icontag = 'dt';
+            $id = intval( $atts['id'] );
 
-        $columns = intval($columns);
-        $itemwidth = $columns > 0 ? floor(100/$columns) : 100;
-        $float = is_rtl() ? 'right' : 'left';
+            if ( ! empty( $atts['include'] ) ) {
+                $_attachments = get_posts( array( 'include' => $atts['include'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
 
-        $selector = "gallery-{$instance}";
-
-        $gallery_style = $gallery_div = '';
-        if ( apply_filters( 'use_default_gallery_style', true ) )
-            $gallery_style = "
-            <style type='text/css'>
-                #{$selector} {
-                    margin: auto;
+                $attachments = array();
+                foreach ( $_attachments as $key => $val ) {
+                    $attachments[$val->ID] = $_attachments[$key];
                 }
-                #{$selector} .gallery-item {
-                    float: {$float};
-                    margin-top: 10px;
-                    text-align: center;
-                    width: {$itemwidth}%;
+            } elseif ( ! empty( $atts['exclude'] ) ) {
+                $attachments = get_children( array( 'post_parent' => $id, 'exclude' => $atts['exclude'], 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+            } else {
+                $attachments = get_children( array( 'post_parent' => $id, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => $atts['order'], 'orderby' => $atts['orderby'] ) );
+            }
+
+            if ( empty( $attachments ) ) {
+                return '';
+            }
+
+            if ( is_feed() ) {
+                $output = "\n";
+                foreach ( $attachments as $att_id => $attachment ) {
+                    $output .= wp_get_attachment_link( $att_id, $atts['size'], true ) . "\n";
                 }
-                #{$selector} img {
-                    border: 2px solid #cfcfcf;
+                return $output;
+            }
+
+            $itemtag = tag_escape( $atts['itemtag'] );
+            $captiontag = tag_escape( $atts['captiontag'] );
+            $icontag = tag_escape( $atts['icontag'] );
+            $valid_tags = wp_kses_allowed_html( 'post' );
+            if ( ! isset( $valid_tags[ $itemtag ] ) ) {
+                $itemtag = 'dl';
+            }
+            if ( ! isset( $valid_tags[ $captiontag ] ) ) {
+                $captiontag = 'dd';
+            }
+            if ( ! isset( $valid_tags[ $icontag ] ) ) {
+                $icontag = 'dt';
+            }
+
+            $columns = intval( $atts['columns'] );
+            $itemwidth = $columns > 0 ? floor(100/$columns) : 100;
+            $float = is_rtl() ? 'right' : 'left';
+
+            $selector = "gallery-{$instance}";
+
+            $gallery_style = '';
+
+            /**
+             * Filter whether to print default gallery styles.
+             *
+             * @since 3.1.0
+             *
+             * @param bool $print Whether to print default gallery styles.
+             *                    Defaults to false if the theme supports HTML5 galleries.
+             *                    Otherwise, defaults to true.
+             */
+            if ( apply_filters( 'use_default_gallery_style', ! $html5 ) ) {
+                $gallery_style = "
+                <style type='text/css'>
+                    #{$selector} {
+                        margin: auto;
+                    }
+                    #{$selector} .gallery-item {
+                        float: {$float};
+                        margin-top: 10px;
+                        text-align: center;
+                        width: {$itemwidth}%;
+                    }
+                    #{$selector} img {
+                        border: 2px solid #cfcfcf;
+                    }
+                    #{$selector} .gallery-caption {
+                        margin-left: 0;
+                    }
+                    /* see gallery_shortcode() in wp-includes/media.php */
+                </style>\n\t\t";
+            }
+
+            $size_class = sanitize_html_class( $atts['size'] );
+            $gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$columns} gallery-size-{$size_class}'>";
+
+            /**
+             * Filter the default gallery shortcode CSS styles.
+             *
+             * @since 2.5.0
+             *
+             * @param string $gallery_style Default CSS styles and opening HTML div container
+             *                              for the gallery shortcode output.
+             */
+            $output = apply_filters( 'gallery_style', $gallery_style . $gallery_div );
+
+            $i = 0;
+            foreach ( $attachments as $id => $attachment ) {
+
+                $attr = ( trim( $attachment->post_excerpt ) ) ? array( 'aria-describedby' => "$selector-$id" ) : '';
+                if ( ! empty( $atts['link'] ) && 'file' === $atts['link'] ) {
+                    $image_output = wp_get_attachment_link( $id, $atts['size'], false, false, false, $attr );
+                } elseif ( ! empty( $atts['link'] ) && 'none' === $atts['link'] ) {
+                    $image_output = wp_get_attachment_image( $id, $atts['size'], false, $attr );
+                } else {
+                    $image_output = wp_get_attachment_link( $id, $atts['size'], true, false, false, $attr );
                 }
-                #{$selector} .gallery-caption {
-                    margin-left: 0;
+                $image_meta  = wp_get_attachment_metadata( $id );
+
+                $orientation = '';
+                if ( isset( $image_meta['height'], $image_meta['width'] ) ) {
+                    $orientation = ( $image_meta['height'] > $image_meta['width'] ) ? 'portrait' : 'landscape';
                 }
-                /* see gallery_shortcode() in wp-includes/media.php */
-            </style>";
-        $size_class = sanitize_html_class( $size );
-        $gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$columns} gallery-size-{$size_class}'>";
-        $output = apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
-
-        $i = 0;
-        foreach ( $attachments as $id => $attachment ) {
-            if ( ! empty( $link ) && 'file' === $link )
-                $image_output = wp_get_attachment_link( $id, $size, false, false );
-            elseif ( ! empty( $link ) && 'none' === $link )
-                $image_output = wp_get_attachment_image( $id, $size, false );
-            else
-                $image_output = wp_get_attachment_link( $id, $size, true, false );
-
-            $image_meta  = wp_get_attachment_metadata( $id );
-
-            $orientation = '';
-            if ( isset( $image_meta['height'], $image_meta['width'] ) )
-                $orientation = ( $image_meta['height'] > $image_meta['width'] ) ? 'portrait' : 'landscape';
-
-            $output .= "<{$itemtag} class='gallery-item'>";
-            $output .= "
-                <{$icontag} class='gallery-icon {$orientation}'>
-                    $image_output
-                </{$icontag}>";
-            if ( $captiontag && trim($attachment->post_excerpt) ) {
+                $output .= "<{$itemtag} class='gallery-item'>";
                 $output .= "
-                    <{$captiontag} class='wp-caption-text gallery-caption'>
-                    " . wptexturize($attachment->post_excerpt) . "
-                    </{$captiontag}>";
+                    <{$icontag} class='gallery-icon {$orientation}'>
+                        $image_output
+                    </{$icontag}>";
+                if ( $captiontag && trim($attachment->post_excerpt) ) {
+                    $output .= "
+                        <{$captiontag} class='wp-caption-text gallery-caption' id='$selector-$id'>
+                        " . wptexturize($attachment->post_excerpt) . "
+                        </{$captiontag}>";
+                }
+                $output .= "</{$itemtag}>";
+                if ( ! $html5 && $columns > 0 && ++$i % $columns == 0 ) {
+                    $output .= '<br style="clear: both" />';
+                }
             }
-            $output .= "</{$itemtag}>";
-            if ( $columns > 0 && ++$i % $columns == 0 )
-                $output .= '<br style="clear: both" />';
-        }
 
-        $output .= "
-                <br style='clear: both;' />
-            </div>\n";
+            if ( ! $html5 && $columns > 0 && $i % $columns !== 0 ) {
+                $output .= "
+                    <br style='clear: both' />";
+            }
 
-        // !!! EDIT - ADDED !!!
+            $output .= "
+                </div>\n";
+        // === END gallery_shortcode === //
+
+
         PhotoMosaic::localize( 'photomosaic_fallbacks', 'PhotoMosaic["Fallbacks"]["'. $unique .'"]', $output );
 
-        // !!! EDIT - ADDED !!!
         $output = "<noscript>" . $output . "</noscript>";
 
         return $output;

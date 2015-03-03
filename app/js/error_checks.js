@@ -36,6 +36,11 @@ PhotoMosaic.ErrorChecks = (function($){
             }
             return false;
         },
+        nonModernBrowser: function () {
+            // first 2 = can't handle React
+            // last = can't position mosaic-items
+            return (!Array.isArray || !Object.freeze || !PhotoMosaic.Plugins.Modernizr.csstransforms);
+        },
 // these got moved into layouts/columns.js
         imageDimensions: function (images) {
             var to_delete = [];

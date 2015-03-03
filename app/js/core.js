@@ -11,7 +11,7 @@
         this.obj = $(el);
         this._options = options;
 
-        this._id = PhotoMosaic.Utils.makeID(true);
+        this._id = options.id || PhotoMosaic.Utils.makeID(true);
 
         this._transition_end_event_name = (function () {
             var event_names = {
@@ -100,6 +100,15 @@
 
             // Error Checks
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) {
+                return;
+            }
+
+            if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
+                this.obj.html( PhotoMosaic.Fallbacks[this._id] );
+
+                setTimeout(function(){
+                    self.modalCallback( self.obj.find('.gallery') );
+                }, 0);
                 return;
             }
 
@@ -470,8 +479,8 @@
             this.refresh();
         },
 
-        modalCallback: function () {
-            var $node = this.obj.children().get(0);
+        modalCallback: function ($node) {
+            var $node = $node || this.obj.children().get(0);
             if ($.isFunction(this.opts.modal_ready_callback)) {
                 this.opts.modal_ready_callback.apply(this, [$node]);
             }

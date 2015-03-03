@@ -336,6 +336,7 @@ class PhotoMosaic {
         $output_buffer .='
                 JQPM(document).ready(function() {
                     JQPM("#photoMosaicTarget'.$unique.'").photoMosaic({
+                        id: "'.$unique.'",
                         gallery: PMalbum'.$unique.',
                         padding: '. intval($settings['padding']) .',
                         columns: '. $settings['columns'] .',
@@ -385,7 +386,7 @@ class PhotoMosaic {
         if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
             if( $settings['lightbox'] == 'true' ) {
                 $output_buffer .='
-                            $mosaic.find("a[rel^=\''.$settings['lightbox_rel'].'\']").prettyPhoto({
+                            $mosaic.find("a").prettyPhoto({
                                 overlay_gallery: false,
                                 slideshow: false,
                                 theme: "pp_default",
@@ -933,14 +934,22 @@ class PhotoMosaic {
 
     public static function wordpress_gallery_shortcode($attr, $unique) {
         // this function is taken directly from the WP (3.8.1) core (wp-includes/media.php#gallery_shortcode)
-        // with 3 exceptions:
-        // - the post_gallery filter call has been commented-out
-        // - a call to PhotoMosaic::localize has been added
-        // - the entire output is wrapped in a noscript
+        // with except where noted "// !!! EDIT":
         $post = get_post();
 
         static $instance = 0;
         $instance++;
+
+        // !!! EDIT - ADDED
+        if ( empty( $attr['link'] ) ) {
+            if ( $attr['link_behavior'] == 'image' ) {
+                $attr['link'] = 'file';
+            } else if ( $attr['link_behavior'] == 'none' ) {
+                $attr['link'] = 'none';
+            } else if ( $attr['link_behavior'] == 'attachment' ) {
+                // do nothing - attachment is the default
+            }
+        }
 
         if ( ! empty( $attr['ids'] ) ) {
             // 'ids' is explicitly ordered, unless you specify otherwise.
@@ -1080,8 +1089,10 @@ class PhotoMosaic {
                 <br style='clear: both;' />
             </div>\n";
 
+        // !!! EDIT - ADDED !!!
         PhotoMosaic::localize( 'photomosaic_fallbacks', 'PhotoMosaic["Fallbacks"]["'. $unique .'"]', $output );
 
+        // !!! EDIT - ADDED !!!
         $output = "<noscript>" . $output . "</noscript>";
 
         return $output;

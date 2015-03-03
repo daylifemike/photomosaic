@@ -440,7 +440,11 @@ class PhotoMosaic {
             $output_buffer .= apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_div );
         } else {
             $output_buffer .= $gallery_div;
-            $output_buffer .= PhotoMosaic::wordpress_gallery_shortcode( $atts, $unique );
+            if ( !empty($atts['nggid']) || !empty($atts['nggaid']) ) {
+                $output_buffer .= PhotoMosaic::nextgen_gallery_fallback( $atts, $unique );
+            } else {
+                $output_buffer .= PhotoMosaic::wordpress_gallery_fallback( $atts, $unique );
+            }
         }
 
         $output_buffer .='</div>';
@@ -932,7 +936,7 @@ class PhotoMosaic {
         }
     }
 
-    public static function wordpress_gallery_shortcode($attr, $unique) {
+    public static function wordpress_gallery_fallback($attr, $unique) {
         // this function is taken directly from the WP (4.1.1) core (wp-includes/media.php#gallery_shortcode)
 
         if ( empty( $attr['link'] ) ) {
@@ -1029,15 +1033,6 @@ class PhotoMosaic {
 
             $gallery_style = '';
 
-            /**
-             * Filter whether to print default gallery styles.
-             *
-             * @since 3.1.0
-             *
-             * @param bool $print Whether to print default gallery styles.
-             *                    Defaults to false if the theme supports HTML5 galleries.
-             *                    Otherwise, defaults to true.
-             */
             if ( apply_filters( 'use_default_gallery_style', ! $html5 ) ) {
                 $gallery_style = "
                 <style type='text/css'>
@@ -1063,14 +1058,6 @@ class PhotoMosaic {
             $size_class = sanitize_html_class( $atts['size'] );
             $gallery_div = "<div id='$selector' class='gallery galleryid-{$id} gallery-columns-{$columns} gallery-size-{$size_class}'>";
 
-            /**
-             * Filter the default gallery shortcode CSS styles.
-             *
-             * @since 2.5.0
-             *
-             * @param string $gallery_style Default CSS styles and opening HTML div container
-             *                              for the gallery shortcode output.
-             */
             $output = apply_filters( 'gallery_style', $gallery_style . $gallery_div );
 
             $i = 0;
@@ -1116,6 +1103,28 @@ class PhotoMosaic {
                 </div>\n";
         // === END gallery_shortcode === //
 
+
+        PhotoMosaic::localize( 'photomosaic_fallbacks', 'PhotoMosaic["Fallbacks"]["'. $unique .'"]', $output );
+
+        $output = "<noscript>" . $output . "</noscript>";
+
+        return $output;
+    }
+
+    public static function nextgen_gallery_fallback($attr, $unique) {
+        $args = array('display_type' => 'photocrati-nextgen_basic_thumbnails');
+
+        if ( !empty($attr['nggid']) ) {
+            $args = array_merge( $args, array(
+                'gallery_ids' => $attr['nggid']
+            ) );
+        } else if ( !empty($attr['nggaid']) ) {
+            $args = array_merge( $args, array(
+                'album_ids' => $attr['nggaid']
+            ) );
+        }
+
+        $output = M_Gallery_Display::display_images( $args );
 
         PhotoMosaic::localize( 'photomosaic_fallbacks', 'PhotoMosaic["Fallbacks"]["'. $unique .'"]', $output );
 

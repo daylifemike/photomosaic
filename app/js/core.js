@@ -104,11 +104,20 @@
             }
 
             if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
-                this.obj.html( PhotoMosaic.Fallbacks[this._id] );
+                var fallback = PhotoMosaic.Fallbacks[this._id];
 
-                setTimeout(function(){
-                    self.modalCallback( self.obj.find('.gallery') );
-                }, 0);
+                if ( fallback ) {
+                    this.obj.html( fallback );
+
+                    setTimeout(function(){
+                        self.modalCallback( self.obj.find('.gallery') );
+                    }, 0);
+                } else {
+                    setTimeout(function(){
+                        self.modalCallback( self.obj );
+                    }, 0);
+                }
+
                 return;
             }
 

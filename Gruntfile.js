@@ -4,33 +4,33 @@ module.exports = function(grunt) {
     var plugin_path = '../wordpress/wp-content/plugins/' + plugin_name + '/';
     var nonwp_path = 'app/non-WP/download/files/';
     var demo_path = 'app/non-WP/demo3/';
-    var dist_path = 'app/dist/';
+    var dist_path = 'dist/';
     var release_path = '../' + plugin_name + '/';
     var files = [
         // base
-        'app/js/app.js',
+        'app/public/js/app.js',
         // dependencies
-        'app/includes/vendor/modernizr.js',
-        'app/includes/vendor/imagesloaded.js',
-        'app/includes/vendor/waypoints.js',
-        'app/includes/vendor/prettyphoto/jquery.prettyphoto.js',
+        'app/public/vendor/modernizr.js',
+        'app/public/vendor/imagesloaded.js',
+        'app/public/vendor/waypoints.js',
+        'app/public/vendor/prettyphoto/jquery.prettyphoto.js', // TODO : don't include
         // utils
-        'app/js/utils.js',
-        'app/js/error_checks.js',
-        'app/js/inputs.js',
-        'app/js/loader.js',
+        'app/public/js/utils.js',
+        'app/public/js/error_checks.js',
+        'app/public/js/inputs.js',
+        'app/public/js/loader.js',
         // view constructors
-        'app/js/layouts/common.js',
-        'app/js/layouts/columns.js',
-        'app/js/layouts/rows.js',
-        'app/js/layouts/grid.js',
+        'app/public/js/layouts/common.js',
+        'app/public/js/layouts/columns.js',
+        'app/public/js/layouts/rows.js',
+        'app/public/js/layouts/grid.js',
         // react
-        'app/js/layouts/react.js',
+        'app/public/js/layouts/react.js',
         // photomosaic
-        'app/js/core.js'
+        'app/public/js/core.js'
     ];
     var files_w_react = files.slice();
-    files_w_react.unshift('app/includes/vendor/react.js');
+    files_w_react.unshift('app/public/vendor/react.js');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -57,7 +57,7 @@ module.exports = function(grunt) {
         concat : {
             wp : {
                 src : files,
-                dest : dist_path + 'js/photomosaic.js',
+                dest : dist_path + 'public/js/photomosaic.js',
                 nonull : true
             },
             with_react : {
@@ -152,32 +152,29 @@ module.exports = function(grunt) {
                     {
                         expand : true,
                         cwd : 'app/',
-                        src : ['css/**/*', 'images/**/*', 'includes/**/*'],
+                        src : ['admin/**/*', 'includes/**/*', '*.php', '*.txt'],
                         dest : dist_path,
                         filter : 'isFile'
                     },
                     {
                         expand : true,
-                        cwd : 'app/js/admin/',
-                        src : ['photomosaic.admin.js', 'photomosaic.editor.js'],
-                        dest : dist_path + 'js/',
+                        cwd : 'app/public/',
+                        src : ['*.php', 'css/**/*', 'images/**/*'],
+                        dest : dist_path + 'public/',
                         filter : 'isFile'
                     },
                     {
-                        expand: true,
-                        cwd : 'app/includes/vendor/',
-                        src : ['markdown.php'],
-                        dest : dist_path + 'includes/',
-                        filter : 'isFile',
-                        rename : function (dest, src) {
-                            return dest + 'markdown.php';
-                        }
+                        expand : true,
+                        cwd : 'app/public/vendor/',
+                        src : ['prettyphoto/**/*'],
+                        dest : dist_path + 'public/vendor/',
+                        filter : 'isFile'
                     },
                     {
-                        expand: true,
-                        cwd : 'app/',
-                        src : ['photomosaic.php'],
-                        dest : dist_path,
+                        expand : true,
+                        cwd : 'app/public/js/',
+                        src : ['noop.js', '*.php'],
+                        dest : dist_path + 'public/js/',
                         filter : 'isFile'
                     }
                 ]
@@ -185,8 +182,8 @@ module.exports = function(grunt) {
         },
         uglify : {
             dist : {
-                src : dist_path + 'js/photomosaic.js',
-                dest : dist_path + 'js/photomosaic.min.js',
+                src : dist_path + 'public/js/photomosaic.js',
+                dest : dist_path + 'public/js/photomosaic.min.js',
                 options : {
                     mangle: true,
                     sourceMap : true,
@@ -283,10 +280,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-text-replace');
 
-    grunt.registerTask('dist', [ 'concat:wp', 'copy:dist', 'uglify:dist' ]);
-    grunt.registerTask('default', [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
-    grunt.registerTask('release', [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
-    grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
-    grunt.registerTask('nonwp', [ 'concat:with_react', 'concat:without_react', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'uglify:lite', 'copy:nonwp', 'clean:dist' ]);
-    grunt.registerTask('demo', [ 'concat:with_react', 'copy:dist', 'replace:nonwp', /*'uglify:dist',*/ 'copy:demo', 'clean:dist' ]);
+    grunt.registerTask('dist',       [ 'concat:wp', 'copy:dist', 'uglify:dist' ]);    
+    grunt.registerTask('default',    [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
+    // grunt.registerTask('release',    [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
+    // grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
+    // grunt.registerTask('nonwp',      [ 'concat:with_react', 'concat:without_react', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'uglify:lite', 'copy:nonwp', 'clean:dist' ]);
+    // grunt.registerTask('demo',       [ 'concat:with_react', 'copy:dist', 'replace:nonwp', /*'uglify:dist',*/ 'copy:demo', 'clean:dist' ]);
 };

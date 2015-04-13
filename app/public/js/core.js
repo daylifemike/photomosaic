@@ -7,6 +7,7 @@
     var photoMosaic = function (el, options, i) {
         self = this;
 
+        this.$ = $;
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -104,10 +105,8 @@
             }
 
             if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
-                var fallback = PhotoMosaic.Fallbacks[this._id];
-
-                if ( fallback ) {
-                    this.obj.html( fallback );
+                if ( this.opts.fallback ) {
+                    this.obj.html( this.opts.fallback );
 
                     setTimeout(function(){
                         self.modalCallback( self.obj.find('.gallery') );
@@ -171,7 +170,7 @@
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
-            this.react = React.renderComponent(
+            this.react = React.render(
                 PhotoMosaic.Layouts.React.mosaic(view_model), // the component to render
                 this.obj.get(0), // the dom node container
                 function () {  // the callback
@@ -239,11 +238,10 @@
 
         prepData: function (gallery, isPreload) {
             var self = this;
-            var $preload = $('#' + this.preload);
+            var $preload = (isPreload) ? $('#' + this.preload) : null;
             var $img = null;
             var image = null;
             var image_url = '';
-            var modal_text = '';
             var mem = {};
             var images = [];
 
@@ -279,43 +277,55 @@
 
                 image.caption = PhotoMosaic.Utils.decodeHTML( image.caption );
 
-                // modal hooks
-                if (self.opts.modal_name) {
-                    if (self.opts.modal_group) {
-                        if (self.opts.modal_hash) {
-                            modal_text = self.opts.modal_name + '[' + self.opts.modal_hash + ']';
-                        } else {
-                            modal_text = self.opts.modal_name + '[' + self._id + ']';
-                        }
-                    } else {
-                        modal_text = self.opts.modal_name;
-                    }
-                    image.modal = modal_text;
-                }
+                image = self.prepDataModal( image );
 
-                // link paths
-                if (self.opts.links && image.url) {
-                    image.link = true;
-                    image.path = image.url;
-                    image.external = self.opts.external_links;
-                    // delete image.modal;
-                } else if (self.opts.links) {
-                    image.link = true;
-                    image.external = self.opts.external_links;
-
-                    if (image.sizes && image.sizes.hasOwnProperty(self.opts.lightbox_rendition)) {
-                        image.path = image.sizes[self.opts.lightbox_rendition];
-                    } else {
-                        image.path = image.full;
-                    }
-                } else {
-                    image.link = false;
-                }
+                image = self.prepDataLinks( image );
 
                 images.push(image);
             });
 
             return images;
+        },
+
+        prepDataModal: function (image) {
+            var modal_text = '';
+
+            if (this.opts.modal_name) {
+                if (this.opts.modal_group) {
+                    if (this.opts.modal_hash) {
+                        modal_text = this.opts.modal_name + '[' + this.opts.modal_hash + ']';
+                    } else {
+                        modal_text = this.opts.modal_name + '[' + this._id + ']';
+                    }
+                } else {
+                    modal_text = this.opts.modal_name;
+                }
+                image.modal = modal_text;
+            }
+
+            return image;
+        },
+
+        prepDataLinks: function (image) {
+            if (this.opts.links && image.url) {
+                image.link = true;
+                image.path = image.url;
+                image.external = this.opts.external_links;
+                // delete image.modal;
+            } else if (this.opts.links) {
+                image.link = true;
+                image.external = this.opts.external_links;
+
+                if (image.sizes && image.sizes.hasOwnProperty(this.opts.lightbox_rendition)) {
+                    image.path = image.sizes[this.opts.lightbox_rendition];
+                } else {
+                    image.path = image.full;
+                }
+            } else {
+                image.link = false;
+            }
+
+            return image;
         },
 
         getGalleryData: function () {
@@ -441,7 +451,8 @@
                 center : this.opts.center
             };
 
-            var layout_data = this.layout.refresh();
+            var layout_data = this.layout.getData();
+
             var view_model = $.extend({}, mosaic_data, layout_data);
 
             // transitionend fires for each proprty being transitioned, we only care about when the last one ends
@@ -449,8 +460,9 @@
                 $.waypoints('refresh');
             }, 300);
 
-            self.react.setProps(
-                view_model,
+            this.react = React.render(
+                PhotoMosaic.Layouts.React.mosaic(view_model),
+                this.obj.get(0),
                 function () {
                     // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check
                     if (PhotoMosaic.Plugins.Modernizr.csstransitions && self.opts.lazyload !== false) {
@@ -479,19 +491,32 @@
 
             this.opts = $.extend({}, this.opts, props);
 
-            if (props.hasOwnProperty('layout')) {
-                this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
-            } else {
-                this.layout.update(props);
-            }
+            var self = this;
+            var gallery = [];
+            $.each(this.opts.gallery, function (idx, image) {
+                gallery.push( self.prepDataModal(image) );
+            });
+
+            this.opts.gallery = gallery;
+
+            this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
 
             this.refresh();
         },
 
         modalCallback: function ($node) {
-            var $node = $node || this.obj.children().get(0);
-            if ($.isFunction(this.opts.modal_ready_callback)) {
-                this.opts.modal_ready_callback.apply(this, [$node]);
+            var $ = $ || this.$;
+
+            if ( $.isFunction(this.opts.modal_ready_callback) ) {
+                var $node = $node || this.obj.children().eq(0);
+                var $items = $node.children();
+                var $ = window.jQuery || $;
+
+                this.opts.modal_ready_callback.apply(this, [$, $node, $items]);
+
+                if ( this.opts.lightbox_callback && $.isFunction(this.opts.lightbox_callback) ) {
+                    this.opts.lightbox_callback.apply(this, [$, $node, $items]);
+                }
             }
         },
 
@@ -537,5 +562,15 @@
             }
         });
     };
+
+    $(document).on('ready', function () {
+        $.each(PhotoMosaic.WP, function (id, config) {
+            var params = $.extend(true, {}, config.settings, {
+                    gallery : config.gallery,
+                    fallback : config.fallback
+                });
+            $('#' + config.target).photoMosaic( params );
+        });
+    });
 
 }(window.JQPM, window));

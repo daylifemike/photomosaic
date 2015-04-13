@@ -60,7 +60,7 @@
                 // if you don't want a loading transition OR it's handled by CSS
                 if ( self.opts.loading_transition === 'none' || PhotoMosaic.Plugins.Modernizr.csstransitions ) {
                     var $image = $(image.img);
-                    var $parent = $image.parents('.' + loading_class);
+                    var $parent = $image.closest('.' + loading_class);
                     var toggleClasses = function () {
                         $parent.addClass(loaded_class);
                         $image.off(self.mosaic._transition_end_event_name);

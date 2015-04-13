@@ -173,7 +173,7 @@ module.exports = function(grunt) {
                     {
                         expand : true,
                         cwd : 'app/public/js/',
-                        src : ['noop.js', '*.php'],
+                        src : ['localize.js', '*.php'],
                         dest : dist_path + 'public/js/',
                         filter : 'isFile'
                     }
@@ -263,7 +263,7 @@ module.exports = function(grunt) {
         watch : {
             dev : {
                 files : [ 'app/**/*', '!app/dist/**/*', 'Gruntfile.js' ],
-                tasks : [ 'concat:wp', 'copy:dist', 'replace:dev', 'clean:plugin', 'copy:plugin', 'clean:dist' ]
+                tasks : [ 'concat:wp', 'copy:dist', /*'replace:dev',*/ 'clean:plugin', 'copy:plugin', 'clean:dist' ]
             },
             // demo : {
             //     files : [ 'app/js/**/*', 'app/css/*', 'Gruntfile.js' ],

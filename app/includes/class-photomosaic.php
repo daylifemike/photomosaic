@@ -6,6 +6,8 @@ class Photomosaic {
     protected $plugin_name;
     protected $version;
     protected $options_key = 'photomosaic_options';
+    protected $plugin_admin;
+    protected $plugin_public;
 
     public function __construct () {
         $this->plugin_name = 'photomosaic';
@@ -24,6 +26,8 @@ class Photomosaic {
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-photomosaic-public.php';
 
         $this->loader = new Photomosaic_Loader();
+        $this->plugin_admin = new Photomosaic_Admin( $this->plugin_name, $this->version );
+        $this->plugin_public = new Photomosaic_Public( $this->plugin_name, $this->version );
     }
 
     // private function set_locale() {
@@ -34,28 +38,24 @@ class Photomosaic {
     // }
 
     private function define_admin_hooks () {
-        $plugin_admin = new Photomosaic_Admin( $this->plugin_name, $this->version );
+        $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
+        $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
+        $this->loader->add_action( 'admin_menu',            $this->plugin_admin, 'setup_admin_page' );
+        $this->loader->add_action( 'plugins_loaded',        $this->plugin_admin, 'include_github_updater' );
 
-        $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-        $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-        $this->loader->add_action( 'admin_menu',            $plugin_admin, 'setup_admin_page' );
-        $this->loader->add_action( 'plugins_loaded',        $plugin_admin, 'include_github_updater' );
-
-        $this->loader->add_filter( 'plugin_action_links', $plugin_admin, 'action_links',          10,   2 );
-        $this->loader->add_filter( 'content_edit_pre',    $plugin_admin, 'scrub_post_shortcodes', 1337, 2 );
+        $this->loader->add_filter( 'plugin_action_links', $this->plugin_admin, 'action_links',          10,   2 );
+        $this->loader->add_filter( 'content_edit_pre',    $this->plugin_admin, 'scrub_post_shortcodes', 1337, 2 );
     }
 
     private function define_public_hooks () {
-        $plugin_public = new Photomosaic_Public( $this->plugin_name, $this->version );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
+        $this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
 
-        $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-        $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
-        $this->loader->add_filter( 'post_gallery', $plugin_public, 'post_gallery', 1337, 2 );
+        $this->loader->add_filter( 'post_gallery', $this->plugin_public, 'post_gallery', 1337, 2 );
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode' );
 
-        $this->loader->add_shortcode( 'photoMosaic', $plugin_public, 'shortcode' );
-        $this->loader->add_shortcode( 'photomosaic', $plugin_public, 'shortcode' );
+        $this->loader->add_shortcode( 'photoMosaic', $this->plugin_public, 'shortcode' );
+        $this->loader->add_shortcode( 'photomosaic', $this->plugin_public, 'shortcode' );
     }
 
     public function run () {
@@ -169,5 +169,34 @@ class Photomosaic {
         update_option('photomosaic_options', $options);
 
         return $options;
+    }
+
+    public function register_lightbox ( $name ) {
+        $this->plugin_public->set_lightbox( $name );
+    }
+
+    public function localize ( $handle, $object_name, $l10n ) {
+        // an overhauled version of WP's wp_localize_scripts (wp-includes/class.wp-scripts::localize)
+        // - doesn't turn everything into a string
+        // - output doesn't start with "var = "
+        global $wp_scripts;
+
+        foreach ( (array) $l10n as $key => $value ) {
+            if ( !is_string( $value ) ) {
+                continue;
+            }
+
+            $l10n[$key] = html_entity_decode( $value, ENT_QUOTES, 'UTF-8');
+        }
+
+        $script = "$object_name = " . wp_json_encode( $l10n ) . ';';
+
+        $data = $wp_scripts->get_data( $handle, 'data' );
+
+        if ( !empty( $data ) ) {
+            $script = "$data\n$script";
+        }
+
+        return $wp_scripts->add_data( $handle, 'data', $script );
     }
 }

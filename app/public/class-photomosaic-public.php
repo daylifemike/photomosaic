@@ -2,10 +2,11 @@
 
 class Photomosaic_Public {
 
-    private $plugin_name;
-    private $version;
-    private $oldest_supported_wp = '3.5';
-    private $url_pattern = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+    protected $plugin_name;
+    protected $version;
+    protected $oldest_supported_wp = '3.5';
+    protected $url_pattern = "(?i)\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))";
+    protected $lightbox = null;
 
     public function __construct ( $plugin_name, $version ) {
         $this->plugin_name = $plugin_name;
@@ -80,73 +81,12 @@ class Photomosaic_Public {
         $target = 'photoMosaicTarget' . $unique;
 
         $this->localize_placeholder( $target, $unique );
-
-        $this->localize_gallery_data( $settings, $atts, $unique );
-
-        $this->localize_settings( $settings, $atts, $unique );
-
-        $fallback = $this->make_fallback( $atts );
-        $this->localize_fallback( $fallback, $unique );
-
-        // $this->attach_lightbox( $id );
-
-        // ========================
-        // ========================
-        // ========================
+        $gallery = $this->localize_gallery_data( $settings, $atts, $unique );
+        $settings = $this->localize_settings( $settings, $atts, $unique );
+        $fallback = $this->localize_fallback( $atts, $unique );
+        $lightbox = $this->attach_lightbox( $settings, $unique );
 
         $output_buffer = '';
-
-        /*
-        $output_buffer .= '
-                        modal_ready_callback : function(mosaic){
-                            var $mosaic = JQPM(mosaic);
-                            var $items = $mosaic.children();
-                            var $ = jQuery;
-                            ('. $settings['onready_callback'] .').apply(this, [$mosaic, $items]);
-        ';
-
-        if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
-            if( $settings['lightbox'] == 'true' ) {
-                $output_buffer .='
-                            $mosaic.find("a.photomosaic-item, .gallery-item a").prettyPhoto({
-                                overlay_gallery: false,
-                                slideshow: false,
-                                theme: "pp_default",
-                                deeplinking: false,
-                                show_title: false,
-                                social_tools: ""
-                            });
-                ';
-            } elseif ( $settings['custom_lightbox'] == 'true' ) {
-                $output_buffer .='
-                            jQuery("a[rel^=\''.$settings['lightbox_rel'].'\']", mosaic).'.$settings['custom_lightbox_name'].'('.$settings['custom_lightbox_params'].');
-                ';
-            }
-        } else if ( class_exists('Jetpack_Carousel') ) {
-            // Jetpack :: Carousel support
-            $output_buffer .='
-                            var data;
-                            var id;
-                            var $fragment;
-                            var $img;
-                            var $a;
-                            var self = this;
-
-                            $items.each(function () {
-                                $a = jQuery(this);
-                                $img = $a.find("img");
-                                id = $img.attr("id");
-                                data = PhotoMosaic.Utils.deepSearch( self.opts.gallery, "id", id );
-
-                                $img.attr( data.jetpack );
-
-                                $a.addClass("gallery-item");
-                            });
-
-                            $mosaic.parent().addClass("gallery");
-            ';
-        }
-        */
         $gallery_div = '<div id="'. $target .'" class="photoMosaicTarget" data-version="'. $this->version .'">';
 
         // Jetpack :: Carousel hack - it needs an HTML string to append it's data
@@ -158,7 +98,6 @@ class Photomosaic_Public {
         }
 
         $output_buffer .= "<noscript>" . $fallback . "</noscript>";
-
         $output_buffer .='</div>';
 
         return preg_replace('/\s+/', ' ', $output_buffer);
@@ -264,12 +203,14 @@ class Photomosaic_Public {
             'align', 'orphans'
         ) );
 
-        // TODO : vet all settings for type (make sure ints are ints)
+        // TODO : vet all settings for type (make sure ints are ints, etc.)
         $this->localize(
             $this->plugin_name . '-localize',
             'PhotoMosaic.WP["'. $id . '"].settings',
             $settings
         );
+
+        return $settings;
     }
 
     public function localize_gallery_data ( $settings, $atts, $id ) {
@@ -306,14 +247,20 @@ class Photomosaic_Public {
             'PhotoMosaic.WP["'. $id . '"].gallery',
             $gallery
         );
+
+        return $gallery;
     }
 
-    public function localize_fallback ( $fallback, $id ) {
+    public function localize_fallback ( $atts, $id ) {
+        $fallback = $this->make_fallback( $atts );
+
         $this->localize(
             $this->plugin_name . '-localize',
             'PhotoMosaic.WP["'. $id .'"].fallback',
             $fallback
         );
+
+        return $fallback;
     }
 
     public function gallery_from_wordpress ( $id, $link_behavior, $include, $exclude, $ids, $return_img_obj = false ) {
@@ -781,6 +728,68 @@ class Photomosaic_Public {
         return $output;
     }
 
+    public function set_lightbox ( $name ) {
+        $this->lightbox = $name;
+    }
+
+    private function attach_lightbox ( $settings, $id ) {
+        //
+/*
+        $output_buffer .= '
+                        modal_ready_callback : function(mosaic){
+                            var $mosaic = JQPM(mosaic);
+                            var $items = $mosaic.children();
+                            var $ = jQuery;
+                            ('. $settings['onready_callback'] .').apply(this, [$mosaic, $items]);
+        ';
+
+        if( $settings['lightbox'] == 'true' || $settings['custom_lightbox'] == 'true' ) {
+            if( $settings['lightbox'] == 'true' ) {
+                $output_buffer .='
+                            $mosaic.find("a.photomosaic-item, .gallery-item a").prettyPhoto({
+                                overlay_gallery: false,
+                                slideshow: false,
+                                theme: "pp_default",
+                                deeplinking: false,
+                                show_title: false,
+                                social_tools: ""
+                            });
+                ';
+            } elseif ( $settings['custom_lightbox'] == 'true' ) {
+                $output_buffer .='
+                            jQuery("a[rel^=\''.$settings['lightbox_rel'].'\']", mosaic).'.$settings['custom_lightbox_name'].'('.$settings['custom_lightbox_params'].');
+                ';
+            }
+        } else if ( class_exists('Jetpack_Carousel') ) {
+            // Jetpack :: Carousel support
+            $output_buffer .='
+                            var data;
+                            var id;
+                            var $fragment;
+                            var $img;
+                            var $a;
+                            var self = this;
+
+                            $items.each(function () {
+                                $a = jQuery(this);
+                                $img = $a.find("img");
+                                id = $img.attr("id");
+                                data = PhotoMosaic.Utils.deepSearch( self.opts.gallery, "id", id );
+
+                                $img.attr( data.jetpack );
+
+                                $a.addClass("gallery-item");
+                            });
+
+                            $mosaic.parent().addClass("gallery");
+            ';
+        }
+*/
+        ?><pre>$this->lightbox = <?php print_r( $this->lightbox );?></pre><?php
+
+        return $this->lightbox;
+    }
+
     private function fetch_taxonomy_categories ( $slug, $args ) {
         $slug = trim($slug);
         $taxonomies = explode(':', $slug);
@@ -878,29 +887,9 @@ class Photomosaic_Public {
         return $output;
     }
 
-    private function localize ( $handle, $object_name, $l10n ) {
-        // an overhauled version of WP's wp_localize_scripts (wp-includes/class.wp-scripts::localize)
-        // - doesn't turn everything into a string
-        // - output doesn't start with "var = "
-        global $wp_scripts;
-
-        foreach ( (array) $l10n as $key => $value ) {
-            if ( !is_string( $value ) ) {
-                continue;
-            }
-
-            $l10n[$key] = html_entity_decode( $value, ENT_QUOTES, 'UTF-8');
-        }
-
-        $script = "$object_name = " . wp_json_encode( $l10n ) . ';';
-
-        $data = $wp_scripts->get_data( $handle, 'data' );
-
-        if ( !empty( $data ) ) {
-            $script = "$data\n$script";
-        }
-
-        return $wp_scripts->add_data( $handle, 'data', $script );
+    public function localize ( $handle, $object_name, $l10n ) {
+        global $photomosaic;
+        return $photomosaic->localize( $handle, $object_name, $l10n );
     }
 
     private function in_debug_mode () {

@@ -104,7 +104,7 @@
             }
 
             if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
-                var fallback = PhotoMosaic.Fallbacks[this._id];
+                var fallback = PhotoMosaic.WP[this._id].fallback;
 
                 if ( fallback ) {
                     this.obj.html( fallback );

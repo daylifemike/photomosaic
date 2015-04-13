@@ -104,10 +104,8 @@
             }
 
             if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
-                var fallback = PhotoMosaic.WP[this._id].fallback;
-
-                if ( fallback ) {
-                    this.obj.html( fallback );
+                if ( this.opts.fallback ) {
+                    this.obj.html( this.opts.fallback );
 
                     setTimeout(function(){
                         self.modalCallback( self.obj.find('.gallery') );
@@ -537,5 +535,15 @@
             }
         });
     };
+
+    $(document).on('ready', function () {
+        $.each(PhotoMosaic.WP, function (id, config) {
+            var params = $.extend( {}, config.settings, {
+                    gallery : config.gallery,
+                    fallback : config.fallback
+                });
+            $('#' + config.target).photoMosaic( params );
+        });
+    });
 
 }(window.JQPM, window));

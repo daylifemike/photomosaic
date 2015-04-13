@@ -173,7 +173,7 @@ module.exports = function(grunt) {
                     {
                         expand : true,
                         cwd : 'app/public/js/',
-                        src : ['noop.js', '*.php'],
+                        src : ['localize.js', '*.php'],
                         dest : dist_path + 'public/js/',
                         filter : 'isFile'
                     }

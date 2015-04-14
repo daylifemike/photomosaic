@@ -33,14 +33,7 @@ class Photomosaic_Admin {
     }
 
     public function action_links ( $links, $file ) {
-        // http://wp.smashingmagazine.com/2011/03/08/ten-things-every-wordpress-plugin-developer-should-know/
-        static $this_plugin;
-
-        if (!$this_plugin) {
-            $this_plugin = plugin_basename(__FILE__);
-        }
-
-        if ($file == $this_plugin) {
+        if ( dirname( $file ) == dirname( dirname( plugin_basename( __FILE__ ) ) ) ) {
             $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=photomosaic">Settings</a>';
             array_unshift($links, $settings_link);
         }

@@ -7,6 +7,7 @@
     var photoMosaic = function (el, options, i) {
         self = this;
 
+        this.$ = $;
         this.el = el;
         this.obj = $(el);
         this._options = options;
@@ -487,9 +488,18 @@
         },
 
         modalCallback: function ($node) {
-            var $node = $node || this.obj.children().get(0);
-            if ($.isFunction(this.opts.modal_ready_callback)) {
-                this.opts.modal_ready_callback.apply(this, [$node]);
+            var $ = $ || this.$;
+
+            if ( $.isFunction(this.opts.modal_ready_callback) ) {
+                var $node = $node || this.obj.children().eq(0);
+                var $items = $node.children();
+                var $ = window.jQuery || $;
+
+                this.opts.modal_ready_callback.apply(this, [$, $node, $items]);
+
+                if ( this.opts.lightbox_callback && $.isFunction(this.opts.lightbox_callback) ) {
+                    this.opts.lightbox_callback.apply(this, [$, $node, $items]);
+                }
             }
         },
 

@@ -35,7 +35,7 @@ class Photomosaic_Admin {
     public function action_links ( $links, $file ) {
         if ( dirname( $file ) == dirname( dirname( plugin_basename( __FILE__ ) ) ) ) {
             $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=photomosaic">Settings</a>';
-            array_unshift($links, $settings_link);
+            array_push($links, $settings_link);
         }
 
         return $links;

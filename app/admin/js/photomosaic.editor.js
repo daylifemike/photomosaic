@@ -37,4 +37,4 @@
             You could probably tap into the global wp.media Backbone stuff and just makes this a Backbone/Underscore app.
         */
     });
-}(JQPM));
+}(jQuery));

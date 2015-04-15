@@ -225,7 +225,7 @@ class Photomosaic_Public {
         return $settings;
     }
 
-    private function localize_lightbox ( $settings, $id ) {
+    public function localize_lightbox ( $settings, $id ) {
         $is_default = !empty( $settings['lightbox'] );
         $is_custom  = !empty( $settings['custom_lightbox'] );
         $is_jetpack = class_exists( 'Jetpack_Carousel' );
@@ -281,12 +281,14 @@ class Photomosaic_Public {
             $function = false;
         }
 
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id . '"].settings.lightbox_callback',
-            $function,
-            true
-        );
+        if ( $function ) {
+            $this->localize(
+                $this->plugin_name . '-localize',
+                'PhotoMosaic.WP["'. $id . '"].settings.lightbox_callback',
+                $function,
+                true
+            );
+        }
 
         return $this->lightbox;
     }
@@ -439,7 +441,7 @@ class Photomosaic_Public {
                             $attrs[$attribute->name] = $attribute->value;
                         }
                     }
-                    $jetpack_data = json_encode($attrs);
+                    $jetpack_data = $attrs;
                 }
 
                 $image = array(

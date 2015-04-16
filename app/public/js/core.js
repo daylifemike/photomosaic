@@ -170,7 +170,7 @@
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
-            this.react = React.renderComponent(
+            this.react = React.render(
                 PhotoMosaic.Layouts.React.mosaic(view_model), // the component to render
                 this.obj.get(0), // the dom node container
                 function () {  // the callback
@@ -238,7 +238,7 @@
 
         prepData: function (gallery, isPreload) {
             var self = this;
-            var $preload = $('#' + this.preload);
+            var $preload = (isPreload) ? $('#' + this.preload) : null;
             var $img = null;
             var image = null;
             var image_url = '';
@@ -440,7 +440,8 @@
                 center : this.opts.center
             };
 
-            var layout_data = this.layout.refresh();
+            // var layout_data = this.layout.refresh();
+            var layout_data = this.layout.getData();
             var view_model = $.extend({}, mosaic_data, layout_data);
 
             // transitionend fires for each proprty being transitioned, we only care about when the last one ends
@@ -448,8 +449,9 @@
                 $.waypoints('refresh');
             }, 300);
 
-            self.react.setProps(
-                view_model,
+            this.react = React.render(
+                PhotoMosaic.Layouts.React.mosaic(view_model),
+                this.obj.get(0),
                 function () {
                     // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check
                     if (PhotoMosaic.Plugins.Modernizr.csstransitions && self.opts.lazyload !== false) {
@@ -460,6 +462,19 @@
                     }
                 }
             );
+
+            // self.react.setProps(
+            //     view_model,
+            //     function () {
+            //         // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check
+            //         if (PhotoMosaic.Plugins.Modernizr.csstransitions && self.opts.lazyload !== false) {
+            //             self.obj.on(
+            //                 self._transition_end_event_name,
+            //                 checkLazyload
+            //             );
+            //         }
+            //     }
+            // );
         },
 
         update: function (props) {
@@ -478,11 +493,13 @@
 
             this.opts = $.extend({}, this.opts, props);
 
-            if (props.hasOwnProperty('layout')) {
+            this.opts.gallery = this.prepData(this.opts.gallery);
+
+            // if (props.hasOwnProperty('layout')) {
                 this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
-            } else {
-                this.layout.update(props);
-            }
+            // } else {
+            //     this.layout.update(props);
+            // }
 
             this.refresh();
         },

@@ -190,6 +190,14 @@ class Photomosaic_Public {
             $settings['links'] = true;
         }
 
+        $rename_settings = array(
+            array('lightbox_group', 'modal_group'),
+            array('lightbox_rel', 'modal_name'),
+        );
+        foreach ( $rename_settings as $s ) {
+            $settings[$s[1]] = $settings[$s[0]];
+        }
+
         $settings['sizes'] = $this->get_size_object( $atts );
 
         $settings['modal_hash'] = hash( 'adler32', json_encode( $atts ) );
@@ -197,7 +205,7 @@ class Photomosaic_Public {
         $settings['id'] = $id;
 
         $settings = wp_array_slice_assoc( $settings, array(
-            'center', 'columns', 'custom_lightbox', 'external_links', 'gallery', 'height', 'id',
+            'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
             'lazyload', 'lightbox', 'lightbox_rendition', 'links', 'loading_transition',
             'max_columns', 'min_columns', 'modal_group', 'modal_hash', 'modal_name',
             'modal_ready_callback', 'onready_callback', 'order', 'padding', 'prevent_crop',

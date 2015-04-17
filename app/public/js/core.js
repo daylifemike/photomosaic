@@ -242,7 +242,6 @@
             var $img = null;
             var image = null;
             var image_url = '';
-            var modal_text = '';
             var mem = {};
             var images = [];
 
@@ -278,43 +277,55 @@
 
                 image.caption = PhotoMosaic.Utils.decodeHTML( image.caption );
 
-                // modal hooks
-                if (self.opts.modal_name) {
-                    if (self.opts.modal_group) {
-                        if (self.opts.modal_hash) {
-                            modal_text = self.opts.modal_name + '[' + self.opts.modal_hash + ']';
-                        } else {
-                            modal_text = self.opts.modal_name + '[' + self._id + ']';
-                        }
-                    } else {
-                        modal_text = self.opts.modal_name;
-                    }
-                    image.modal = modal_text;
-                }
+                image = self.prepDataModal( image );
 
-                // link paths
-                if (self.opts.links && image.url) {
-                    image.link = true;
-                    image.path = image.url;
-                    image.external = self.opts.external_links;
-                    // delete image.modal;
-                } else if (self.opts.links) {
-                    image.link = true;
-                    image.external = self.opts.external_links;
-
-                    if (image.sizes && image.sizes.hasOwnProperty(self.opts.lightbox_rendition)) {
-                        image.path = image.sizes[self.opts.lightbox_rendition];
-                    } else {
-                        image.path = image.full;
-                    }
-                } else {
-                    image.link = false;
-                }
+                image = self.prepDataLinks( image );
 
                 images.push(image);
             });
 
             return images;
+        },
+
+        prepDataModal: function (image) {
+            var modal_text = '';
+
+            if (this.opts.modal_name) {
+                if (this.opts.modal_group) {
+                    if (this.opts.modal_hash) {
+                        modal_text = this.opts.modal_name + '[' + this.opts.modal_hash + ']';
+                    } else {
+                        modal_text = this.opts.modal_name + '[' + this._id + ']';
+                    }
+                } else {
+                    modal_text = this.opts.modal_name;
+                }
+                image.modal = modal_text;
+            }
+
+            return image;
+        },
+
+        prepDataLinks: function (image) {
+            if (this.opts.links && image.url) {
+                image.link = true;
+                image.path = image.url;
+                image.external = this.opts.external_links;
+                // delete image.modal;
+            } else if (this.opts.links) {
+                image.link = true;
+                image.external = this.opts.external_links;
+
+                if (image.sizes && image.sizes.hasOwnProperty(this.opts.lightbox_rendition)) {
+                    image.path = image.sizes[this.opts.lightbox_rendition];
+                } else {
+                    image.path = image.full;
+                }
+            } else {
+                image.link = false;
+            }
+
+            return image;
         },
 
         getGalleryData: function () {
@@ -440,8 +451,8 @@
                 center : this.opts.center
             };
 
-            // var layout_data = this.layout.refresh();
             var layout_data = this.layout.getData();
+
             var view_model = $.extend({}, mosaic_data, layout_data);
 
             // transitionend fires for each proprty being transitioned, we only care about when the last one ends
@@ -462,19 +473,6 @@
                     }
                 }
             );
-
-            // self.react.setProps(
-            //     view_model,
-            //     function () {
-            //         // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check
-            //         if (PhotoMosaic.Plugins.Modernizr.csstransitions && self.opts.lazyload !== false) {
-            //             self.obj.on(
-            //                 self._transition_end_event_name,
-            //                 checkLazyload
-            //             );
-            //         }
-            //     }
-            // );
         },
 
         update: function (props) {
@@ -493,13 +491,15 @@
 
             this.opts = $.extend({}, this.opts, props);
 
-            this.opts.gallery = this.prepData(this.opts.gallery);
+            var self = this;
+            var gallery = [];
+            $.each(this.opts.gallery, function (idx, image) {
+                gallery.push( self.prepDataModal(image) );
+            });
 
-            // if (props.hasOwnProperty('layout')) {
-                this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
-            // } else {
-            //     this.layout.update(props);
-            // }
+            this.opts.gallery = gallery;
+
+            this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
 
             this.refresh();
         },
@@ -565,7 +565,7 @@
 
     $(document).on('ready', function () {
         $.each(PhotoMosaic.WP, function (id, config) {
-            var params = $.extend( {}, config.settings, {
+            var params = $.extend(true, {}, config.settings, {
                     gallery : config.gallery,
                     fallback : config.fallback
                 });

@@ -555,15 +555,20 @@ class Photomosaic_Public {
         }
 
         $response = array();
-        $args = array(
-            'numberposts' => $limit,
-            'post_status' => 'publish',
-            'post_type' => '*'
-        );
 
         if ( empty($category) ) {
+            $args = array(
+                'numberposts' => $limit,
+                'post_status' => 'publish',
+                'post_type' => 'any'
+            );
             $posts = wp_get_recent_posts( $args );
         } else {
+            $args = array(
+                'numberposts' => $limit,
+                'post_status' => array('publish', 'inherit'),
+                'post_type' => 'any'
+            );
             $posts = array();
             $cat_map = explode( ',', $category );
             $cat_args = array_fill(0, count($cat_map), $args);
@@ -577,7 +582,11 @@ class Photomosaic_Public {
             }
         }
         foreach ($posts as $post) {
-            $id = get_post_thumbnail_id( $post['ID'] );
+            if ( $post['post_type'] === 'attachment' ) {
+                $id = $post['ID'];
+            } else {
+                $id = get_post_thumbnail_id( $post['ID'] );
+            }
             $title = $post['post_title'];
 
             if ( !empty( $id ) ) {

@@ -20,10 +20,11 @@ class Photomosaic_Admin {
 
         if ( isset($_GET['page']) ) {
             if ( $_GET['page'] == "photoMosaic.php" || $_GET['page'] == "photomosaic.php"  || $_GET['page'] == "photomosaic" ) {
-                wp_register_script( $this->plugin_name . '-codemirror',         $this->relative_url('vendor/codemirror/codemirror.js'), array(),                                            $this->version, false );
-                wp_enqueue_script(  $this->plugin_name . '-codemirror-jsmode',  $this->relative_url('vendor/codemirror/javascript.js'), array($this->plugin_name . '-codemirror'),          $this->version, false );
-                wp_enqueue_script(  $this->plugin_name . '-codemirror-cssmode', $this->relative_url('vendor/codemirror/css.js' ),       array($this->plugin_name . '-codemirror'),          $this->version, false );
+                wp_register_script( $this->plugin_name . '-codemirror',         $this->relative_url('vendor/codemirror/codemirror.js'), array(),                                             $this->version, false );
+                wp_enqueue_script(  $this->plugin_name . '-codemirror-jsmode',  $this->relative_url('vendor/codemirror/javascript.js'), array($this->plugin_name . '-codemirror'),           $this->version, false );
+                wp_enqueue_script(  $this->plugin_name . '-codemirror-cssmode', $this->relative_url('vendor/codemirror/css.js' ),       array($this->plugin_name . '-codemirror'),           $this->version, false );
                 wp_enqueue_script(  $this->plugin_name . '-admin',              $this->relative_url('js/photomosaic.admin.js'),         array('jquery', $this->plugin_name . '-codemirror'), $this->version, false );
+                wp_enqueue_script( 'plugin-install' );
             }
         }
 

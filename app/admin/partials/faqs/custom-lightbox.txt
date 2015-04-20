@@ -1,90 +1,31 @@
-### How do I use a custom lightbox? {.title}
+### How do I use a different lightbox? {.title}
 
-Most lightbox plugins work in one of four ways.  The methods, explained below, are ordered starting with the easiest.  If you don't already know how your lightbox works please start with the first method, and try them in order.
+PhotoMosaic works with (or can easily be made to work with) almost every lightbox plugin available.  In most cases, integrating PhotoMosaic with your prefered lightbox is as simple as unchecking **Use Default Lightbox**.  Other times, it's a easy as setting **Lightbox REL** to the value stated in your lightbox's documentation.
 
-1. ### Aggressive
-        
-    Some lightbox plugins are very aggressive about finding links/images.  These plugins make integration with PhotoMosaic easy because they require no additional work.
-    
-    In the PhotoMosaic settings:
-    
-    - uncheck **Use Default Lightbox**
-    - uncheck **Use Custom Lightbox**
+There are, however, a number of popular lightbox plugins that require a little extra work to integrate.  For these there are "lightbox bridges".  A lightbox bridge is a plugin that extends PhotoMosaic to make integration with a specific lightbox plugin effortless.  Simply installing and activating a lightbox bridge is all that is necessary to get things working.  By having the lightbox and the bridge installed, PhotoMosaic will automatically switch to using the lightbox and will use its settings.
 
-2. ### Selector
-        
-    Some lightbox plugins allow you to specify a CSS selector the plugin will use to find your images.  Look through your plugin's settings to see if their is a field for specifying selectors.  Be sure to pay attention to whether your plugin accepts selectors that point to images or links.
-    
-    In your lightbox plugin's settings:
+You can see a list of available lightbox bridges on the Global Settings page.  From there you can install both the bridge and the lightbox plugin it supports.  Please note that PhotoMosaic only supports having one lightbox bridge activated at a time.  If you'd like to request a bridge for a specific lightbox plugin, please use the [form on my CodeCanyon author page](http://www.codecanyon.com/makfak#contact) to contact me.  Be sure to include a link to the plugin's [WordPress Plugin Repository](http://plugin.wordpress.org) page.
 
-    - Image Selector = `.photoMosaic img`
-    - Link Selector = `.photoMosaic a`
-    
-    In the PhotoMosaic settings:
+If you're a developer and are familiar with jQuery plugins, the **Custom Lightbox Function Name** and **Custom Lightbox Params** are used to build a call to a jQuery plugin.
 
-    - uncheck **Use Default Lightbox**
-    - uncheck **Use Custom Lightbox**
+- **Lightbox REL** = `pmlightbox`
+- **Custom Lightbox Function Name** = `prettyPhoto`
+- **Custom Lightbox Params** = `{
+    overlay_gallery: false,
+    slideshow: false,
+    theme: "pp_default",
+    deeplinking: false,
+    social_tools: ""
+}`
 
-3. ### REL
-        
-    Some lightbox plugins will automatically find images/links that have a REL attribute set to something specific.  You should be able to find this information in your lightbox plugin's documentation - it will always be a single, alphanumeric word (`lightbox` is the most common REL).
-    
-    In the PhotoMosaic settings:
-    
-    - uncheck **Use Default Lightbox**
-    - uncheck **Use Custom Lightbox**
-    - set "Lightbox REL" to your plugin's alphanumeric word (eg: `lightbox`)
-    
-    If you see, in your lightbox's documentation, examples of RELs with brackets (eg: `lightbox[group1]`) the brackets can be ignored - your **Lightbox REL** is `lightbox`.  The presence of the brackets tells you that your lightbox supports grouped images (check the **Group Images** PhotoMosaic setting).
-    
+... would yield ...
 
-4. ### Manual
-        
-    If none of the previous methods worked, PhotoMosaic can manually try to integrate with your lightbox plugin provided your lightbox is build with jQuery.
-    
-    If your plugin is well documented (or has developer documentation) the information needed for this method will likely be found there.  It is likely, however, that you will need to examine your page's source code to find everything.
-    
-    We will be looking for two pieces of information:
-
-    - the method name your lightbox used to register itself with jQuery (**Custom Lightbox Function Name**)
-    - the JS object that contains all of your lightbox's settings (**Custom Lightbox Params**)
-    
-    At the most basic level, all jQuery calls look the same:
-
-        $("selector").method();
-            OR
-        jQuery("selector").method();
-
-        
-    Sometimes you'll see a JS object being passed to the method:
-
-        $("selector").method({
-            option1: setting1,
-            option2: setting2
-        });
-
-        
-    Looking at that last example, **Custom Lightbox Function Name** is `method` and **Custom Lightbox Params** is the JS object being passed into the method (including the `{}`).
-    
-    If you view the source on a page with a PhotoMosaic with the default settings using the default lightbox you'll see:
-
-        $("a[rel^='pmlightbox']").prettyPhoto({
-            overlay_gallery: false,
-            slideshow: false,
-            theme: "pp_default",
-            deeplinking: false,
-            social_tools: ""
-        });
-        
-    In this case:
-
-    - **Custom Lightbox Function Name** = `prettyPhoto`
-    - **Custom Lightbox Params** = `{
+    $("a[rel^='pmlightbox']").prettyPhoto({
         overlay_gallery: false,
         slideshow: false,
         theme: "pp_default",
         deeplinking: false,
         social_tools: ""
-    }`
-        
-    The reason you should look at your page's source for the **Custom Lightbox Params** is that the JS object that appears in your page's source code will reflect the settings you've set in your lightbox plugin's settings.  Doing this insures that lightboxes opened from PhotoMosaic match lightboxes opened elsewhere on your site.  If you change your lightbox's settings you should also update PhotoMosaic's **Custom Lightbox Params**.
+    });
+
+If, as a developer, you need absolute control, the **onReady Callback** is the place to put your custom code.

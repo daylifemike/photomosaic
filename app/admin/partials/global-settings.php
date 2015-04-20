@@ -1,3 +1,4 @@
+<?php add_thickbox(); ?>
 <p>
     These settings will be applied to all of your PhotoMosaic galleries.
     You can override any of these settings on a per-instance basis (see the details for each type, shortcode, template tag, and sidebar widget).
@@ -194,15 +195,207 @@ rows   |  columns |  masonry
         </div>
     </div>
 
+
+
+
+
+
     <h3>Lightbox</h3>
     <div class="set">
-        <div class="field">
+        <div class="field double-wide">
             <p>
                 <label><input name="lightbox" type="checkbox" value="1" <?php if($options['lightbox']) echo "checked='checked'"; ?> /> Use Default Lightbox</label>
             </p>
             <span class="info">displays your photos in a prettyPhoto lightbox when clicked.</span>
             <span class="info">requires that <b>Link To...</b> be set to something other than "None"</span>
         </div>
+    </div>
+
+    <div class="set margin">
+        <h4>Supported Lightbox Plugins</h4>
+        <p>Support for the following lightbox plugins requires an additional (free) plugin called a "lightbox bridge".  Simply install and activate both the lightbox and the lightbox bridge plugins. <a class="combo-link" href="#tab-faq?customlightbox">More information can be found in the FAQ.</a></p>
+        <?php
+            $bridges = array(
+                array(
+                    'name' => 'PhotoSwipe',
+                    'bridge' => array(
+                        'slug' => 'photomosaic-lightbox-bridge-photoswipe',
+                        'installed' => false,
+                        'active' => false
+                    ),
+                    'plugin' => array(
+                        'slug' => 'simple-photoswipe',
+                        'installed' => false,
+                        'active' => false
+                    )
+                ),
+                array(
+                    'name' => 'blueimp lightbox',
+                    'bridge' => array(
+                        'slug' => 'photomosaic-lightbox-bridge-blueimp',
+                        'installed' => false,
+                        'active' => false
+                    ),
+                    'plugin' => array(
+                        'slug' => 'blueimp-lightbox',
+                        'installed' => false,
+                        'active' => false
+                    )
+                ),
+                array(
+                    'name' => 'jQuery Colorbox',
+                    'bridge' => array(
+                        'slug' => 'photomosaic-lightbox-bridge-colorbox',
+                        'installed' => false,
+                        'active' => false
+                    ),
+                    'plugin' => array(
+                        'slug' => 'jquery-colorbox',
+                        'installed' => false,
+                        'active' => false
+                    )
+                ),
+                array(
+                    'name' => 'Responsive Lightbox',
+                    'bridge' => array(
+                        'slug' => 'photomosaic-lightbox-bridge-responsive',
+                        'installed' => false,
+                        'active' => false
+                    ),
+                    'plugin' => array(
+                        'slug' => 'responsive-lightbox',
+                        'installed' => false,
+                        'active' => false
+                    )
+                )
+            );
+            $plugins = get_plugins();
+            $paths = array();
+            foreach ($plugins as $k => $v) {
+                array_push($paths, $k);
+            }
+        ?>
+
+        <table class="wp-list-table widefat z-fixed">
+            <thead>
+                <tr>
+                    <th scope="col" id="active" class="manage-column column-active">Active</th>
+                    <th scope="col" id="title" class="manage-column column-title">Title</th>
+                    <th scope="col" id="lightbox" class="manage-column column-lightbox">
+                        <div class="primary">Lightbox Plugin</div>
+                        <div class="secondary">
+                            <span>Installed</span>
+                            <span>Active</span>
+                        </div>
+                    </th>
+                    <th scope="col" id="bridge" class="manage-column column-bridge">
+                        <div class="primary">Support Plugin</div>
+                        <div class="secondary">
+                            <span>Installed</span>
+                            <span>Active</span>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th scope="col" id="active" class="manage-column column-active">Active</th>
+                    <th scope="col" id="title" class="manage-column column-title">Title</th>
+                    <th scope="col" id="lightbox" class="manage-column column-lightbox">
+                        <div class="secondary">
+                            <span>Installed</span>
+                            <span>Active</span>
+                        </div>
+                        <div class="primary">Lightbox Plugin</div>
+                    </th>
+                    <th scope="col" id="bridge" class="manage-column column-bridge">
+                        <div class="secondary">
+                            <span>Installed</span>
+                            <span>Active</span>
+                        </div>
+                        <div class="primary">Support Plugin</div>
+                    </th>
+                </tr>
+            </tfoot>
+
+            <tbody id="the-list">
+                <?php
+                    foreach ($bridges as $index => $bridge) {
+                        foreach ($paths as $path) {
+                            if ( strpos( $path, $bridge['plugin']['slug'] ) !== false ) {
+                                $bridge['plugin']['installed'] = $path;
+                            } elseif ( strpos( $path, $bridge['bridge']['slug'] ) !== false ) {
+                                $bridge['bridge']['installed'] = $path;
+                            }
+                        }
+
+                        if ( is_plugin_active( $bridge['plugin']['installed'] ) ) {
+                            $bridge['plugin']['active'] = true;
+                        }
+                        if ( is_plugin_active( $bridge['bridge']['installed'] ) ) {
+                            $bridge['bridge']['active'] = true;
+                        }
+
+                        $wp_plugin_url = esc_url(  network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . $bridge['plugin']['slug'] . '&TB_iframe=true&width=600&height=550' ) );
+                    ?>
+                        <tr class="format-standard hentry <?php if ($index % 2 == 0) { ?>alternate<?php } ?> level-0">
+                            <td class="column-active">
+                                <?php if ( $bridge['plugin']['active'] && $bridge['bridge']['active'] ) : ?>
+                                    <span class="dashicons dashicons-yes"></span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="column-title">
+                                <a class="thickbox" href="<?php echo $wp_plugin_url ?>">
+                                    <?php echo $bridge['name'] ?>
+                                </a>
+                            </td>
+                            <td class="column-lightbox">
+                                <div class="lb-icon">
+                                    <?php if ( $bridge['plugin']['installed'] ) : ?>
+                                        <span class="dashicons dashicons-yes" title="Plugin Installed"></span>
+                                    <?php else : ?>
+                                        <a class="thickbox" href="<?php echo $wp_plugin_url ?>">
+                                            <span class="dashicons dashicons-download" title="Download <?php echo $bridge['name'] ?>"></span>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="lb-icon">
+                                    <?php if ( $bridge['plugin']['active'] ) : ?>
+                                        <span class="dashicons dashicons-yes" title="Plugin Active"></span>
+                                    <?php else : ?>
+                                        <span class="dashicons dashicons-no-alt" title="Plugin Not Active"></span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td class="column-bridge">
+                                <div class="lb-icon">
+                                    <?php if ( $bridge['bridge']['installed'] ) : ?>
+                                        <span class="dashicons dashicons-yes" title="Bridge Installed"></span>
+                                    <?php else : ?>
+                                        <a href="https://github.com/daylifemike/<?php echo $bridge['bridge']['slug'] ?>/archive/master.zip">
+                                            <span class="dashicons dashicons-download" title="Download <?php echo $bridge['name'] ?> Support Plugin"></span>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="lb-icon">
+                                    <?php if ( $bridge['bridge']['active'] ) : ?>
+                                        <span class="dashicons dashicons-yes" title="Bridge Active"></span>
+                                    <?php else : ?>
+                                        <span class="dashicons dashicons-no-alt" title="Bridge Not Active"></span>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                        </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="set margin message-info">
+        <p>Please read the <a class="combo-link" href="#tab-faq?customlightbox">FAQ > How do I use a Different Lightbox</a> for help integrating PhotoMosaic with your existing lightbox plugin</p>
+    </div>
+
+    <div class="set margin">
         <div class="field">
             <p><label>Lightbox REL</label></p>
             <p><input type="text" name="lightbox_rel" value="<?php echo($options['lightbox_rel']); ?>" /></p>
@@ -218,10 +411,6 @@ rows   |  columns |  masonry
             <span class="info">appends a bracketed string to the <strong>Lightbox REL</strong> (rel="pmlightbox[group1]")</span>
             <span class="info">applies to <strong>Default</strong> and <strong>Custom</strong> lightboxes</span>
         </div>
-    </div>
-
-    <div class="set margin message-info">
-        <p>Please read the <a class="combo-link" href="#tab-faq?customlightbox">FAQ > How do I use a Custom Lightbox</a> for help integrating PhotoMosaic with your existing lightbox plugin</p>
     </div>
 
     <div class="set margin">
@@ -259,6 +448,11 @@ rows   |  columns |  masonry
             </span>
         </div>
     </div>
+
+
+
+
+
 
     <h3>Advanced Configuration</h3>
     <div class="set">

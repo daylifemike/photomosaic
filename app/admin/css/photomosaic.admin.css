@@ -103,3 +103,10 @@
 .toplevel_page_photomosaic .codemirror {
     margin-right: 1em;
 }
+
+
+/* Lightbox Bridge Table */
+
+.secondary { font-size:0.8em; color:#999999; }
+.secondary span,
+.lb-icon { display:inline-block; width:50px; line-height:1em; text-align:center; }

@@ -567,7 +567,7 @@ class Photomosaic_Public {
             $posts = array();
             $cat_map = explode( ',', $category );
             $cat_args = array_fill(0, count($cat_map), $args);
-            $cat_map = array_map("$this->fetch_taxonomy_categories", $cat_map, $cat_args);
+            $cat_map = array_map( array($this, 'fetch_taxonomy_categories'), $cat_map, $cat_args );
 
             // flatten one level
             foreach ($cat_map as $cat_arr) {
@@ -820,7 +820,7 @@ class Photomosaic_Public {
         $this->lightbox = $name;
     }
 
-    private function fetch_taxonomy_categories ( $slug, $args ) {
+    public function fetch_taxonomy_categories ( $slug, $args ) {
         $slug = trim($slug);
         $taxonomies = explode(':', $slug);
         $taxonomy = (count($taxonomies) > 1 ? $taxonomies[0] : 'category');
@@ -846,10 +846,22 @@ class Photomosaic_Public {
         $height_count = 0;
         $width_val = 0;
         $height_val = 0;
+        $output = array();
 
         if ( empty($atts['nggid']) && empty($atts['ngaid']) ) {
             // it's a WP gallery
-            $images = $this->gallery_from_wordpress( $atts['id'], $atts['link_behavior'], $atts['include'], $atts['exclude'], $atts['ids'], true );
+            if ( empty($atts['category']) ) {
+                $images = $this->gallery_from_wordpress( $atts['id'], $atts['link_behavior'], $atts['include'], $atts['exclude'], $atts['ids'], true );
+            } else {
+                if ( $atts['category'] == 'recent' || $atts['category'] == 'latest' ) {
+                    $recent_images = $this->recent_posts_images( $atts['limit'] );
+                } else {
+                    $recent_images = $this->recent_posts_images( $atts['limit'], $atts['category'] );
+                }
+
+                $ids = array_keys( $recent_images );
+                $images = $this->gallery_from_wordpress( $atts['id'], $recent_images, $atts['include'], $atts['exclude'], $ids, true );
+            }
 
             foreach ( $images as $_post ) {
                 $image_thumbnail = wp_get_attachment_image_src($_post->ID , 'thumbnail');

@@ -70,6 +70,7 @@
             // columns opts
             columns : 'auto', // auto (str) or (int)
             order : 'rows', // rows, columns, masonry, random
+            min_column_width : 300,
 
             // rows opts
             rows : 'auto', // auto (str) or (int)

@@ -30,22 +30,16 @@
             var num_cols = 0;
             var max_width = 0;
             var num_images = 0
-            var maths = {};
             var i = 0;
 
             if (opts.columns && opts.columns !== 'auto') {
                 num_images = opts.gallery.length;
                 num_cols = (num_images < opts.columns) ? num_images : opts.columns;
             } else {
-                // TODO : make this less lame
                 max_width = opts.width;
                 num_images = opts.gallery.length;
-                maths = {
-                    plus : 425, // (300 + (150 / 1.2))
-                    minus : 175 // (300 - (150 / 1.2))
-                };
-
-                num_cols = (max_width < maths.plus) ? 1 : Math.floor(max_width / maths.minus);
+                mobile_cutoff = 425;
+                num_cols = (max_width < mobile_cutoff) ? 1 : Math.floor(max_width / opts.min_column_width);
 
                 if (num_images < num_cols) {
                     num_cols = num_images;

@@ -177,7 +177,7 @@ class Photomosaic_Public {
         }
 
         $int_settings = array(
-            'padding'
+            'padding', 'min_column_width'
         );
         foreach ( $int_settings as $key ) {
             $settings[$key] = intval( $settings[$key] );
@@ -207,9 +207,9 @@ class Photomosaic_Public {
         $settings = wp_array_slice_assoc( $settings, array(
             'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
             'lazyload', 'lightbox', 'lightbox_rendition', 'links', 'loading_transition',
-            'max_columns', 'min_columns', 'modal_group', 'modal_hash', 'modal_name',
-            'modal_ready_callback', 'onready_callback', 'order', 'padding', 'prevent_crop',
-            'resize_transition', 'show_loading', 'sizes', 'width',
+            'max_columns', 'min_columns', 'min_column_width', 'modal_group', 'modal_hash',
+            'modal_name', 'modal_ready_callback', 'onready_callback', 'order', 'padding',
+            'prevent_crop', 'resize_transition', 'show_loading', 'sizes', 'width',
             // these need to be typed
             'align', 'allow_orphans', 'layout', 'max_row_height', 'orphans', 'rows', 'shape', 'sizing'
         ) );

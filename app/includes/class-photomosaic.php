@@ -71,6 +71,7 @@ class Photomosaic {
         $defaults = array(
             'padding' => 2,
             'columns' => 0,
+            'min_column_width' => 175,
             'min_columns' => 0,
             'max_columns' => 0,
             'width' => 0,

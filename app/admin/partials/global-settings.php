@@ -56,6 +56,12 @@
             <span class="info">using auto-columns, alone or in a range, has PhotoMosaic calculate the optimal number of columns given the number of images in the gallery and the size of its container</span>
         </div>
         <div class="field">
+            <p><label>Minimum Column Width</label></p>
+            <p><input type="text" name="min_column_width" value="<?php echo($options['min_column_width']); ?>" /></p>
+            <span class="info">only accepts <b>px</b> values (e.g. 175px or 175)</span>
+            <span class="info">only applies when using auto-columns</span>
+        </div>
+        <div class="field">
             <p><label>Order</label></p>
             <p>
                 <select name="order">

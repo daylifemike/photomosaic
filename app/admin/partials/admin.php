@@ -10,7 +10,7 @@
         $tabs = array(
             // display name, id, file
             array('Global Settings',   'form',        'global-settings.php'),
-            array('Usage',             'usage',       'usage.txt'),
+            array('How To Use',        'usage',       'usage.txt'),
             array('Inline Attributes', 'inlineattrs', 'inline-attributes.txt'),
             array('FAQ',               'faq',         'faq.php'),
             array("What's New",        'whatsnew',    'whatsnew.txt')

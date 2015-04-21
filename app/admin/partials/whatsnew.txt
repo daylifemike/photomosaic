@@ -1,5 +1,13 @@
 ## What's New
 
+### 2.12
+- Enhancement : adds lightbox-bridge capacity
+- Enhancement : JS is now loaded in the page footer
+- Enhancement : adds 'Minimum Column Width' setting
+- Enhancement : adds support for Media Library categories/tags when using "category" to filter a taxonomy 
+- Bug Fix : inline CSS is now only included once per page
+- Bug Fix : corrects bug that caused loading spinners to disappear prematurely in certain conditions
+
 ### 2.11
 - Breaking Change : (could break custom CSS) prefixes '.loading' and '.loaded' classes with 'photomosaic-' to prevent collisions.
 - Breaking Change : (could break custom CSS) separates the image and the loading-spinner into unique containers

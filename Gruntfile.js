@@ -128,7 +128,7 @@ module.exports = function(grunt) {
             },
             changelog : {
                 expand : true,
-                cwd : dist_path + 'includes/admin-markup/',
+                cwd : dist_path + 'admin/partials/',
                 src : 'whatsnew.txt',
                 dest : release_path,
                 filter : 'isFile',
@@ -282,7 +282,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dist',       [ 'concat:wp', 'copy:dist', 'uglify:dist' ]);    
     grunt.registerTask('default',    [ 'dist', 'clean:plugin', 'copy:plugin', 'clean:dist' ]);
-    // grunt.registerTask('release',    [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
+    grunt.registerTask('release',    [ 'dist', 'clean:release', 'copy:release', 'copy:changelog', 'clean:dist' ]);
     // grunt.registerTask('codecanyon', [ 'dist', 'compress:wordpress', 'copy:readme', 'compress:codecanyon', 'clean:codecanyon', 'clean:dist' ]);
     // grunt.registerTask('nonwp',      [ 'concat:with_react', 'concat:without_react', 'copy:dist', 'replace:nonwp', 'uglify:dist', 'uglify:lite', 'copy:nonwp', 'clean:dist' ]);
     // grunt.registerTask('demo',       [ 'concat:with_react', 'copy:dist', 'replace:nonwp', /*'uglify:dist',*/ 'copy:demo', 'clean:dist' ]);

@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.12.1
+- Bug Fix : adds deprecation adjustment for "onready_callback" changes
+
 ### 2.12
 - Enhancement : adds lightbox-bridge capacity
 - Enhancement : JS is now loaded in the page footer

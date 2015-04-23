@@ -544,7 +544,6 @@ class GitHub_Updater {
 	 */
 	protected function get_changelog_filename( $type ) {
 		$changelogs = array( 'CHANGES.md', 'CHANGELOG.md' );
-
 		foreach ( $changelogs as $changes ) {
 			if ( file_exists( $this->$type->local_path . $changes ) ) {
 				return $changes;
@@ -653,8 +652,11 @@ class GitHub_Updater {
 		$forks       = empty( $repo_meta->forks ) ? $this->type->forks : $repo_meta->forks;
 		$open_issues = empty( $repo_meta->open_issues ) ? $this->type->open_issues : $repo_meta->open_issues;
 		$score       = empty( $repo_meta->score ) ? $this->type->score : $repo_meta->score; //what is this anyway?
-
 		$rating = round( $watchers + ( $forks * 1.5 ) - $open_issues + $score );
+
+		if ( $repo_meta->name === 'photomosaic-for-wordpress' ) {
+			$rating = $rating * 4; // hey, if they don't know what 'score' is why should i suffer
+		}
 
 		if ( 100 < $rating ) {
 			return 100;

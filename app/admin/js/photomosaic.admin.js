@@ -365,7 +365,7 @@
             }
 
             if ( $.trim($onready_callback.val()) == '' ) {
-                $onready_callback.val('function($mosaic, $items){\n' +
+                $onready_callback.val('function($, $mosaic, $items){\n' +
                     '\t/* your code here */\n' +
                 '}');
             }

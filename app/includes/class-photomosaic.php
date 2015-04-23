@@ -97,7 +97,7 @@ class Photomosaic {
             'custom_lightbox_params' => '{}',
             'custom_css' => '/* your custom css here */',
             // this is repeated in pm.admin.js as a null-check
-            'onready_callback' => "function(".'$mosaic'.", ".'$items'."){\n\t/* your code here */\n}"
+            'onready_callback' => "function(".'$'.", ".'$mosaic'.", ".'$items'."){\n\t/* your code here */\n}"
         );
 
         $options = get_option( $this->options_key );
@@ -165,6 +165,12 @@ class Photomosaic {
         if (array_key_exists('responsive_transition', $options)) {
             $options['resize_transitiion'] = $options['responsive_transition'];
             unset($options['responsive_transition']);
+        }
+
+        // 'onready_callback' : new default arg : "function($mosaic" --> "function($, $mosaic" - v2.12
+        $onready_callback_re = '/function[\s]*\([\s]*\$mosaic/';
+        if ( preg_match_all( $onready_callback_re, $options['onready_callback'], $matches ) ) {
+            $options['onready_callback'] = preg_replace( $onready_callback_re, 'function($, $mosaic', $options['onready_callback'] );
         }
 
         update_option('photomosaic_options', $options);

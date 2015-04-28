@@ -1,5 +1,9 @@
 ## What's New
 
+### 2.12.2
+- Bug Fix : corrects custom lightbox regression introduced in 2.12 commit
+- Bug Fix : adds logic check to suppress "array_diff_key" warning
+
 ### 2.12.1
 - Bug Fix : adds deprecation adjustment for "onready_callback" changes
 

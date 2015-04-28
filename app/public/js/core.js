@@ -507,17 +507,16 @@
 
         modalCallback: function ($node) {
             var $ = $ || this.$;
+            var $node = $node || this.obj.children().eq(0);
+            var $items = $node.children();
+            var lightbox_callback = PhotoMosaic.WP[ this.opts.id ].lightbox_callback;
 
             if ( $.isFunction(this.opts.modal_ready_callback) ) {
-                var $node = $node || this.obj.children().eq(0);
-                var $items = $node.children();
-                var $ = window.jQuery || $;
-
                 this.opts.modal_ready_callback.apply(this, [$, $node, $items]);
+            }
 
-                if ( this.opts.lightbox_callback && $.isFunction(this.opts.lightbox_callback) ) {
-                    this.opts.lightbox_callback.apply(this, [$, $node, $items]);
-                }
+            if ( lightbox_callback && $.isFunction( lightbox_callback ) ) {
+                lightbox_callback.apply(this, [$, $node, $items]);
             }
         },
 

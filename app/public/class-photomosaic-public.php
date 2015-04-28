@@ -204,6 +204,9 @@ class Photomosaic_Public {
 
         $settings['id'] = $id;
 
+        // before we trim the settings
+        $this->localize_lightbox( $settings, $id );
+
         $settings = wp_array_slice_assoc( $settings, array(
             'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
             'lazyload', 'lightbox', 'lightbox_rendition', 'links', 'loading_transition',
@@ -227,8 +230,6 @@ class Photomosaic_Public {
             $settings['onready_callback'],
             true
         );
-
-        $this->localize_lightbox( $settings, $id );
 
         return $settings;
     }
@@ -292,7 +293,7 @@ class Photomosaic_Public {
         if ( $function ) {
             $this->localize(
                 $this->plugin_name . '-localize',
-                'PhotoMosaic.WP["'. $id . '"].settings.lightbox_callback',
+                'PhotoMosaic.WP["'. $id . '"].lightbox_callback',
                 $function,
                 true
             );

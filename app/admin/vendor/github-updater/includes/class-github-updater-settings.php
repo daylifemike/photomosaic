@@ -228,14 +228,16 @@ class GitHub_Updater_Settings extends GitHub_Updater {
 		}
 
 		// Unset options that are no longer present
-		$ghu_unset_keys = array_diff_key( parent::$options, $ghu_options_keys );
-		unset( $ghu_unset_keys['bitbucket_username'] );
-		unset( $ghu_unset_keys['bitbucket_password'] );
-		if ( ! empty( $ghu_unset_keys ) ) {
-			foreach ( $ghu_unset_keys as $key => $value ) {
-				unset( parent::$options [ $key ] );
+		if ( is_array( parent::$options ) ) {
+	        $ghu_unset_keys = array_diff_key( parent::$options, $ghu_options_keys );
+			unset( $ghu_unset_keys['bitbucket_username'] );
+			unset( $ghu_unset_keys['bitbucket_password'] );
+			if ( ! empty( $ghu_unset_keys ) ) {
+				foreach ( $ghu_unset_keys as $key => $value ) {
+					unset( parent::$options [ $key ] );
+				}
+				update_site_option( 'github_updater', parent::$options );
 			}
-			update_site_option( 'github_updater', parent::$options );
 		}
 	}
 

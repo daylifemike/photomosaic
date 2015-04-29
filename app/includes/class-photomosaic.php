@@ -212,6 +212,10 @@ class Photomosaic {
         return $wp_scripts->add_data( $handle, 'data', $script );
     }
 
+    public function shortcode ( $atts = array() ) {
+        return $this->plugin_public->shortcode( $atts );
+    }
+
     public function get_plugin_name () {
         return $this->plugin_name;
     }

@@ -167,7 +167,7 @@
             if ( PhotoMosaic.ErrorChecks.initial(this.opts) ) { return; }
 
             this.layout = new PhotoMosaic.Layouts[ this.opts.layout ]( this );
-            layout_data = this.layout.getData();
+            layout_data = this.layout.getData( false );
 
             view_model = $.extend({}, mosaic_data, layout_data);
 
@@ -452,7 +452,7 @@
                 center : this.opts.center
             };
 
-            var layout_data = this.layout.getData();
+            var layout_data = this.layout.getData( true );
 
             var view_model = $.extend({}, mosaic_data, layout_data);
 

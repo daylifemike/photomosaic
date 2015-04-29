@@ -9,11 +9,10 @@
         this.ordered_images = $.map( this.images, function (item, i) {
             return item.id;
         } );
-        this.isRefreshing = false;
         return this;
     };
     PhotoMosaic.Layouts.rows.prototype = {
-        getData : function () {
+        getData : function (isRefreshing) {
             var images = this.images;
             var rows = null;
 
@@ -62,8 +61,6 @@
             this.positionImagesInMosaic( rows, this.opts.padding );
 
             images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
-
-            this.isRefreshing = false;
 
             return {
                 width : this.opts.width,
@@ -353,8 +350,7 @@
         },
 
         refresh : function () {
-            this.isRefreshing = true;
-            return this.getData();
+            return this.getData( true );
         },
 
         update : function (props) {

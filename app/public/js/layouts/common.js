@@ -119,7 +119,7 @@
                 images = this.randomizeImages( images );
             }
 
-            columns = this.sortIntoRows( images, columns );
+            columns = this.sortIntoMasonry( images, columns );
 
             return columns;
         },

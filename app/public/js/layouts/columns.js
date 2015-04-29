@@ -8,12 +8,11 @@
         this._options.gallery = mosaic.opts.gallery.slice(); // we want to be able to refer to the original gallery order
         this.images = mosaic.opts.gallery;
         this.imagesById = PhotoMosaic.Utils.arrayToObj( this.images, 'id' );
-        this.isRefreshing = false;
         return this;
     };
 
     PhotoMosaic.Layouts.columns.prototype = {
-        getData : function () {
+        getData : function (isRefreshing) {
             var images = this.images;
             var columns = null;
             var column_width = null;
@@ -31,7 +30,7 @@
             images = this.scaleToWidth( images, column_width );
 
             // sort the images (based on opts.order) and assign them to columns
-            columns = PhotoMosaic.Layouts.Common.dealIntoColumns( images, columns, this.opts, this.isRefreshing );
+            columns = PhotoMosaic.Layouts.Common.dealIntoColumns( images, columns, this.opts, isRefreshing );
 
             // determine the target height for the entire mosaic
             mosaic_height = this.getMosaicHeight( columns );
@@ -57,8 +56,6 @@
             PhotoMosaic.Layouts.Common.positionImagesInMosaic( this.imagesById, columns, column_width, this.opts );
 
             images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
-
-            this.isRefreshing = false;
 
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),
@@ -186,8 +183,7 @@
         },
 
         refresh : function () {
-            this.isRefreshing = true;
-            return this.getData();
+            return this.getData( true );
         },
 
         update : function (props) {

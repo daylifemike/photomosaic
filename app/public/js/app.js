@@ -11,7 +11,7 @@
         }
     }
 
-    // verbatim from jQuery Migrate 1.2.1
+    // verbatim from jQuery Migrate (as of 10/13 never received an official release)
     jQuery.sub = function() {
         function jQuerySub( selector, context ) {
             return new jQuerySub.fn.init( selector, context );
@@ -22,11 +22,10 @@
         jQuerySub.fn.constructor = jQuerySub;
         jQuerySub.sub = this.sub;
         jQuerySub.fn.init = function init( selector, context ) {
-            if ( context && context instanceof jQuery && !(context instanceof jQuerySub) ) {
-                context = jQuerySub( context );
-            }
-
-            return jQuery.fn.init.call( this, selector, context, rootjQuerySub );
+            var instance = jQuery.fn.init.call( this, selector, context, rootjQuerySub );
+            return instance instanceof jQuerySub ?
+                instance :
+                jQuerySub( instance );
         };
         jQuerySub.fn.init.prototype = jQuerySub.fn;
         var rootjQuerySub = jQuerySub(document);

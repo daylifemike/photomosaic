@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.12.3
+- Enhancement : Randomized mosaics now have a less jagged bottom edge (when 'Prevent Cropping' is turned on)
+- Bug Fix : corrects a regression that caused the wp_photomosaic() template tag to fail
+- Bug Fix : corrects a regression that caused 'Category' mosaics not to link to posts
+
 ### 2.12.2
 - Bug Fix : corrects custom lightbox regression introduced in 2.12 commit
 - Bug Fix : adds logic check to suppress "array_diff_key" warning

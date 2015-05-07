@@ -210,7 +210,7 @@ class Photomosaic_Public {
         $settings['id'] = $id;
 
         // before we trim the settings
-        $this->localize_lightbox( $settings, $id );
+        $this->localize_lightbox( $settings, $atts, $id );
 
         $settings = wp_array_slice_assoc( $settings, array(
             'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
@@ -239,13 +239,20 @@ class Photomosaic_Public {
         return $settings;
     }
 
-    public function localize_lightbox ( $settings, $id ) {
+    public function localize_lightbox ( $settings, $atts, $id ) {
         $is_default = !empty( $settings['lightbox'] );
         $is_custom  = !empty( $settings['custom_lightbox'] );
         $is_jetpack = class_exists( 'Jetpack_Carousel' );
         $has_bridge = !empty( $this->lightbox );
+        $should_lightbox = (
+            ( empty($atts['category']) && ($settings['link_behavior'] == 'image') ) ||
+            ( !empty($atts['category']) && !empty($atts['link_behavior']) && $atts['link_behavior'] == 'image' )
+        );
 
-        if ( $has_bridge ) {
+        if ( !$should_lightbox ) {
+            $function = false;
+
+        } elseif ( $has_bridge ) {
             $function = 'function ($, $mosaic, $items) {
                 PhotoMosaic.LightboxBridge.' . $this->lightbox . '.apply(this, [$, $mosaic, $items])
             }';

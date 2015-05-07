@@ -141,7 +141,7 @@
                     React.DOM.div({
                         className : 'photomosaic-spinner-wrap',
                         children : [
-                            React.DOM.span({
+                            React.DOM.div({
                                 className : 'photomosaic-spinner',
                                 style : style
                             })

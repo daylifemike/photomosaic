@@ -49,7 +49,7 @@
             // TODO : stop being a side-effect
             PhotoMosaic.Layouts.Common.positionImagesInMosaic( this.imagesById, columns, column_width, this.opts );
 
-            images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
+            images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes, this.opts.honor_device_pixel_ratio );
 
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),

@@ -60,7 +60,7 @@
             // convert all this knowledge into position data
             this.positionImagesInMosaic( rows, this.opts.padding );
 
-            images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes );
+            images = PhotoMosaic.Utils.pickImageSize( images, this.opts.sizes, this.opts.honor_device_pixel_ratio );
 
             return {
                 width : this.opts.width,

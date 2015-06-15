@@ -74,7 +74,7 @@ PhotoMosaic.Utils = (function(){
             return response;
         },
 
-        pickImageSize : function (images, sizes) {
+        pickImageSize : function (images, sizes, honor_device_pixel_ratio) {
             // currently only supported in PM4WP
             if (!sizes || !images[0].sizes) { return images; }
 
@@ -85,6 +85,7 @@ PhotoMosaic.Utils = (function(){
                     width : 0,
                     height : 0
                 };
+                var pixel_ratio = (honor_device_pixel_ratio && window.devicePixelRatio) ? window.devicePixelRatio : 1;
 
                 for (var key in sizes) {
                     if (sizes.hasOwnProperty(key)) {
@@ -101,7 +102,9 @@ PhotoMosaic.Utils = (function(){
                         // if either of the image's dims are less than the container's dims - we'd be scaling up
                         // scaling up is bad
                         // keep looping until we scale the image down
-                        if (scaled.width < image.width.adjusted || scaled.height < image.height.adjusted) {
+
+                        if (scaled.width < (image.width.adjusted * pixel_ratio) ||
+                            scaled.height < (image.height.adjusted * pixel_ratio)) {
                             continue;
                         } else {
                             size = key;

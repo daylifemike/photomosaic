@@ -64,6 +64,7 @@
             modal_ready_callback : null,
             lazyload : 0, // int || false
             lightbox_rendition : 'full',
+            honor_device_pixel_ratio : true,
 
             layout : 'columns', // rows, columns, grid
 

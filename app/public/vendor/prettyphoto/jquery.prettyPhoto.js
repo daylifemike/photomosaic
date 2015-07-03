@@ -1,5 +1,5 @@
 /*
-    Version: 3.1.5f
+    Version: 3.1.6f
     Modified by Mike Kafka (http://codecanyon.net/user/makfak) to serve my own purposes
     # b
      - new jQuery namespace (JQPM)
@@ -21,10 +21,10 @@
     Class: prettyPhoto
     Use: Lightbox clone for jQuery
     Author: Stephane Caron (http://www.no-margin-for-errors.com)
-    Version: 3.1.5
+    Version: 3.1.6
 ------------------------------------------------------------------------- */
 (function($) {
-    $.prettyPhoto = {version: '3.1.5'};
+    $.prettyPhoto = {version: '3.1.6'};
     
     $.fn.prettyPhoto = function(pp_settings) {
         pp_settings = $.extend({
@@ -914,7 +914,9 @@
     function getHashtag(){
         var url = location.href;
         hashtag = (url.indexOf('#prettyPhoto') !== -1) ? decodeURI(url.substring(url.indexOf('#prettyPhoto')+1,url.length)) : false;
-
+        if (hashtag) {
+            hashtag = hashtag.replace(/<|>/g,'');
+        }
         return hashtag;
     };
     

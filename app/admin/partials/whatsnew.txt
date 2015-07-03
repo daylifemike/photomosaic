@@ -1,5 +1,11 @@
 ## What's New
 
+### 2.12.4
+- Enhancement : Adds support for HiDPI (aka "retina") screens
+- Enhancement : Adds caching to improve page-load response times
+- Breaking Change : (could break custom CSS) spinner element is now a DIV
+- Bug Fix : prevents Lightbox Bridges from assuming control before they've been activated
+
 ### 2.12.3
 - Enhancement : Randomized mosaics now have a less jagged bottom edge (when 'Prevent Cropping' is turned on)
 - Bug Fix : corrects a regression that caused the wp_photomosaic() template tag to fail

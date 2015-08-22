@@ -86,9 +86,9 @@ class Photomosaic_Public {
         $target = 'photoMosaicTarget' . $unique;
 
         $this->localize_placeholder( $target, $unique );
+        $fallback = $this->localize_fallback( $settings, $unique );
         $gallery = $this->localize_gallery_data( $settings, $atts, $unique );
         $settings = $this->localize_settings( $settings, $atts, $unique );
-        $fallback = $this->localize_fallback( $settings, $unique );
 
         $output_buffer = '';
         $gallery_div = '<div id="'. $target .'" class="photoMosaicTarget" data-version="'. $this->version .'">';

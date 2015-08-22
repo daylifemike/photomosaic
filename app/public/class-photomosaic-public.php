@@ -30,7 +30,8 @@ class Photomosaic_Public {
     public function enqueue_scripts () {
         global $photomosaic;
 
-        wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js', null, '0.12.2', true );
+        // wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.min.js', null, '0.12.2', true );
+        wp_register_script( 'react', '//fb.me/react-0.13.3.min.js', null, '0.13.3', true );
 
         if ( $this->in_debug_mode() ) {
             wp_register_script( $this->plugin_name, $this->relative_url('js/photomosaic.js') , array('jquery','react'), $this->version, true );

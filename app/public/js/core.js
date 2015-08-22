@@ -159,6 +159,7 @@
             var layout_data = null;
             var view_model = null;
             var mosaic_data = {
+                key : this._id,
                 id : this._id,
                 class_name : this.makeSpecialClasses(),
                 center : this.opts.center
@@ -173,7 +174,10 @@
             view_model = $.extend({}, mosaic_data, layout_data);
 
             this.react = React.render(
-                PhotoMosaic.Layouts.React.mosaic(view_model), // the component to render
+                React.createElement(
+                    PhotoMosaic.Layouts.React.mosaic,
+                    view_model
+                ), // the component to render
                 this.obj.get(0), // the dom node container
                 function () {  // the callback
                     // triggers lazyloading / imagesLoaded

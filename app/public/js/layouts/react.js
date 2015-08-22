@@ -15,7 +15,7 @@
     PhotoMosaic.Layouts.React = {
         mosaic : React.createClass({
             componentDidMount : function () {
-                $(this.getDOMNode()).addClass('photomosaic-loading');
+                $(React.findDOMNode(this)).addClass('photomosaic-loading');
             },
             render : function () {
                 var id = prefixId(this.props.id);
@@ -26,29 +26,32 @@
                 };
                 var images = this.props.images.map(function (image) {
                     return (
-                        PhotoMosaic.Layouts.React.item(image)
+                        React.createElement(PhotoMosaic.Layouts.React.item, image)
                     );
                 });
 
                 if (this.props.center) {
-                    style['margin-right'] = 'auto';
-                    style['margin-left'] = 'auto';
+                    style['marginRight'] = 'auto';
+                    style['marginLeft'] = 'auto';
                 }
 
                 return (
-                    React.DOM.div({
-                        id : id,
-                        className : class_name,
-                        style : style,
-                        children : images
-                    })
+                    React.createElement(
+                        'div',
+                        {
+                            id : id,
+                            className : class_name,
+                            style : style,
+                            children : images
+                        }
+                    )
                 );
             }
         }),
 
         item : React.createClass({
             componentDidMount : function () {
-                $(this.getDOMNode()).addClass('photomosaic-loading');
+                $(React.findDOMNode(this)).addClass('photomosaic-loading');
             },
             render : function () {
                 var data = this.props;
@@ -61,8 +64,14 @@
                         height : data.height.container
                     },
                     children : [
-                        PhotoMosaic.Layouts.React.spinner( $.extend({}, data, {key : data.id + '_spinner'}) ),
-                        PhotoMosaic.Layouts.React.animation_wrapper(data)
+                        React.createElement(
+                            PhotoMosaic.Layouts.React.spinner,
+                            $.extend({}, data, {key : data.id + '_spinner'})
+                        ),
+                        React.createElement(
+                            PhotoMosaic.Layouts.React.animation_wrapper,
+                            data
+                        )
                     ]
                 };
 
@@ -76,7 +85,7 @@
                 }
 
                 return (
-                    React.DOM[node_type](params)
+                    React.createElement(node_type, params)
                 );
             }
         }),
@@ -87,19 +96,19 @@
                 var params = {
                     className : 'photomosaic-animation-wrap',
                     children : [
-                        PhotoMosaic.Layouts.React.image(data)
+                        React.createElement(PhotoMosaic.Layouts.React.image, data)
                     ]
                 };
 
                 return (
-                    React.DOM.div(params)
+                    React.createElement('div', params)
                 );
             }
         }),
 
         image : React.createClass({
             componentDidUpdate : function (prev_props, prev_state) {
-                var $image = $(this.getDOMNode());
+                var $image = $(React.findDOMNode(this));
                 var next_src = $image.attr('data-src');
 
                 if (prev_props.src && (prev_props.src != next_src)) {
@@ -116,13 +125,16 @@
                 style[vendorPrefix('transform')] = 'translate(' + (data.adjustments.left * -1) + 'px, ' + (data.adjustments.top * -1) + 'px)';
 
                 return (
-                    React.DOM.img({
-                        id : data.id,
-                        'data-src' : data.src,
-                        title : data.caption,
-                        alt : data.alt,
-                        style : style
-                    })
+                    React.createElement(
+                        'IMG', // uppercase because of a MooTools v1.4.5 conflict
+                        {
+                            id : data.id,
+                            'data-src' : data.src,
+                            title : data.caption,
+                            alt : data.alt,
+                            style : style
+                        }
+                    )
                 );
             }
         }),
@@ -138,15 +150,21 @@
                 style[vendorPrefix('transform')] = 'translate(' + (data.adjustments.left * -1) + 'px, ' + (data.adjustments.top * -1) + 'px)';
 
                 return (
-                    React.DOM.div({
-                        className : 'photomosaic-spinner-wrap',
-                        children : [
-                            React.DOM.div({
-                                className : 'photomosaic-spinner',
-                                style : style
-                            })
-                        ]
-                    })
+                    React.createElement(
+                        'div',
+                        {
+                            className : 'photomosaic-spinner-wrap',
+                            children : [
+                                React.createElement(
+                                    'div',
+                                    {
+                                        className : 'photomosaic-spinner',
+                                        style : style
+                                    }
+                                )
+                            ]
+                        }
+                    )
                 );
             }
         }),
@@ -154,14 +172,20 @@
         loading : React.createClass({
             render : function () {
                 return (
-                    React.DOM.div({
-                        id : prefixId(this.props.id),
-                        className : 'photoMosaic',
-                        children : React.DOM.div({
-                            className : 'photoMosaicLoading',
-                            children : 'loading gallery...'
-                        })
-                    })
+                    React.createElement(
+                        'div',
+                        {
+                            id : prefixId(this.props.id),
+                            className : 'photoMosaic',
+                            children : React.createElement(
+                                'div',
+                                {
+                                    className : 'photoMosaicLoading',
+                                    children : 'loading gallery...'
+                                }
+                            )
+                        }
+                    )
                 );
             }
         })

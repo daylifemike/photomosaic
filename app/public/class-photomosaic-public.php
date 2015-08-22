@@ -249,9 +249,10 @@ class Photomosaic_Public {
         $is_custom  = !empty( $settings['custom_lightbox'] );
         $is_jetpack = class_exists( 'Jetpack_Carousel' );
         $has_bridge = !empty( $this->lightbox );
+        $valid_link_behavior = (($settings['link_behavior'] == 'image') || ($settings['link_behavior'] == 'custom'));
         $should_lightbox = (
-            ( empty($atts['category']) && ($settings['link_behavior'] == 'image') ) ||
-            ( !empty($atts['category']) && !empty($atts['link_behavior']) && $atts['link_behavior'] == 'image' )
+            ( empty($atts['category']) && $valid_link_behavior ) ||
+            ( !empty($atts['category']) && !empty($atts['link_behavior']) && $valid_link_behavior )
         );
 
         if ( !$should_lightbox ) {
@@ -293,14 +294,17 @@ class Photomosaic_Public {
         } elseif ( $is_default ) {
             $function = 'function ($, $mosaic, $items) {
                 var $fallback_items = $mosaic.find(".gallery-item a");
-                $items.add( $fallback_items ).prettyPhoto({
-                    overlay_gallery: false,
-                    slideshow: false,
-                    theme: "pp_default",
-                    deeplinking: false,
-                    show_title: false,
-                    social_tools: ""
-                });
+                $items
+                    .add( $fallback_items )
+                    .filter("a[href*=\".jpg\"], a[href*=\"jpeg\"], a[href*=\".png\"], a[href*=\".gif\"]")
+                    .prettyPhoto({
+                        overlay_gallery: false,
+                        slideshow: false,
+                        theme: "pp_default",
+                        deeplinking: false,
+                        show_title: false,
+                        social_tools: ""
+                    });
             }';
 
         } else {

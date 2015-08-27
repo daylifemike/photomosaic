@@ -17,8 +17,16 @@
             var columns = null;
             var column_width = null;
             var mosaic_height = 0;
+            var force_hidden = false;
 
             this.opts.width = PhotoMosaic.Layouts.Common.getRelativeWidth( this._options, this.opts, this.node );
+
+            // lazyloading requires that there be nodes to attach to (so we need a width)
+            // but we don't want to render the mosaic so we display:none it
+            if ( this.errorChecks.width(this.opts.width) ) {
+                this.opts.width = 300;
+                force_hidden = true;
+            }
 
             // determine the number of columns
             this.columns = columns = PhotoMosaic.Layouts.Common.makeColumnBuckets( this.opts );
@@ -60,7 +68,8 @@
             return {
                 width : (column_width * columns.length) + (this.opts.padding * (columns.length - 1)),
                 height : mosaic_height,
-                images : images
+                images : images,
+                force_hidden : force_hidden
             };
         },
 
@@ -223,6 +232,13 @@
                         PhotoMosaic.Utils.log.error("Your gallery has been hidden because its height is too small for your current settings and won't render correctly.");
                         return true;
                     }
+                }
+                return false;
+            },
+            width: function (width) {
+                if (width == 0) {
+                    PhotoMosaic.Utils.log.error("Your gallery's target container doesn't have a width (width = 0). Make sure it isn't hidden.");
+                    return true;
                 }
                 return false;
             }

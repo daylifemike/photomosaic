@@ -134,8 +134,11 @@
             var self = this;
 
             if (this.opts.show_loading) {
-                this.react = React.renderComponent(
-                    PhotoMosaic.Layouts.React.loading({ id : this._id }),
+                this.react = React.render(
+                    React.createElement(
+                        PhotoMosaic.Layouts.React.loading,
+                        { id : this._id }
+                    ),
                     this.obj.get(0)
                 );
             }
@@ -172,6 +175,18 @@
             layout_data = this.layout.getData( false );
 
             view_model = $.extend({}, mosaic_data, layout_data);
+
+            if (layout_data == false) {
+                this.react = null;
+
+                // update the mosaic on window.resize
+                $(window)
+                    .unbind('resize.photoMosaic' + self._id)
+                    .bind('resize.photoMosaic' + self._id, function () {
+                        self.refresh();
+                    });
+                return;
+            }
 
             this.react = React.render(
                 React.createElement(
@@ -452,6 +467,7 @@
         refresh: function () {
             var self = this;
             var mosaic_data = {
+                key : this._id,
                 id : this._id,
                 class_name : this.makeSpecialClasses(),
                 center : this.opts.center
@@ -466,8 +482,16 @@
                 $.waypoints('refresh');
             }, 300);
 
+            if (layout_data == false) {
+                this.react = null;
+                return;
+            }
+
             this.react = React.render(
-                PhotoMosaic.Layouts.React.mosaic(view_model),
+                React.createElement(
+                    PhotoMosaic.Layouts.React.mosaic,
+                    view_model
+                ),
                 this.obj.get(0),
                 function () {
                     // if applicable, wait until after the CSS transitions fire to trigger a lazyloading check

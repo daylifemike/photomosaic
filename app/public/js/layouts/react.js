@@ -35,6 +35,10 @@
                     style['marginLeft'] = 'auto';
                 }
 
+                if (this.props.force_hidden) {
+                    style['display'] = 'none';
+                }
+
                 return (
                     React.createElement(
                         'div',

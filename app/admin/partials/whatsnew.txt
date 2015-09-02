@@ -1,5 +1,10 @@
 ## What's New
 
+### 2.13
+- Enhancement : the default lightbox now works with links to images when "Link Behavior" is set to "Custom"
+- Bug Fix : fixes the bug that caused some mosaics to intermittently fail to load
+- Bug Fix : corrects the image size used in the non-JS fallback gallery
+
 ### 2.12.4
 - Enhancement : Adds support for HiDPI (aka "retina") screens
 - Enhancement : Adds caching to improve page-load response times

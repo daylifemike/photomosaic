@@ -4,7 +4,7 @@
  * Plugin Name:       PhotoMosaic for WordPress
  * Plugin URI:        http://codecanyon.net/item/photomosaic-for-wordpress/243422?ref=makfak
  * Description:       Adds a new display type for your WordPress and NextGen galleries. See the settings page for examples and instructions.
- * Version:           2.12.4
+ * Version:           2.13
  * Author:            makfak
  * Author URI:        http://www.codecanyon.net/user/makfak?ref=makfak
  * Text Domain:       photomosaic

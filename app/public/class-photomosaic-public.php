@@ -883,6 +883,10 @@ class Photomosaic_Public {
 
         $output = M_Gallery_Display::display_images( $args );
 
+        // NEXTGEN deprecation notice?
+        // $renderer = C_Displayed_Gallery_Renderer::get_instance();
+        // $output = $renderer->display_images( $args );
+
         set_transient( $transient_key, $output, $this->transient_expiry );
         return $output;
     }

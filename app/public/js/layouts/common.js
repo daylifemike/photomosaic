@@ -15,7 +15,7 @@
                 if (typeof(_options[dim]) == 'number') {
                     return opts[dim];
                 } else if (_options[dim].indexOf('%') > -1) {
-                    return (node[dim]() * (parseInt(_options[dim], 10) / 100));
+                    return Math.floor((node[dim]() * (parseInt(_options[dim], 10) / 100)));
                 } else {
                     // I can't imaging what wouldn't be 'auto', a %, or an int
                     return fallback;

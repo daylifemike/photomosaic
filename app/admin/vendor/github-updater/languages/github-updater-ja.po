@@ -3,24 +3,25 @@ msgstr ""
 "Project-Id-Version: GitHub Updater\n"
 "POT-Creation-Date: 2016-07-02 14:53-0700\n"
 "PO-Revision-Date: 2016-07-02 14:53-0700\n"
-"Last-Translator: Enea Overclokk <info@overclokk.net>\n"
-"Language-Team: Enea Overclokk\n"
-"Language: it\n"
+"Last-Translator: ishihara <ishihara@grow-group.jp>\n"
+"Language-Team: \n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.8\n"
 "X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: github-updater.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
 
 #: mu/ghu-loader.php:68
 msgid "Activated as mu-plugin"
-msgstr "Attivato come mu-plugin"
+msgstr "mu-plugin として有効化しました。"
 
 #: src/GitHub_Updater/Base.php:540
 #, php-format
@@ -29,28 +30,28 @@ msgstr ""
 
 #: src/GitHub_Updater/Install.php:68
 msgid "A repository URI is required."
-msgstr ""
+msgstr "リポジトリURIが必要です。"
 
 #: src/GitHub_Updater/Install.php:245 src/GitHub_Updater/Settings.php:84
 msgid "Install Plugin"
-msgstr "Installare Plugin"
+msgstr "プラグインをインストール"
 
 #: src/GitHub_Updater/Install.php:248 src/GitHub_Updater/Settings.php:85
 msgid "Install Theme"
-msgstr "Installa Tema"
+msgstr "テーマをインストール"
 
 #: src/GitHub_Updater/Install.php:266
 msgid "Plugin"
-msgstr "Plugin"
+msgstr "プラグイン"
 
 #: src/GitHub_Updater/Install.php:269
 msgid "Theme"
-msgstr "Tema:"
+msgstr "テーマ"
 
 #: src/GitHub_Updater/Install.php:280
 #, php-format
 msgid "GitHub Updater Install %s"
-msgstr "GitHub Updater Installa %s"
+msgstr "GitHub Updater インストール %s"
 
 #: src/GitHub_Updater/Install.php:287
 #, php-format
@@ -59,24 +60,23 @@ msgstr "%s URI"
 
 #: src/GitHub_Updater/Install.php:295
 msgid "Repository Branch"
-msgstr "Ramo del repository"
+msgstr "リポジトリのブランチ"
 
 #: src/GitHub_Updater/Install.php:303
 msgid "Remote Repository Host"
-msgstr "Repository remoto Host"
+msgstr "リモートリポジトリホスト"
 
 #: src/GitHub_Updater/Install.php:311
 msgid "Private Bitbucket Repository"
-msgstr "Repository privato Bitbucket"
+msgstr "プライベートなBitbucketのリポジトリ"
 
 #: src/GitHub_Updater/Install.php:319
 msgid "GitHub Access Token"
-msgstr "GitHub Access Token"
+msgstr "Github アクセストークン"
 
 #: src/GitHub_Updater/Install.php:330
-#, fuzzy
 msgid "GitLab Private Token"
-msgstr "Impostazioni private GitHub"
+msgstr "GitLab プライベート トークン"
 
 #: src/GitHub_Updater/Install.php:347
 msgid "URI is case sensitive."
@@ -84,25 +84,21 @@ msgstr ""
 
 #: src/GitHub_Updater/Install.php:361
 msgid "Enter branch name or leave empty for `master`"
-msgstr "Immettere il nome del ramo o lasciare vuoto per 'master'"
+msgstr ""
+"ブランチ名を入力、または’master’ に設定するために空のままにしてください。"
 
 #: src/GitHub_Updater/Install.php:392
 #, fuzzy
 msgid "Check for private Bitbucket repositories."
-msgstr "Repository privato Bitbucket"
+msgstr "プライベートなBitbucketのリポジトリ"
 
 #: src/GitHub_Updater/Install.php:406
 msgid "Enter GitHub Access Token for private GitHub repositories."
-msgstr ""
-"Inserisci il tuo Access Token di Github. Lascia vuoto per gli archivi "
-"pubblici."
+msgstr "プライベートリポジトリ用のGitHubアクセストークンを入力します。"
 
 #: src/GitHub_Updater/Install.php:420
-#, fuzzy
 msgid "Enter GitLab Private Token for private GitLab repositories."
-msgstr ""
-"Inserisci il tuo Access Token di Github. Lascia vuoto per gli archivi "
-"pubblici."
+msgstr "プライベートリポジトリの GitLab プライベートトークンを入力"
 
 #: src/GitHub_Updater/Install.php:464
 msgid "Activate"
@@ -117,12 +113,12 @@ msgstr ""
 #: src/GitHub_Updater/Messages.php:187
 #, fuzzy
 msgid "GitHub Updater Error Code:"
-msgstr "Codice di errore GitHub Updater:"
+msgstr "%s はチェックされていません。 GitHub Updater エラーコード:"
 
 #: src/GitHub_Updater/Messages.php:118
 #, php-format
 msgid "GitHub API's rate limit will reset in %s minutes."
-msgstr "Il limite di frequenza delle GitHub API si resetterà in %s  minuti."
+msgstr ""
 
 #: src/GitHub_Updater/Messages.php:123
 #, php-format
@@ -130,33 +126,35 @@ msgid ""
 "It looks like you are running into GitHub API rate limits. Be sure and "
 "configure a %sPersonal Access Token%s to avoid this issue."
 msgstr ""
+"GitHub APIの制限に達している可能性があります。この問題を回避する %sPersonal "
+"Access Token%sを構成してください。"
 
 #: src/GitHub_Updater/Messages.php:152
 #, fuzzy
 msgid ""
 "There is probably an access token or password error on the GitHub Updater "
 "Settings page."
-msgstr ""
-"Probabilmente c'è un errore nella pagina impostazioni di GitHub Updater"
+msgstr "GitHubのアップデータの設定ページにエラーがある可能性があります。"
 
 #: src/GitHub_Updater/Messages.php:172
 msgid ""
 "You must set a GitLab.com, GitLab CE, or GitLab Enterprise Private Token."
 msgstr ""
+"あなたはGitLab.com、GitLab CE、またはGitLabエンタープライズプライベートトーク"
+"ンを設定する必要があります。"
 
 #: src/GitHub_Updater/Plugin.php:299 src/GitHub_Updater/Theme.php:454
-#, fuzzy, php-format
+#, php-format
 msgid "Current branch is `%1$s`, try %2$sanother branch%3$s."
-msgstr "La versione attuale è aggiornata. Prova %sun&#39;altra versione%s"
+msgstr "現在のブランチは `%1$s`です。%2$sanother branch%3$s."
 
 #: src/GitHub_Updater/Plugin.php:307 src/GitHub_Updater/Theme.php:462
 msgid "Switch to branch "
 msgstr ""
 
 #: src/GitHub_Updater/Plugin.php:361
-#, fuzzy
 msgid "View details"
-msgstr "Visualizza i dettagli della versione %4$s"
+msgstr "詳細を見る"
 
 #: src/GitHub_Updater/Rest_Update.php:68
 msgid "Plugin not found or not updatable with GitHub Updater: "
@@ -184,7 +182,7 @@ msgstr ""
 
 #: src/GitHub_Updater/Settings.php:83 src/GitHub_Updater/Settings.php:769
 msgid "Settings"
-msgstr "Impostazioni"
+msgstr "設定"
 
 #: src/GitHub_Updater/Settings.php:86 src/GitHub_Updater/Settings.php:519
 msgid "Remote Management"
@@ -193,13 +191,13 @@ msgstr ""
 #: src/GitHub_Updater/Settings.php:97 src/GitHub_Updater/Settings.php:105
 #: src/GitHub_Updater/Settings.php:210
 msgid "GitHub Updater Settings"
-msgstr "Impostazioni GitHub Updater"
+msgstr "GitHub Updater 設定"
 
 #. Plugin Name of the plugin/theme
 #: src/GitHub_Updater/Settings.php:98 src/GitHub_Updater/Settings.php:106
 #: src/GitHub_Updater/Settings.php:143
 msgid "GitHub Updater"
-msgstr "GitHub Updater"
+msgstr "GItHub Updater"
 
 #: src/GitHub_Updater/Settings.php:148
 msgid "RESTful key reset."
@@ -207,68 +205,67 @@ msgstr ""
 
 #: src/GitHub_Updater/Settings.php:152
 msgid "Saved."
-msgstr "Salvato."
+msgstr "保存しました。"
 
 #: src/GitHub_Updater/Settings.php:177
 msgid "Reset RESTful key"
 msgstr ""
 
 #: src/GitHub_Updater/Settings.php:217
+#, fuzzy
 msgid "Enable Branch Switching"
-msgstr ""
+msgstr "プラグインがブランチを変更することを有効化"
 
 #: src/GitHub_Updater/Settings.php:229
-#, fuzzy
 msgid "Personal GitHub Access Token"
-msgstr "GitHub Access Token"
+msgstr "個人のGitHubのアクセストークン"
 
 #: src/GitHub_Updater/Settings.php:236
 #, fuzzy
 msgid "GitHub.com Access Token"
-msgstr "GitHub Access Token"
+msgstr "Github アクセストークン"
 
 #: src/GitHub_Updater/Settings.php:246
 #, fuzzy
 msgid "GitHub Enterprise Access Token"
-msgstr "GitHub Access Token"
+msgstr "Github アクセストークン"
 
 #: src/GitHub_Updater/Settings.php:260
 msgid "GitHub Private Settings"
-msgstr "Impostazioni private GitHub"
+msgstr "GitHub プライベート設定"
 
 #: src/GitHub_Updater/Settings.php:273
-#, fuzzy
 msgid "GitLab Private Settings"
-msgstr "Impostazioni private GitHub"
+msgstr "GitLab プライベートリポジトリ 設定"
 
 #: src/GitHub_Updater/Settings.php:282
-#, fuzzy
 msgid "GitLab.com Private Token"
-msgstr "Impostazioni private GitHub"
+msgstr "GitLab.com プライベート トークン"
 
 #: src/GitHub_Updater/Settings.php:293
 msgid "GitLab CE or GitLab Enterprise Private Token"
-msgstr ""
+msgstr "GitLab CE または GitLab エンタープライズ プライベート トークン"
 
 #: src/GitHub_Updater/Settings.php:306
 msgid "Bitbucket Private Settings"
-msgstr "Impostazioni private Bitbucket"
+msgstr "Bitbucket プライベートリポジトリ 設定"
 
 #: src/GitHub_Updater/Settings.php:313
 msgid "Bitbucket Username"
-msgstr "Username Bitbucket"
+msgstr "Bitbucket ユーザーネーム"
 
 #: src/GitHub_Updater/Settings.php:322
 msgid "Bitbucket Password"
-msgstr "Password Bitbucket"
+msgstr "Bitbucket パスワード"
 
 #: src/GitHub_Updater/Settings.php:335
 msgid "Bitbucket Private Repositories"
-msgstr "Repository privato Bitbucket"
+msgstr "Bitbucket プライベート リポジトリ"
 
 #: src/GitHub_Updater/Settings.php:347
 msgid "No private repositories are installed."
-msgstr "Nessun repository privato è installato."
+msgstr ""
+"プライベートリポジトリを持つプラグイン・テーマがインストールされていません。"
 
 #: src/GitHub_Updater/Settings.php:581
 #, php-format
@@ -293,14 +290,16 @@ msgid "Activate Extended Naming by setting %s"
 msgstr ""
 
 #: src/GitHub_Updater/Settings.php:590
+#, fuzzy
 msgid "Check to enable branch switching from the Plugins or Themes page."
 msgstr ""
+"プラグインページからブランチ切り替えを可能にするために確認してください。"
 
 #: src/GitHub_Updater/Settings.php:597
 msgid "Enter your GitHub Access Token. Leave empty for public repositories."
 msgstr ""
-"Inserisci il tuo Access Token di Github. Lascia vuoto per gli archivi "
-"pubblici."
+"あなたのGitHub アクセストークンを入力してください。公開リポジトリの場合は空の"
+"ままにしてください。"
 
 #: src/GitHub_Updater/Settings.php:604
 #, fuzzy
@@ -308,23 +307,22 @@ msgid ""
 "Enter your personal GitHub.com or GitHub Enterprise Access Token to avoid "
 "API access limits."
 msgstr ""
-"Inserisci il tuo Access Token di Github. Lascia vuoto per gli archivi "
-"pubblici."
+"APIアクセス制限を回避するために、あなたのGitHubのアクセストークンを入力してく"
+"ださい。"
 
 #: src/GitHub_Updater/Settings.php:611
 msgid ""
 "Check box if private repository. Leave unchecked for public repositories."
-msgstr ""
-"Seleziona se il repository è privato. Lascia deselezionato per gli archivi "
-"pubblici."
+msgstr "プライベートリポジトリ場合には、チェックしてください。"
 
 #: src/GitHub_Updater/Settings.php:618
 msgid "Enter your personal Bitbucket username and password."
-msgstr "Inserisci la tua username e password di Bitbucket."
+msgstr "あなた個人のBitbucket ユーザーネーム、パスワードを入力してください"
 
 #: src/GitHub_Updater/Settings.php:625
 msgid "Enter your GitLab.com, GitLab CE, or GitLab Enterprise Private Token."
 msgstr ""
+"GitLab.com、GitLab CE、またはGitLabエンタープライズプライベートトークンを入力"
 
 #: src/GitHub_Updater/Settings.php:640
 msgid ""
@@ -340,69 +338,68 @@ msgstr ""
 
 #: src/GitHub_Updater/Theme.php:355
 msgid "Theme is up-to-date!"
-msgstr "Il tema è aggiornato!"
+msgstr "テーマは最新のものです。"
 
 #: src/GitHub_Updater/Theme.php:359
 msgid "Rollback to:"
-msgstr "Ripristina a:"
+msgstr "ロールバック : "
 
 #: src/GitHub_Updater/Theme.php:366
 #, fuzzy
 msgid "Rollback"
-msgstr "Ripristina a:"
+msgstr "ロールバック : "
 
 #: src/GitHub_Updater/Theme.php:367 src/GitHub_Updater/Theme.php:406
 #: src/GitHub_Updater/Theme.php:592
 #, fuzzy
 msgid "now"
-msgstr "&nbsp;disponibile adesso."
+msgstr "バージョン%1$sの詳細を見る%2$sもしくは %3$supdate now%4$s."
 
 #: src/GitHub_Updater/Theme.php:377 src/GitHub_Updater/Theme.php:656
 msgid "No previous tags to rollback to."
-msgstr "Nessun tag precedente da ripristinare."
+msgstr "ロールバックする以前のタグはありません。"
 
 #: src/GitHub_Updater/Theme.php:386
 #, php-format
 msgid "GitHub Updater shows a new version of %s available."
-msgstr "GitHub Updater mostra una nuova versione di %1$s disponibile."
+msgstr "GitHubのアップデータは、利用可能な%sの新しいバージョンを表示しています"
 
 #: src/GitHub_Updater/Theme.php:394
 #, php-format
 msgid "View version %s details."
-msgstr "Visualizza i dettagli della versione %s."
+msgstr "バージョン %s の詳細を見る"
 
 #: src/GitHub_Updater/Theme.php:398
 msgid "Automatic update is unavailable for this theme."
-msgstr "L&#39;aggiornamento automatico non è disponibile per questo tema."
+msgstr "自動更新はこのテーマでは利用できません。"
 
 #: src/GitHub_Updater/Theme.php:401 src/GitHub_Updater/Theme.php:587
 #, php-format
 msgid "View version %1$s details%2$s or %3$supdate now%4$s."
-msgstr ""
-"Visualizza i dettagli della versione %1$s %2$s o %3$saggiorna adesso%4$s"
+msgstr "バージョン%1$sの詳細を見る%2$sもしくは %3$supdate now%4$s."
 
 #: src/GitHub_Updater/Theme.php:405 src/GitHub_Updater/Theme.php:591
 #, fuzzy
 msgid "Update"
-msgstr "L&#39;aggiornamento automatico non è disponibile per questo tema."
+msgstr "Read more information about %show you can update%s."
 
 #: src/GitHub_Updater/Theme.php:580
 #, php-format
 msgid "There is a new version of %s available now."
-msgstr "C'è una nuova versione di %s disponibile."
+msgstr "利用可能な %s の新しいバージョンが追加されました。"
 
 #: src/GitHub_Updater/Theme.php:625
 #, fuzzy, php-format
 msgid "Current branch is `%s`. Try %sanother version%s"
-msgstr "La versione attuale è aggiornata. Prova %sun&#39;altra versione%s"
+msgstr "現在のブランチは `%1$s`です。%2$sanother branch%3$s."
 
 #: src/GitHub_Updater/Theme.php:639
 msgid "Choose a Version"
-msgstr "Scegli una versione"
+msgstr "バージョンを選択"
 
 #: src/GitHub_Updater/Theme.php:662
 msgid "Install"
-msgstr "Installa"
+msgstr "インストール"
 
 #. Plugin URI of the plugin/theme
 msgid "https://github.com/afragen/github-updater"
@@ -420,38 +417,33 @@ msgid "Andy Fragen"
 msgstr "Andy Fragen"
 
 #~ msgid "Theme:"
-#~ msgstr "Tema:"
+#~ msgstr "テーマ :"
 
 #~ msgid "Current version is up to date. Try %sanother version%s"
-#~ msgstr "La versione attuale è aggiornata. Prova %sun&#39;altra versione%s"
+#~ msgstr "現在のバージョンは最新です。%sanother version%s に変更する"
 
-#, fuzzy
-#~ msgid "%s was not checked. GitHub Updater Error Code:"
-#~ msgstr ""
-#~ "%1$s non è stato verificato. Codice di errore di GitHub Updater: %2$s"
-
-#, fuzzy
 #~ msgid "Renaming %1$s to %2$s"
-#~ msgstr "Rinominato %s a %s"
+#~ msgstr "%1$s から %2$sにリネームしています。"
 
 #~ msgid "Rename successful"
-#~ msgstr "Rinominato con successo"
+#~ msgstr "リネームに成功しました。"
 
 #~ msgid "Unable to rename downloaded repository."
-#~ msgstr "Impossibile rinominare il repository scaricato."
+#~ msgstr "ダウンロードしたリポジトリの名前を変更することができません。"
 
-#, fuzzy
 #~ msgid "this plugin"
-#~ msgstr "Plugin"
+#~ msgstr "このプラグイン"
 
-#, fuzzy
 #~ msgid "Unfortunately, %1$s can not run on PHP versions older than %2$s."
 #~ msgstr ""
-#~ "Purtroppo %1$s non può essere eseguito su versioni di PHP più vecchie di "
-#~ "%2$s. Puoi leggere ulteriori informazioni su %3$s come è possibile "
-#~ "aggiornare%4$s."
+#~ "残念ながら、%1$s は  %2$s よりも古いバージョンの PHP で実行できません。"
 
-#, fuzzy
+#~ msgid "Read more information about %show you can update%s."
+#~ msgstr "Read more information about %show you can update%s."
+
+#~ msgid "%1$s recommends a PHP version greater than %2$s."
+#~ msgstr "%1$s recommends a PHP version greater than %2$s."
+
 #~ msgid ""
 #~ "A plugin to automatically update GitHub, Bitbucket or GitLab hosted "
 #~ "plugins and themes. It also allows for remote installation of plugins or "
@@ -460,60 +452,10 @@ msgstr "Andy Fragen"
 #~ "a>. Theme class based upon <a href=\"https://github.com/WordPress-Phoenix/"
 #~ "whitelabel-framework\">Whitelabel Framework</a> modifications."
 #~ msgstr ""
-#~ "Un plugin per aggiornare automaticamente un tema o plugin ospitato su "
-#~ "GitHub or Bitbucket direttamente dentro WordPress. La classe per la "
-#~ "gestione dei plugin è basata su <a href=\"https://github.com/codepress/"
-#~ "github-plugin-updater\">codepress/github-plugin-updater</a>.La classe per "
-#~ "la gestione dei temi è basata su <a href=\"https://github.com/WordPress-"
-#~ "Phoenix/whitelabel-framework\">Whitelabel Framework</a> modificata."
-
-#~ msgid ""
-#~ "No changelog is available via GitHub Updater. Create a file <code>CHANGES."
-#~ "md</code> or <code>CHANGELOG.md</code> in your repository."
-#~ msgstr ""
-#~ "Nessun changelog è disponibile con GitHub Updater. Crea un file "
-#~ "<code>CHANGES.md</code> o <code>CHANGELOG.md</code> nel tuo repository."
-
-#~ msgid "%1$s was not checked. GitHub Updater Error Code: %2$s"
-#~ msgstr "%1$s non è stata verificata. Codice di errore GitHub Updater: %2$s"
-
-#~ msgid "GitHub API's rate limit will reset in %1$s minutes."
-#~ msgstr "Limite di frequenza su GitHub API si resetterà in minuti di %1$s."
-
-#~ msgid "%sRollback to:%s"
-#~ msgstr "%sRipristina a:%s"
-
-#~ msgid "GitHub Updater shows a new version of %1$s available."
-#~ msgstr "GitHub Updater mostra una nuova versione di %1$s disponibile."
-
-#~ msgid "View version %4$s details"
-#~ msgstr "Visualizza i dettagli della versione %4$s"
-
-#~ msgid "View version %4$s details%5$s or %6$supdate now%7$s."
-#~ msgstr ""
-#~ "%4$sVisualizza i dettagli della versione %5$s o %6$saggiorna adesso%7$s"
-
-#~ msgid "There is a new version of %1$s available now."
-#~ msgstr "E' disponibile una nuova versione di %1$s."
-
-#~ msgid "%sView version %s details%s or %supdate now%s."
-#~ msgstr "%sVisualizza i dettagli della versione %s %s o %saggiorna adesso%s."
-
-#~ msgid "available now."
-#~ msgstr "disponibile adesso."
-
-#, fuzzy
-#~ msgid "View version"
-#~ msgstr "Visualizza i dettagli della versione %4$s"
-
-#~ msgid "or"
-#~ msgstr "o"
-
-#~ msgid "another version?"
-#~ msgstr "un&#39;altra versione?"
-
-#~ msgid "was not checked."
-#~ msgstr "non è stata verificata."
-
-#~ msgid "&nbsp;or&nbsp;"
-#~ msgstr "&nbsp;o&nbsp;"
+#~ "GitHub、Bitbucket または GitLab を自動的に更新するプラグインは、プラグイン"
+#~ "やテーマにホストされています。また、WordPressのプラグインやテーマのリモー"
+#~ "トインストールできます。プラグイン クラス <a href=\"https://github.com/"
+#~ "codepress/github-plugin-updater\"> codepress/github-plugin-updater</a>に基"
+#~ "づいています。テーマ クラスは、<a href=\"https://github.com/WordPress-"
+#~ "Phoenix/whitelabel-framework\">Whitelabel Framework</a> の変更に基づいてい"
+#~ "ます。"

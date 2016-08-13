@@ -111,7 +111,16 @@ class Photomosaic_Admin {
     public function include_github_updater () {
         if ( !(isset($_GET['action']) && $_GET['action'] == 'activate') ) {
             if ( !class_exists('GitHub_Plugin_Updater') ) {
-                require_once( $this->relative_path( 'vendor/github-updater/github-updater.php' ) );
+                if ( ! class_exists( 'WPUpdatePhp' ) ) {
+                    require_once ( $this->relative_path( 'vendor/github-updater/vendor/wp-update-php/src/WPUpdatePhp.php' ) );
+                }
+                $updatePhp = new WPUpdatePhp( '5.3.0' ); // GitHub Updater minimum PHP version
+                if ( method_exists( $updatePhp, 'set_plugin_name' ) ) {
+                    $updatePhp->set_plugin_name( 'PhotoMosaic for Wordpress\'s ability to auto-update' );
+                }
+                if ( $updatePhp->does_it_meet_required_php_version() ) {
+                    require_once( $this->relative_path( 'vendor/github-updater/github-updater.php' ) );
+                }
             }
         }
     }

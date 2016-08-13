@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.14
+- Bug Fix : updates dependencies that threw errors in PHP7
+
 ### 2.13
 - Enhancement : the default lightbox now works with links to images when "Link Behavior" is set to "Custom"
 - Bug Fix : fixes the bug that caused some mosaics to intermittently fail to load

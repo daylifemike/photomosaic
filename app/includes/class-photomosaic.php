@@ -11,7 +11,7 @@ class Photomosaic {
 
     public function __construct () {
         $this->plugin_name = 'photomosaic';
-        $this->version = '2.13';
+        $this->version = '2.14';
 
         $this->load_dependencies();
         // $this->set_locale();

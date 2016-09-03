@@ -98,7 +98,7 @@
 .PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-item,
 .PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-animation-wrap,
 .PM_csstransforms.PM_csstransitions .photoMosaic.resize-transition-none .photomosaic-loaded img,
-.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none img, {
+.PM_csstransforms.PM_csstransitions .photoMosaic.loading-transition-none img {
     -webkit-transition: none;
        -moz-transition: none;
         -ms-transition: none;

@@ -107,8 +107,11 @@
             }
 
             if ( PhotoMosaic.ErrorChecks.nonModernBrowser() ) {
-                if ( this.opts.fallback ) {
-                    this.obj.html( this.opts.fallback );
+                var fallback_node = this.el.childNodes[0];
+                var fallback = fallback_node ? fallback_node.textContent : null;
+
+                if ( fallback ) {
+                    this.obj.html( fallback );
 
                     setTimeout(function(){
                         self.modalCallback( self.obj.find('.gallery') );
@@ -595,8 +598,7 @@
     $(document).on('ready', function () {
         $.each(PhotoMosaic.WP, function (id, config) {
             var params = $.extend(true, {}, config.settings, {
-                    gallery : config.gallery,
-                    fallback : config.fallback
+                    gallery : config.gallery
                 });
             $('#' + config.target).photoMosaic( params );
         });

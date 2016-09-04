@@ -85,7 +85,6 @@ class Photomosaic_Public {
         $target = 'photoMosaicTarget' . $unique;
 
         $this->localize_placeholder( $target, $unique );
-        $fallback = $this->localize_fallback( $settings, $unique );
         $gallery = $this->localize_gallery_data( $settings, $atts, $unique );
         $settings = $this->localize_settings( $settings, $atts, $unique );
 
@@ -100,7 +99,7 @@ class Photomosaic_Public {
             $output_buffer .= $gallery_div;
         }
 
-        $output_buffer .= "<noscript>" . $fallback . "</noscript>";
+        $output_buffer .= "<noscript>" . $this->make_fallback( $settings ) . "</noscript>";
         $output_buffer .='</div>';
 
         return preg_replace('/\s+/', ' ', $output_buffer);
@@ -356,18 +355,6 @@ class Photomosaic_Public {
         );
 
         return $gallery;
-    }
-
-    public function localize_fallback ( $settings, $id ) {
-        $fallback = $this->make_fallback( $settings );
-
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id .'"].fallback',
-            $fallback
-        );
-
-        return $fallback;
     }
 
     public function gallery_from_wordpress ( $id, $link_behavior, $include, $exclude, $ids, $return_img_obj = false ) {

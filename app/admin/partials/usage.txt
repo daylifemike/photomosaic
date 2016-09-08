@@ -63,3 +63,9 @@ The PhotoMosaic template tag accepts an array of the attributes (list of support
 A PhotoMosaic shortcode can be placed in a standard Text Widget.  Because Widgets aren't posts or pages they can't have attached images.  This means that you'll need to use any PhotoMosaic method (id, ids, category, nggid, ngaid) except the barebones `[photomosaic]`.
 
 While the Create Gallery flow is unavailable on the Widgets page, you can create a gallery on any post/page and then simply copy/paste the resulting shortcode into your Text Widget.
+
+
+
+## Loaded via AJAX {.subhead}
+
+If your theme loads content via AJAX, PhotoMosaic provides a function `PhotoMosaic.refreshPage()` that will search for mosaics that haven't been initalized and initialize them.  Any existing, initialized, mosaic will be refreshed.  This function can be used as a safe, generic way to 'kick' a mosaic.

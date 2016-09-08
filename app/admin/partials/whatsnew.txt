@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.15
+- Enhancement : better support for galleries loaded via AJAX
+
 ### 2.14
 - Bug Fix : updates dependencies that threw errors in PHP7
 

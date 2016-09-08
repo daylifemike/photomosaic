@@ -64,4 +64,18 @@
             ]);
         });
     });
+    registerNamespace('PhotoMosaic.refreshPage', function () {
+        // calls instance.refresh() on existing mosaics
+        // inits any uninitialized mosaics
+        var $ = PhotoMosaic.$;
+        $.each(PhotoMosaic.WP, function (id, config) {
+            var $el = $('#' + config.target);
+            var instance = $el.data('photoMosaic')
+            var params = (instance) ? null : $.extend(true, {}, config.settings, {
+                    gallery : config.gallery
+                });
+
+            $el.photoMosaic( params );
+        });
+    });
 }(jQuery, window));

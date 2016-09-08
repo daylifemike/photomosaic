@@ -596,12 +596,7 @@
     };
 
     $(document).on('ready', function () {
-        $.each(PhotoMosaic.WP, function (id, config) {
-            var params = $.extend(true, {}, config.settings, {
-                    gallery : config.gallery
-                });
-            $('#' + config.target).photoMosaic( params );
-        });
+        PhotoMosaic.refreshPage();
     });
 
 }(window.JQPM, window));

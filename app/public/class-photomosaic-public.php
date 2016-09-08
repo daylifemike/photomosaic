@@ -38,7 +38,6 @@ class Photomosaic_Public {
             wp_register_script( $this->plugin_name, $this->relative_url('js/photomosaic.min.js'), array('jquery','react'), $this->version, true );
         }
 
-        wp_enqueue_script( $this->plugin_name . '-localize', $this->relative_url('js/localize.js'), array( $this->plugin_name ), $this->version, true );
         wp_enqueue_script( $this->plugin_name );
 
         if ( !is_admin() && $photomosaic->get_option('lightbox')) {
@@ -84,11 +83,34 @@ class Photomosaic_Public {
 
         $target = 'photoMosaicTarget' . $unique;
 
-        $this->localize_placeholder( $target, $unique );
-        $gallery = $this->localize_gallery_data( $settings, $atts, $unique );
-        $settings = $this->localize_settings( $settings, $atts, $unique );
+        $gallery = $this->make_gallery_data( $settings, $atts, $unique );
+        $settings = $this->make_gallery_settings( $settings, $atts, $unique );
+        $lightbox = $this->make_lightbox_func( $settings, $atts, $unique );
 
-        $output_buffer = '';
+        $onready_callback = $settings['onready_callback'];
+
+        // $this->make_lightbox_func needs to be called before the settings are trimmed
+        $settings = wp_array_slice_assoc( $settings, array(
+            'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
+            'lazyload', 'lightbox', 'lightbox_rendition', 'link_behavior', 'links', 'loading_transition',
+            'max_columns', 'min_columns', 'min_column_width', 'modal_group', 'modal_hash',
+            'modal_name', 'modal_ready_callback', /* 'onready_callback', */ 'order', 'padding',
+            'prevent_crop', 'resize_transition', 'show_loading', 'sizes', 'width',
+            // these need to be typed
+            'align', 'allow_orphans', 'layout', 'max_row_height', 'orphans', 'rows', 'shape', 'sizing'
+        ) );
+
+        $output_buffer = '
+            <div class="photomosaic-container">
+                <script type="text/javascript">
+                    if (!window.PhotoMosaic) { window.PhotoMosaic = { WP : {} } }
+                    PhotoMosaic.WP["'. $unique . '"] = ' . json_encode( array( 'target' => $target ) ) . ';
+                    PhotoMosaic.WP["'. $unique . '"].gallery = ' . json_encode( $gallery ) . ';
+                    PhotoMosaic.WP["'. $unique . '"].settings = ' . json_encode( $settings ) . ';
+                    PhotoMosaic.WP["'. $unique . '"].settings.modal_ready_callback = ' . ( $onready_callback ? $onready_callback : 'false') .';
+                    PhotoMosaic.WP["'. $unique . '"].lightbox_callback = ' . ( $lightbox ? $lightbox : 'false' ) .';
+                </script>
+        ';
         $gallery_div = '<div id="'. $target .'" class="photoMosaicTarget" data-version="'. $this->version .'">';
 
         // Jetpack :: Carousel hack - it needs an HTML string to append it's data
@@ -100,25 +122,12 @@ class Photomosaic_Public {
         }
 
         $output_buffer .= "<noscript>" . $this->make_fallback( $settings ) . "</noscript>";
-        $output_buffer .='</div>';
+        $output_buffer .='</div></div>';
 
         return preg_replace('/\s+/', ' ', $output_buffer);
     }
 
-    public function localize_placeholder ( $target, $id ) {
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id . '"]',
-            array(
-                'target' => $target,
-                'gallery' => false,
-                'settings' => false,
-                'lightbox_callback' => false
-            )
-        );
-    }
-
-    public function localize_settings ( $settings, $atts, $id ) {
+    public function make_gallery_settings ( $settings, $atts, $id ) {
         // backwards compatibility
         // 'links' & 'link_to_url' might exist on the shortcode
         // convert them to 'link_behavior'
@@ -212,37 +221,10 @@ class Photomosaic_Public {
 
         $settings['id'] = $id;
 
-        // before we trim the settings
-        $this->localize_lightbox( $settings, $atts, $id );
-
-        $settings = wp_array_slice_assoc( $settings, array(
-            'center', 'columns', 'custom_lightbox', 'external_links', 'height', 'id',
-            'lazyload', 'lightbox', 'lightbox_rendition', 'link_behavior', 'links', 'loading_transition',
-            'max_columns', 'min_columns', 'min_column_width', 'modal_group', 'modal_hash',
-            'modal_name', 'modal_ready_callback', 'onready_callback', 'order', 'padding',
-            'prevent_crop', 'resize_transition', 'show_loading', 'sizes', 'width',
-            // these need to be typed
-            'align', 'allow_orphans', 'layout', 'max_row_height', 'orphans', 'rows', 'shape', 'sizing'
-        ) );
-
-        // TODO : vet all settings for type (make sure ints are ints, etc.)
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id . '"].settings',
-            $settings
-        );
-
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id . '"].settings.modal_ready_callback',
-            $settings['onready_callback'],
-            true
-        );
-
         return $settings;
     }
 
-    public function localize_lightbox ( $settings, $atts, $id ) {
+    public function make_lightbox_func ( $settings, $atts, $id ) {
         $is_default = !empty( $settings['lightbox'] );
         $is_custom  = !empty( $settings['custom_lightbox'] );
         $is_jetpack = class_exists( 'Jetpack_Carousel' );
@@ -309,19 +291,10 @@ class Photomosaic_Public {
             $function = false;
         }
 
-        if ( $function ) {
-            $this->localize(
-                $this->plugin_name . '-localize',
-                'PhotoMosaic.WP["'. $id . '"].lightbox_callback',
-                $function,
-                true
-            );
-        }
-
-        return $this->lightbox;
+        return $function;
     }
 
-    public function localize_gallery_data ( $settings, $atts, $id ) {
+    public function make_gallery_data ( $settings, $atts, $id ) {
         if ( !empty( $atts['nggid'] ) ) {
             $gallery = $this->gallery_from_nextgen( $atts['nggid'], $settings['link_behavior'], 'gallery' );
 
@@ -347,12 +320,6 @@ class Photomosaic_Public {
         } else {
             $gallery = $this->gallery_from_wordpress( $settings['id'], $settings['link_behavior'], $settings['include'], $settings['exclude'], $settings['ids'] );
         }
-
-        $this->localize(
-            $this->plugin_name . '-localize',
-            'PhotoMosaic.WP["'. $id . '"].gallery',
-            $gallery
-        );
 
         return $gallery;
     }
@@ -1007,11 +974,6 @@ class Photomosaic_Public {
 
         set_transient( $transient_key, $output, $this->transient_expiry );
         return $output;
-    }
-
-    public function localize ( $handle, $object_name, $l10n, $dirty = false ) {
-        global $photomosaic;
-        return $photomosaic->localize( $handle, $object_name, $l10n, $dirty );
     }
 
     private function in_debug_mode () {

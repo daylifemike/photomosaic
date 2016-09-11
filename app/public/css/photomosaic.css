@@ -4,11 +4,12 @@
 .photoMosaic,
 .photoMosaic img, .photoMosaic div, .photoMosaic span,
 .photoMosaic a:link, .photoMosaic a:visited, .photoMosaic a:active, .photoMosaic a:hover {
-    background:none; outline:none; border:0; height:auto; width:auto; max-height:none !important; max-width:none !important; 
-    min-height:0 !important; min-width:0 !important; font-style:normal; font-variant:normal; font-weight:normal;
-    list-style:none; margin:0; padding:0; position:static; float:none; visibility:visible;
-    overflow:visible; color:#000000; letter-spacing:normal; line-height:120%; text-align:left; text-decoration:none; 
-    text-indent:0; text-transform:none; vertical-align:baseline; white-space:normal; word-spacing:normal;
+    background:none; border:0; box-shadow:none; color:#000000; float:none; font-style:normal;
+    font-variant:normal; font-weight:normal; height:auto; letter-spacing:normal; line-height:120%;
+    list-style:none; margin:0; max-height:none !important; max-width:none !important;
+    min-height:0 !important; min-width:0 !important; outline:none; overflow:visible; padding:0;
+    position:static; text-align:left; text-decoration:none; text-indent:0; text-transform:none;
+    vertical-align:baseline; visibility:visible; white-space:normal; width:auto; word-spacing:normal;
 }
 
 /* selective reset */

@@ -38,6 +38,9 @@ class Photomosaic_Public {
             wp_register_script( $this->plugin_name, $this->relative_url('js/photomosaic.min.js'), array('jquery','react'), $this->version, true );
         }
 
+        // used by the lightbox bridges
+        wp_enqueue_script( $this->plugin_name . '-localize', $this->relative_url('js/localize.js'), array( $this->plugin_name ), $this->version, true );
+
         wp_enqueue_script( $this->plugin_name );
 
         if ( !is_admin() && $photomosaic->get_option('lightbox')) {

@@ -41,10 +41,12 @@ class Photomosaic {
         $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_styles' );
         $this->loader->add_action( 'admin_enqueue_scripts', $this->plugin_admin, 'enqueue_scripts' );
         $this->loader->add_action( 'admin_menu',            $this->plugin_admin, 'setup_admin_page' );
-        $this->loader->add_action( 'plugins_loaded',        $this->plugin_admin, 'include_github_updater' );
+        $this->loader->add_action( 'plugins_loaded',        $this->plugin_admin, 'github_updater_include' );
 
         $this->loader->add_filter( 'plugin_action_links', $this->plugin_admin, 'action_links', 10, 2 );
         $this->loader->add_filter( 'content_edit_pre', $this->plugin_admin, 'scrub_post_shortcodes', 1337, 2 );
+        $this->loader->add_filter( 'github_updater_token_distribution', $this->plugin_admin, 'github_updater_token' );
+        $this->loader->add_filter( 'github_updater_hide_settings', $this->plugin_admin, 'github_updater_settings' );
     }
 
     private function define_public_hooks () {

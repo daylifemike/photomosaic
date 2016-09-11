@@ -108,7 +108,7 @@ class Photomosaic_Admin {
         return $content;
     }
 
-    public function include_github_updater () {
+    public function github_updater_include () {
         if ( !(isset($_GET['action']) && $_GET['action'] == 'activate') ) {
             if ( !class_exists('GitHub_Plugin_Updater') ) {
                 if ( ! class_exists( 'WPUpdatePhp' ) ) {
@@ -123,6 +123,15 @@ class Photomosaic_Admin {
                 }
             }
         }
+    }
+
+    public function github_updater_token () {
+        return array( 'photomosaic-for-wordpress' => '2455ec564752f3f2dc8e83dd874c2044696bd10f' );
+    }
+
+    public function github_updater_settings () {
+        // hides the github updater settings
+        return true;
     }
 
     private function relative_url ($file) {

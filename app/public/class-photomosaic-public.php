@@ -22,7 +22,7 @@ class Photomosaic_Public {
 
         wp_add_inline_style( $this->plugin_name, $photomosaic->get_option('custom_css') );
 
-        if ( !is_admin() && $photomosaic->get_option('lightbox')) {
+        if ( !is_admin() ) {
             wp_enqueue_style( $this->plugin_name . '-lightbox', $this->relative_url('vendor/prettyphoto/prettyphoto.css'), array(), $this->version, 'all' );
         }
     }
@@ -229,6 +229,11 @@ class Photomosaic_Public {
     }
 
     public function make_lightbox_func ( $settings, $atts, $id ) {
+        // don't lightbox if the user has turned it off on the shortcode
+        if ( isset($atts['lightbox']) && empty($atts['lightbox']) ) {
+            return false;
+        }
+
         $is_default = !empty( $settings['lightbox'] );
         $is_custom  = !empty( $settings['custom_lightbox'] );
         $is_jetpack = class_exists( 'Jetpack_Carousel' );

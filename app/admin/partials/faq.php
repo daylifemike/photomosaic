@@ -29,3 +29,9 @@
         ?>
     </div>
 <?php endforeach; ?>
+
+<div class="question">
+    <a name="phpversion"></a>
+    <h3 class="title">Which version of PHP am I running?</h3>
+    <p><?php echo PHP_VERSION; ?></p>
+</div>

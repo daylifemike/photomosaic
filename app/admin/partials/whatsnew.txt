@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.15.3
+- Bug Fix : some people were still seeing that blasted error!
+
 ### 2.15.2
 - Bug Fix : corrects a bug that caused an Error Message to appear when updating the plugin
 

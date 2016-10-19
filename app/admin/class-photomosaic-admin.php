@@ -115,9 +115,10 @@ class Photomosaic_Admin {
                     require_once ( $this->relative_path( 'vendor/github-updater/vendor/wp-update-php/src/WPUpdatePhp.php' ) );
                 }
                 $updatePhp = new WPUpdatePhp( '5.3.0' ); // GitHub Updater minimum PHP version
-                if ( method_exists( $updatePhp, 'set_plugin_name' ) ) {
-                    $updatePhp->set_plugin_name( 'PhotoMosaic for Wordpress\'s ability to auto-update' );
-                }
+                // shows a really annoying error message that never goes away
+                // if ( method_exists( $updatePhp, 'set_plugin_name' ) ) {
+                //     $updatePhp->set_plugin_name( 'PhotoMosaic for Wordpress\'s ability to auto-update' );
+                // }
                 if ( $updatePhp->does_it_meet_required_php_version() ) {
                     require_once( $this->relative_path( 'vendor/github-updater/github-updater.php' ) );
                 }
@@ -126,7 +127,9 @@ class Photomosaic_Admin {
     }
 
     public function github_updater_token () {
-        return array( 'photomosaic-for-wordpress' => '2455ec564752f3f2dc8e83dd874c2044696bd10f' );
+        // aparently this is only necessary for private repos
+        // return array( 'photomosaic-for-wordpress' => '2455ec564752f3f2dc8e83dd874c2044696bd10f' );
+        return array( 'photomosaic-for-wordpress' => '' );
     }
 
     public function github_updater_settings () {

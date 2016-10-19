@@ -56,6 +56,16 @@ class WPUpdatePhp {
 		return false;
 	}
 
+	// same as above, just without the error message
+	public function does_it_meet_required_php_version_no_message( $version = PHP_VERSION ) {
+		if ( $this->version_passes_requirement( $this->minimum_version, $version ) ) {
+			return true;
+		}
+
+		// $this->load_version_notice( array( $this, 'minimum_admin_notice' ) );
+		return false;
+	}
+
 	/**
 	 * Check given PHP version against recommended version.
 	 *

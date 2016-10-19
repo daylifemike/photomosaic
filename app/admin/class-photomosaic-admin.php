@@ -119,7 +119,7 @@ class Photomosaic_Admin {
                 // if ( method_exists( $updatePhp, 'set_plugin_name' ) ) {
                 //     $updatePhp->set_plugin_name( 'PhotoMosaic for Wordpress\'s ability to auto-update' );
                 // }
-                if ( $updatePhp->does_it_meet_required_php_version() ) {
+                if ( $updatePhp->does_it_meet_required_php_version_no_message() ) {
                     require_once( $this->relative_path( 'vendor/github-updater/github-updater.php' ) );
                 }
             }

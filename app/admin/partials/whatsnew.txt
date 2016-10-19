@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.15.2
+- Bug Fix : corrects a bug that caused an Error Message to appear when updating the plugin
+
 ### 2.15.1
 - Bug Fix : corrects bug that prevented the lightbox from being turned-off via Inline Attributes
 

@@ -37,7 +37,7 @@
     registerNamespace('JQPM', $sub || {});
     registerNamespace('PhotoMosaic');
     registerNamespace('PhotoMosaic.$', $sub || {});
-    registerNamespace('PhotoMosaic.version', '2.15.3');
+    registerNamespace('PhotoMosaic.version', '2.15.4');
     registerNamespace('PhotoMosaic.Utils');
     registerNamespace('PhotoMosaic.Inputs');
     registerNamespace('PhotoMosaic.Loader');

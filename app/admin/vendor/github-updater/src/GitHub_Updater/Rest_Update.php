@@ -48,8 +48,8 @@ class Rest_Update extends Base {
 	/**
 	 * Update plugin.
 	 *
-	 * @param  string $plugin_slug
-	 * @param string  $tag
+	 * @param string $plugin_slug
+	 * @param string $tag
 	 *
 	 * @throws \Exception
 	 */
@@ -65,7 +65,7 @@ class Rest_Update extends Base {
 		}
 
 		if ( ! $plugin ) {
-			throw new \Exception( esc_html__( 'Plugin not found or not updatable with GitHub Updater: ', 'github-updater' ) . $plugin_slug );
+			throw new \Exception( 'Plugin not found or not updatable with GitHub Updater: ' . $plugin_slug );
 		}
 
 		if ( is_plugin_active( $plugin->slug ) ) {
@@ -90,8 +90,10 @@ class Rest_Update extends Base {
 		$upgrader->upgrade( $plugin->slug );
 
 		if ( $is_plugin_active ) {
-			activate_plugin( $plugin->slug, null, true );
-			$this->upgrader_skin->messages[] = esc_html__( 'Plugin reactivated successfully.', 'github-updater' );
+			$activate = is_multisite() ? activate_plugin( $plugin->slug, null, true ) : activate_plugin( $plugin->slug );
+			if ( ! $activate ) {
+				$this->upgrader_skin->messages[] = 'Plugin reactivated successfully.';
+			}
 		}
 	}
 
@@ -114,7 +116,7 @@ class Rest_Update extends Base {
 		}
 
 		if ( ! $theme ) {
-			throw new \Exception( esc_html__( 'Theme not found or not updatable with GitHub Updater: ', 'github-updater' ) . $theme_slug );
+			throw new \Exception( 'Theme not found or not updatable with GitHub Updater: ' . $theme_slug );
 		}
 
 		$this->get_remote_repo_meta( $theme );
@@ -174,7 +176,7 @@ class Rest_Update extends Base {
 			$show_themes[] = $theme;
 		}
 
-		$response['messages'] = esc_html__( 'Available Updates', 'github-updater' );
+		$response['messages'] = 'Available Updates';
 		$response['plugins']  = $show_plugins;
 		$response['themes']   = $show_themes;
 
@@ -197,7 +199,11 @@ class Rest_Update extends Base {
 
 	/**
 	 * Process request.
+	 *
 	 * Relies on data in $_REQUEST, prints out json and exits.
+	 * If the request came through a webhook, and if the branch in the
+	 * webhook matches the branch specified by the url, use the latest
+	 * update available as specified in the webhook payload.
 	 */
 	public function process_request() {
 		try {
@@ -210,15 +216,30 @@ class Rest_Update extends Base {
 			if ( ! isset( $_REQUEST['key'] ) ||
 			     $_REQUEST['key'] != get_site_option( 'github_updater_api_key' )
 			) {
-				throw new \Exception( esc_html__( 'Bad api key.', 'github-updater' ) );
+				throw new \Exception( 'Bad api key.' );
 			}
 
 			$tag = 'master';
-
 			if ( isset( $_REQUEST['tag'] ) ) {
 				$tag = $_REQUEST['tag'];
 			} elseif ( isset( $_REQUEST['committish'] ) ) {
 				$tag = $_REQUEST['committish'];
+			}
+
+			/**
+			 * Parse webhook response and convert 'tag' to 'committish'.
+			 * This will avoid potential race conditions.
+			 *
+			 * Throw Exception if `$_REQUEST['tag'] !== webhook branch` this avoids
+			 * unnecessary updates for PUSH to different branch.
+			 */
+			$webhook_response = $this->get_webhook_data();
+			if ( $webhook_response ) {
+				if ( $tag === $webhook_response['branch'] ) {
+					$tag = $webhook_response['hash'];
+				} else {
+					throw new \Exception( 'Request tag and webhook are not matching.' );
+				}
 			}
 
 			if ( isset( $_REQUEST['plugin'] ) ) {
@@ -228,7 +249,7 @@ class Rest_Update extends Base {
 			} elseif ( isset( $_REQUEST['updates'] ) ) {
 				$show_updates = true;
 			} else {
-				throw new \Exception( esc_html__( 'No plugin or theme specified for update.', 'github-updater' ) );
+				throw new \Exception( 'No plugin or theme specified for update.' );
 			}
 		} catch ( \Exception $e ) {
 			http_response_code( 500 );
@@ -260,6 +281,99 @@ class Rest_Update extends Base {
 
 		echo json_encode( $response, $json_encode_flags ) . "\n";
 		exit;
+	}
+
+	/**
+	 * Checks the headers of the request and sends webhook data to be parsed.
+	 * If the request did not come from a webhook, this function returns false.
+	 *
+	 * @return bool|array false if no data; array of parsed webhook response
+	 */
+	private function get_webhook_data() {
+		$request_body = file_get_contents( 'php://input' );
+		$request_data = json_decode( $request_body, true );
+
+		if ( empty( $request_data ) ) {
+			return false;
+		}
+
+		// GitHub
+		if ( 'push' == $_SERVER['HTTP_X_GITHUB_EVENT'] ) {
+			return $this->parse_github_webhook( $request_data );
+		}
+
+		// Bitbucket
+		if ( 'repo:push' == $_SERVER['HTTP_X_EVENT_KEY'] ) {
+			return $this->parse_bitbucket_webhook( $request_data );
+		}
+
+		// GitLab
+		if ( 'Push Hook' == $_SERVER['HTTP_X_GITLAB_EVENT'] ) {
+			return $this->parse_gitlab_webhook( $request_data );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Parses GitHub webhook data.
+	 *
+	 * @link https://developer.github.com/v3/activity/events/types/#pushevent
+	 *
+	 * @param array $request_data
+	 *
+	 * @return array $response
+	 */
+	private function parse_github_webhook( $request_data ) {
+		$response           = array();
+		$response['hash']   = $request_data['after'];
+		$response['branch'] = array_pop( explode( '/', $request_data['ref'] ) );
+
+		return $response;
+	}
+
+	/**
+	 * Parses GitLab webhook data.
+	 *
+	 * @link https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/web_hooks/web_hooks.md
+	 *
+	 * @param array $request_data
+	 *
+	 * @return array $response
+	 */
+	private function parse_gitlab_webhook( $request_data ) {
+		$response           = array();
+		$response['hash']   = $request_data['after'];
+		$response['branch'] = array_pop( explode( '/', $request_data['ref'] ) );
+
+		return $response;
+	}
+
+	/**
+	 * Parses Bitbucket webhook data.
+	 *
+	 * We assume here that changes contains one single entry and that first
+	 * entry is the correct one.
+	 *
+	 * @link https://confluence.atlassian.com/bitbucket/event-payloads-740262817.html#EventPayloads-HTTPHeaders
+	 *
+	 * @param array $request_data
+	 *
+	 * @return bool|array $response
+	 */
+	private function parse_bitbucket_webhook( $request_data ) {
+		$new = $request_data['push']['changes'][0]['new'];
+
+		// What else could this be? For now, just expect branch.
+		if ( empty( $new ) || 'branch' != $new['type'] ) {
+			return false;
+		}
+
+		$response           = array();
+		$response['hash']   = $new['target']['hash'];
+		$response['branch'] = $new['name'];
+
+		return $response;
 	}
 
 }

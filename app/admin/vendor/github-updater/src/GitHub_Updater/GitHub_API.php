@@ -79,7 +79,7 @@ class GitHub_API extends API {
 		$repo_type = $this->return_repo_type();
 		$response  = isset( $this->response['tags'] ) ? $this->response['tags'] : false;
 
-		if ( $this->exit_no_update( $response ) && 'theme' !== $repo_type['type'] ) {
+		if ( $this->exit_no_update( $response, true ) ) {
 			return false;
 		}
 
@@ -186,8 +186,9 @@ class GitHub_API extends API {
 		}
 
 		if ( $response && isset( $response->content ) ) {
-			$parser   = new Readme_Parser;
-			$response = $parser->parse_readme( base64_decode( $response->content ) );
+			$file     = base64_decode( $response->content );
+			$parser   = new Readme_Parser( $file );
+			$response = $parser->parse_data();
 			$this->set_transient( 'readme', $response );
 		}
 
@@ -243,7 +244,7 @@ class GitHub_API extends API {
 		}
 
 		$this->type->repo_meta = $response;
-		$this->_add_meta_repo_object();
+		$this->add_meta_repo_object();
 
 		return true;
 	}
@@ -312,8 +313,13 @@ class GitHub_API extends API {
 		) );
 		$endpoint           = '';
 
+		/*
+		 * If release asset.
+		 */
 		if ( $this->type->release_asset && '0.0.0' !== $this->type->newest_tag ) {
-			return $this->make_release_asset_download_link();
+			$download_link_base = $this->make_release_asset_download_link();
+
+			return $this->add_access_token_endpoint( $this, $download_link_base );
 		}
 
 		/*
@@ -342,9 +348,50 @@ class GitHub_API extends API {
 			$endpoint = $branch_switch;
 		}
 
-		$endpoint = $this->_add_access_token_endpoint( $this, $endpoint );
+		$endpoint = $this->add_access_token_endpoint( $this, $endpoint );
 
 		return $download_link_base . $endpoint;
+	}
+
+	/**
+	 * Get/process Language Packs.
+	 * Language Packs cannot reside on GitHub Enterprise.
+	 *
+	 * @TODO Figure out how to serve raw file from GitHub Enterprise.
+	 *
+	 * @param array $headers Array of headers of Language Pack.
+	 *
+	 * @return bool When invalid response.
+	 */
+	public function get_language_pack( $headers ) {
+		$response = ! empty( $this->response['languages'] ) ? $this->response['languages'] : false;
+		$type     = explode( '_', $this->type->type );
+
+		if ( ! $response ) {
+			$response = $this->api( '/repos/' . $headers['owner'] . '/' . $headers['repo'] . '/contents/language-pack.json' );
+
+			if ( $this->validate_response( $response ) ) {
+				return false;
+			}
+
+			if ( $response ) {
+				$contents = base64_decode( $response->content );
+				$response = json_decode( $contents );
+
+				foreach ( $response as $locale ) {
+					$package = array( 'https://github.com', $headers['owner'], $headers['repo'], 'blob/master' );
+					$package = implode( '/', $package ) . $locale->package;
+					$package = add_query_arg( array( 'raw' => 'true' ), $package );
+
+					$response->{$locale->language}->package = $package;
+					$response->{$locale->language}->type    = $type[1];
+					$response->{$locale->language}->version = $this->type->remote_version;
+				}
+
+				$this->set_transient( 'languages', $response );
+			}
+		}
+		$this->type->language_packs = $response;
 	}
 
 	/**
@@ -353,9 +400,11 @@ class GitHub_API extends API {
 	 * @param $git
 	 * @param $endpoint
 	 *
+	 * @access private
+	 *
 	 * @return string
 	 */
-	private function _add_access_token_endpoint( $git, $endpoint ) {
+	private function add_access_token_endpoint( $git, $endpoint ) {
 		// Add GitHub.com access token.
 		if ( ! empty( parent::$options['github_access_token'] ) ) {
 			$endpoint = add_query_arg( 'access_token', parent::$options['github_access_token'], $endpoint );
@@ -396,7 +445,15 @@ class GitHub_API extends API {
 			$endpoint = add_query_arg( 'ref', $git->type->branch, $endpoint );
 		}
 
-		$endpoint = $this->_add_access_token_endpoint( $git, $endpoint );
+		$endpoint = $this->add_access_token_endpoint( $git, $endpoint );
+
+		/*
+		 * Remove branch endpoint if a translation file.
+		 */
+		$repo = explode( '/', $endpoint );
+		if ( isset( $repo[3] ) && $repo[3] !== $git->type->repo ) {
+			$endpoint = remove_query_arg( 'ref', $endpoint );
+		}
 
 		/*
 		 * If using GitHub Enterprise header return this endpoint.
@@ -413,11 +470,10 @@ class GitHub_API extends API {
 	 *
 	 * @access private
 	 */
-	private function _add_meta_repo_object() {
+	private function add_meta_repo_object() {
 		$this->type->rating       = $this->make_rating( $this->type->repo_meta );
 		$this->type->last_updated = $this->type->repo_meta->pushed_at;
 		$this->type->num_ratings  = $this->type->repo_meta->watchers;
-		$this->type->private      = $this->type->repo_meta->private;
 	}
 
 	/**

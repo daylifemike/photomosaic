@@ -56,6 +56,9 @@ class Photomosaic {
         $this->loader->add_filter( 'post_gallery', $this->plugin_public, 'post_gallery', 1337, 2 );
         $this->loader->add_filter( 'widget_text', null, 'do_shortcode' );
 
+        // stupid caching plugins
+        $this->loader->add_filter( 'rocket_minify_excluded_external_js', $this->plugin_public, '__fix_wprocket_excluded_external_js' )
+
         $this->loader->add_shortcode( 'photoMosaic', $this->plugin_public, 'shortcode' );
         $this->loader->add_shortcode( 'photomosaic', $this->plugin_public, 'shortcode' );
     }

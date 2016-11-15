@@ -1041,4 +1041,10 @@ class Photomosaic_Public {
         $safe_text = _wp_specialchars( $safe_text, "double" );
         return apply_filters( 'attribute_escape', $safe_text, $text );
     }
+
+    // stupid caching plugins
+    public function __fix_wprocket_excluded_external_js ( $external_js ) {
+        $external_js[] = 'fb.me';
+        return $external_js;
+    }
 }

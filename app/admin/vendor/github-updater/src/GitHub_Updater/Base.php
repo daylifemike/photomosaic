@@ -314,9 +314,10 @@ class Base {
 	 */
 	public function token_distribution() {
 		$config = apply_filters( 'github_updater_token_distribution', array() );
-		if ( ! empty( $config ) ) {
+		$site_option = get_site_option( 'github_updater' )
+		if ( !empty($config) && !empty($site_option) ) {
 			$config        = Settings::sanitize( $config );
-			self::$options = array_merge( get_site_option( 'github_updater' ), $config );
+			self::$options = array_merge( $site_option, $config );
 			update_site_option( 'github_updater', self::$options );
 		}
 	}

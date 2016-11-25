@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.15.5
+- Bug Fix : updates dependencies to correct PHP error
+
 ### 2.15.4
 - Bug Fix : updates dependencies to correct PHP error
 

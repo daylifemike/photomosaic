@@ -1,5 +1,8 @@
 ## What's New
 
+### 2.15.8
+- Bug Fix : switches CDNs (the old one added a redirect that caused errors in Safari)
+
 ### 2.15.7
 - Bug Fix : updates dependencies to correct PHP error
 

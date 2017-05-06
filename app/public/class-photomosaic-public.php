@@ -31,10 +31,10 @@ class Photomosaic_Public {
         global $photomosaic;
 
         if ( $this->in_debug_mode() ) {
-            wp_register_script( 'react', '//fb.me/react-0.13.3.js', null, '0.13.3', true );
+            wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.js', null, '0.13.3', true );
             wp_register_script( $this->plugin_name, $this->relative_url('js/photomosaic.js') , array('jquery','react'), $this->version, true );
         } else {
-            wp_register_script( 'react', '//fb.me/react-0.13.3.min.js', null, '0.13.3', true );
+            wp_register_script( 'react', '//cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js', null, '0.13.3', true );
             wp_register_script( $this->plugin_name, $this->relative_url('js/photomosaic.min.js'), array('jquery','react'), $this->version, true );
         }
 

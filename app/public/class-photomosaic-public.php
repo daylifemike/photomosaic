@@ -104,17 +104,16 @@ class Photomosaic_Public {
             'align', 'allow_orphans', 'layout', 'max_row_height', 'orphans', 'rows', 'shape', 'sizing'
         ) );
 
-        $output_buffer = '
-            <div class="photomosaic-container">
-                <script type="text/javascript">
-                    if (!window.PhotoMosaic) { window.PhotoMosaic = { WP : {} } }
-                    PhotoMosaic.WP["'. $unique . '"] = ' . json_encode( array( 'target' => $target ) ) . ';
-                    PhotoMosaic.WP["'. $unique . '"].gallery = ' . json_encode( $gallery ) . ';
-                    PhotoMosaic.WP["'. $unique . '"].settings = ' . json_encode( $settings ) . ';
-                    PhotoMosaic.WP["'. $unique . '"].settings.modal_ready_callback = ' . ( $onready_callback ? $onready_callback : 'false') .';
-                    PhotoMosaic.WP["'. $unique . '"].lightbox_callback = ' . ( $lightbox ? $lightbox : 'false' ) .';
-                </script>
-        ';
+        $output_buffer = '<div class="photomosaic-container">';
+        $output_buffer .= '<script type="text/javascript">';
+        $output_buffer .= 'if (!window.PhotoMosaic) { window.PhotoMosaic = { WP : {} } } ';
+        $output_buffer .= 'PhotoMosaic.WP["'. $unique . '"] = ' . json_encode( array( 'target' => $target ) ) . '; ';
+        $output_buffer .= 'PhotoMosaic.WP["'. $unique . '"].gallery = ' . json_encode( $gallery ) . '; ';
+        $output_buffer .= 'PhotoMosaic.WP["'. $unique . '"].settings = ' . json_encode( $settings ) . '; ';
+        $output_buffer .= 'PhotoMosaic.WP["'. $unique . '"].settings.modal_ready_callback = ' . ( $onready_callback ? preg_replace('/\s+/', ' ', $onready_callback) : 'false') .'; ';
+        $output_buffer .= 'PhotoMosaic.WP["'. $unique . '"].lightbox_callback = ' . ( $lightbox ? preg_replace('/\s+/', ' ', $lightbox) : 'false' ) .'; ';
+        $output_buffer .= '</script>';
+
         $gallery_div = '<div id="'. $target .'" class="photoMosaicTarget" data-version="'. $this->version .'">';
 
         // Jetpack :: Carousel hack - it needs an HTML string to append it's data
@@ -128,7 +127,7 @@ class Photomosaic_Public {
         $output_buffer .= "<noscript>" . $this->make_fallback( $settings ) . "</noscript>";
         $output_buffer .='</div></div>';
 
-        return preg_replace('/\s+/', ' ', $output_buffer);
+        return $output_buffer;
     }
 
     public function make_gallery_settings ( $settings, $atts, $id ) {
